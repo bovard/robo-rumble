@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package team122;
 import battlecode.common.*;
@@ -23,8 +19,15 @@ public class ScoutRobotSystem extends MobileRobotSystem {
   
   public ScoutRobotSystem(RobotController robotControl) {
     super(robotControl);
-    
-    sensorControl = (SensorController)robotControl.components()[1];
+
+    //for our scouts we want to make sure we build the sensor as the first thing after
+    //building the chasis, thus they will always be in teh components[1] slot
+    //the bot we start with, however, has the sensor, SIGHT, in components[2], hence
+    //the extra if statement
+    if (robotControl.components()[2].type() == ComponentType.SIGHT)
+      sensorControl = (SensorController)robotControl.components()[2];
+    else
+      sensorControl = (SensorController)robotControl.components()[1];
     sensorSys = new SensorSystem(sensorControl);
   }
   
@@ -59,4 +62,19 @@ public class ScoutRobotSystem extends MobileRobotSystem {
     return false;
   }
 
+  /**
+   * the bot runs! 
+   * right now it's pretty dumb, just tries to run back to it's birthplace
+   * @return if it has fleed sucessfully
+   */
+  protected boolean actFlee() {
+    navSys.setDestination(birthPlace);
+
+    boolean done = false;
+    while(!done){
+      done = navSys.nextMove();
+    }
+
+    return done;
+  }
 }

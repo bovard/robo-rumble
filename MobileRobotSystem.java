@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package team122;
 import battlecode.common.*;
 
 /**
- *
+ * Serves as a base class for all mobile robots. 
  * @author bovard
  */
 public class MobileRobotSystem extends RobotSystem {
