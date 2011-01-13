@@ -5,6 +5,7 @@
  * ->MobileRobotSystem
  * --->ScoutRobotSystem
  * ----->BuilderScoutRobotSystem
+ * ----->FighterScoutRobotSystem
  */
 
 package team122;
