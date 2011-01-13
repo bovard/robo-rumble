@@ -2,6 +2,7 @@
  * RobotSystem inheritance chart
  *
  * RobotSytem
+ * ->RecyclerRobotSystem
  * ->MobileRobotSystem
  * --->ScoutRobotSystem
  * ----->BuilderScoutRobotSystem
