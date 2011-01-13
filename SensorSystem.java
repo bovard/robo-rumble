@@ -42,7 +42,7 @@ public class SensorSystem {
    * system to 'forget' a mine. It would just test new ones against already known mines
    * and only add in ones that it's never seen. I'm not sure how benficial this would be
    *
-   * @return a list of bots that are sensed
+   * @return a list of mines that are sensed
    */
   public Mine[] getMines() {
     if(lastMineScan < Clock.getRoundNum()) {

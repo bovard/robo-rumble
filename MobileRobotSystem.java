@@ -20,7 +20,7 @@ public class MobileRobotSystem extends RobotSystem {
 
   
 
-  private boolean actMove(MapLocation dest) {
+  protected boolean actMove(MapLocation dest) {
     navSys.setDestination(dest);
 
     boolean safeToMove = true;

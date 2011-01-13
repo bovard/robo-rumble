@@ -33,7 +33,7 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
 
   /**
    * the bot attempts to perform the ScoutBuild sequence, if it can't it tries to flee
-   * @return
+   * @return if either action was sucessfull
    */
   protected boolean selScout() {
     if(seqScoutBuild())
@@ -46,8 +46,8 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return
    */
   protected boolean seqScoutBuild() {
-    if (actScoutMine()) {
-      if(actBuildRecycler()) {
+    if (actScoutUncoveredMine()) {
+      if(seqBuildRecycler()) {
         return true;
       }
     }
@@ -58,8 +58,31 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * builds a recycler on the newly scouted uncovered mine
    * @return whether or not the action was completeled sucessfully
    */
-  protected boolean actBuildRecycler() {
+  protected boolean seqBuildRecycler() {
+    // TODO: implement this
+    // find a mine that isn't covered already and pull the locaiton
+    Mine[] mines = sensorSys.getMines();
+    MapLocation mineLoc;
+    for (int i=0; i<mines.length;i++) {
 
-    return false
+    }
+    // find a free square adjacent to target mine, return false if can't
+    // move adjacent to target mine, return false if can't
+    // build a building on target mine, return false if can't
+    // build a recycler on the building, return false if can't
+    // return true if all these are done
+    return false;
+  }
+
+
+  /**
+   * Tries to build object obj at location loc
+   * @param obj the game object to build
+   * @param loc the location to build the object
+   * @return if the build was successful
+   */
+  protected boolean actBuild(GameObject obj, MapLocation loc) {
+    //TODO: implement this
+    return false;
   }
 }

@@ -36,7 +36,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
    * returns false if scouting is stopped for any other reason
    * @return if an uncovered mine was found
    */
-  protected boolean actScoutMine() {
+  protected boolean actScoutUncoveredMine() {
     //TODO: Implement this
     
     
