@@ -8,7 +8,7 @@ import battlecode.common.*;
  * //TODO: flesh this class out
  * @author bovard
  */
-public class FighterScoutRobotSystem extends ScoutRobotSystem {
+public class FighterScoutRobotSystem extends SensorRobotSystem {
   protected WeaponSystem weaponSys;
   protected WeaponController weaponControl;
 

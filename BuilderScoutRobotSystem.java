@@ -6,7 +6,7 @@ import battlecode.common.*;
  *
  * @author bovard
  */
-public class BuilderScoutRobotSystem extends ScoutRobotSystem {
+public class BuilderScoutRobotSystem extends SensorRobotSystem {
   protected BuilderController buildControl;
   protected BuilderSystem buildSys;
   protected MapLocation uncoveredMineLoc;

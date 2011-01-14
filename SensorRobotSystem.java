@@ -2,20 +2,21 @@
 package team122;
 import battlecode.common.*;
 import java.util.Random;
-
+import java.lang.Integer;
 /**
  * A scout robot system is assumed to be mobile and have a sensor in component slot 1
  * @author bovard
  */
-public class ScoutRobotSystem extends MobileRobotSystem {
-  
+public class SensorRobotSystem extends MobileRobotSystem {
+  //we don't know the bounds of the map to start with, we'll fill these in as we find them
+  protected int minX=-1, maxX=Integer.MAX_VALUE, minY=-1, maxY=Integer.MAX_VALUE;
   
   protected SensorController sensorControl;
   protected SensorSystem sensorSys;
   protected Random rand = new Random();
 
   
-  public ScoutRobotSystem(RobotController robotControl) {
+  public SensorRobotSystem(RobotController robotControl) {
     super(robotControl);
 
     //for our scouts we want to make sure we build the sensor as the first thing after
@@ -52,14 +53,18 @@ public class ScoutRobotSystem extends MobileRobotSystem {
    * of the robots birthplace
    */
   protected MapLocation chooseNextDestination() {
-    MapLocation next = birthPlace;
-    int x = rand.nextInt(30);
-    int y = rand.nextInt(30);
-    if (rand.nextBoolean())
-      x *= -1;
-    if (rand.nextBoolean())
-      y *= -1;
-    next = next.add(x, y);
+    MapLocation next;
+    int x, y;
+    do {
+      next = birthPlace;
+      x = rand.nextInt(30);
+      y = rand.nextInt(30);
+      if (rand.nextBoolean())
+        x *= -1;
+      if (rand.nextBoolean())
+        y *= -1;
+      next = next.add(x, y);
+    } while (x < minX || x > maxX || y < minY || y > maxY);
     return next;
   }
 
