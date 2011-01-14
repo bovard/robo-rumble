@@ -26,8 +26,15 @@ public class RobotPlayer implements Runnable {
     ComponentController [] components;
     //one the code enters here it waits until it recognizes one of the builds, then loads
     //the appropriate system
+    myRC.setIndicatorString(0, "Staging...");
     while(true) {
+
       components = myRC.components();
+      System.out.println("In staging with "+components.length+" components: "+ java.util.Arrays.toString(components));
+      System.out.println("with chassis "+myRC.getChassis());
+      for (int i=0;i<components.length;i++) {
+        System.out.println(i + ": " + components[i].type());
+      }
 
       if (myRC.getChassis() == Chassis.LIGHT) {
         //our BUILDER_SCOUT
@@ -37,19 +44,19 @@ public class RobotPlayer implements Runnable {
           system.go();
         }
         //provided BuilderScout (the one that we start off the game with)
-        else if (components.length == 3 && components[2].type()==ComponentType.SIGHT &&
+        if (components.length == 3 && components[2].type()==ComponentType.SIGHT &&
                 components[1].type()==ComponentType.CONSTRUCTOR) {
           BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC);
           system.go();
         }
         //FIGHTER_SCOUT
-        else if (components.length == 4 && components[1].type()==ComponentType.RADAR &&
-                components[1].type()==ComponentType.BLASTER && components[2].type()==ComponentType.SHIELD) {
+        if (components.length == 4 && components[1].type()==ComponentType.RADAR &&
+                components[2].type()==ComponentType.BLASTER && components[3].type()==ComponentType.SHIELD) {
           FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC);
           system.go();
         }
       }
-      else if (myRC.getChassis()==Chassis.BUILDING) {
+      if (myRC.getChassis()==Chassis.BUILDING) {
         //RECYCLER
         if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
                 components[2].type()==ComponentType.RECYCLER) {

@@ -22,6 +22,7 @@ public class NavigationSystem {
 
   private Random rand = new Random();
   private MovementController moveControl;
+  private RobotController robotControl;
   private int mode;
   private MapLocation dest;
   private boolean has_dest = false;
@@ -35,6 +36,7 @@ public class NavigationSystem {
   
   public NavigationSystem(MovementController control) {
     moveControl = control;
+    robotControl = moveControl.getRC();
     mode = NavigationMode.BUG;
   }
 
@@ -42,12 +44,14 @@ public class NavigationSystem {
     moveControl = control;
     this.dest = dest;
     has_dest = true;
+    robotControl.setIndicatorString(2, "Dest: "+dest.toString());
     mode = NavigationMode.BUG;
   }
 
   public void setDestination(MapLocation new_dest) {
     dest = new_dest;
     has_dest = true;
+    robotControl.setIndicatorString(2, "Dest: "+dest.toString());
   }
 
   public MapLocation getDestination() {
@@ -103,6 +107,7 @@ public class NavigationSystem {
       if (moveControl.getRC().getLocation().equals(dest)) {
         System.out.println("DESTINATION REACHED!!");
         has_dest = false;
+        robotControl.setIndicatorString(2, "No Dest");
       }
       //if we're currently tracking
       else if (tracking) {

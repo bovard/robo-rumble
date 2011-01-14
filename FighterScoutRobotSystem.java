@@ -15,11 +15,21 @@ public class FighterScoutRobotSystem extends ScoutRobotSystem {
 
   public FighterScoutRobotSystem(RobotController robotControl) {
     super(robotControl);
+    robotControl.setIndicatorString(0,"FighterScoutConstructor");
     weaponControl = (WeaponController)robotControl.components()[2];
     WeaponController[] weapons = new WeaponController[1];
     weapons[0] = weaponControl;
     weaponSys = new WeaponSystem(weapons, sensorSys);
 
+  }
+
+  public void go() {
+    //TODO: Implement this!
+    robotControl.setIndicatorString(0, "FighterScout");
+    while(true) {
+      
+      yield();
+    }
   }
 
 }

@@ -22,6 +22,8 @@ public class RobotSystem {
   protected RobotController robotControl;
   protected MovementController moveControl;
 
+  protected final int MINIMUM = 100;
+
 
 
   public RobotSystem(RobotController robotControl) {

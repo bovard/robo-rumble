@@ -12,7 +12,9 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
   protected MapLocation uncoveredMineLoc;
 
   public BuilderScoutRobotSystem(RobotController robotControl) {
+
     super(robotControl);
+    robotControl.setIndicatorString(0,"BuilderScoutConstructor");
 
     //on scouts, build systems should be in component[2], added another if clause to catch
     //our starting bot, who has it in components[1]
@@ -25,6 +27,7 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
   }
 
   public void go() {
+    robotControl.setIndicatorString(0,"BuilderScout");
     while(true) {
       selScout();
     }
@@ -35,6 +38,7 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return if either action was sucessfull
    */
   protected boolean selScout() {
+    robotControl.setIndicatorString(1, "selScout");
     if(seqScoutBuild())
       return true;
     return actFlee();
@@ -45,6 +49,7 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return if this was performed successfully
    */
   protected boolean seqScoutBuild() {
+    robotControl.setIndicatorString(1, "selScoutBuild");
     //move around until you find an uncoverd mine
     if (seqScoutUncoveredMine()) {
       //try to build a recycler on that mine
@@ -60,10 +65,11 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return whether or not the action was completeled sucessfully
    */
   protected boolean seqBuildRecycler() {
+    robotControl.setIndicatorString(1, "selBuildRecycler");
     // find a free square adjacent to target mine and move there
     if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())) {
       //wait till we have enough money
-      while(robotControl.getTeamResources() < RobotBuildOrder.RECYCLER_COST) {
+      while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.RECYCLER_COST) {
         yield();
       }
       //build the recycler
@@ -82,11 +88,12 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return if an uncovered mine was found
    */
   protected boolean seqScoutUncoveredMine() {
+    robotControl.setIndicatorString(1, "seqScoutUncoveredMine");
     navSys.setDestination(chooseNextDestination());
     boolean done = false;
 
     //while we haven't found an uncovered mine and we aren't at our destination
-    while(!done && !navSys.nextMove()) {
+    while(!done && !actMove()) {
 
       Mine[] mines = sensorSys.getMines();
       int i = 0;

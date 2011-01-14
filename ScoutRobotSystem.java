@@ -59,8 +59,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
       x *= -1;
     if (rand.nextBoolean())
       y *= -1;
-
-    next.add(x, y);
+    next = next.add(x, y);
     return next;
   }
 
