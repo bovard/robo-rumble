@@ -27,7 +27,7 @@ public class RobotSystem {
   public RobotSystem(RobotController robotControl) {
     this.robotControl = robotControl;
 
-    //as of 1.06 the movementcontroller is always the first item in the components list
+    //as of 1.07 the movementcontroller is always the first item in the components list
     moveControl = (MovementController)robotControl.components()[0];
 
   }
@@ -39,6 +39,8 @@ public class RobotSystem {
   public void go() {
     while(true) {
       //start of main loop
+      System.out.println("fell back to RobotSystem main go loop! (something's wrong)");
+      yield();
     }
   }
 

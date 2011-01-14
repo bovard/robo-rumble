@@ -50,6 +50,10 @@ public class NavigationSystem {
     has_dest = true;
   }
 
+  public MapLocation getDestination() {
+    return dest;
+  }
+
   public void setMode(int mode) {
     this.mode = mode;
   }

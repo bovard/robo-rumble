@@ -8,6 +8,7 @@ import battlecode.common.*;
  */
 public class BuilderScoutRobotSystem extends ScoutRobotSystem {
   protected BuilderController buildControl;
+  protected MapLocation uncoveredMineLoc;
 
   public BuilderScoutRobotSystem(RobotController robotControl) {
     super(robotControl);
@@ -42,7 +43,7 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return if this was performed successfully
    */
   protected boolean seqScoutBuild() {
-    if (actScoutUncoveredMine()) {
+    if (seqScoutUncoveredMine()) {
       if(seqBuildRecycler()) {
         return true;
       }
@@ -79,6 +80,34 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    */
   protected boolean actBuild(GameObject obj, MapLocation loc) {
     //TODO: implement this
+    return false;
+  }
+  
+
+    /**
+   * sends the bot to find an uncovered mine, when one is sensed, returns true
+   * returns false if scouting is stopped for any other reason
+   * @return if an uncovered mine was found
+   */
+  protected boolean seqScoutUncoveredMine() {
+    navSys.setDestination(chooseNextDestination());
+    boolean done = false;
+
+    //while we haven't found an uncovered mine and we aren't at our destination
+    while(!done && !navSys.nextMove()) {
+
+      Mine[] mines = sensorSys.getMines();
+      int i = 0;
+      while (i < mines.length && !done) {
+        try {
+          sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND);
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
+      }
+    }
+
     return false;
   }
 }

@@ -1,6 +1,7 @@
 
 package team122;
 import battlecode.common.*;
+import java.util.Random;
 
 /**
  * A scout robot system is assumed to be mobile and have a sensor in component slot 1
@@ -11,7 +12,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
   protected MapLocation birthPlace;
   protected SensorController sensorControl;
   protected SensorSystem sensorSys;
-  protected MapLocation[] oldDestinations;
+  protected Random rand = new Random();
 
   
   public ScoutRobotSystem(RobotController robotControl) {
@@ -26,37 +27,41 @@ public class ScoutRobotSystem extends MobileRobotSystem {
     else
       sensorControl = (SensorController)robotControl.components()[1];
     sensorSys = new SensorSystem(sensorControl);
+
+    birthPlace = robotControl.getLocation();
+
   }
   
-  /**
-   * sends the bot to find an uncovered mine, when one is sensed, returns true
-   * returns false if scouting is stopped for any other reason
-   * @return if an uncovered mine was found
-   */
-  protected boolean actScoutUncoveredMine() {
-    //TODO: Implement this
-    
-    
-    return false;
-  }
+
 
   /**
    * sends to bot to find an enemy unit, when one is sensed, returns true
-   * returns false if scouting is stopped for any other reason (taking fire from unseen enemy)
+   * returns false if scouting is stopped for any other reason (ex taking fire from
+   * an unseen enemy)
    * @return if an enemy is sensed
    */
-  protected boolean actScoutEnemy() {
+  protected boolean seqScoutEnemy() {
+    navSys.setDestination(chooseNextDestination());
     //TODO: Implement this
     return false;
   }
   
   /**
    * Chooses the next destination to go to based on birthplace and previous destinations
+   * currently chooses a random location within 30 squares horizontally and vertically
+   * of the robots birthplace
    */
-  protected boolean actChooseNextDestination() {
-    //TODO: Implement this
+  protected MapLocation chooseNextDestination() {
+    MapLocation next = birthPlace;
+    int x = rand.nextInt(30);
+    int y = rand.nextInt(30);
+    if (rand.nextBoolean())
+      x *= -1;
+    if (rand.nextBoolean())
+      y *= -1;
 
-    return false;
+    next.add(x, y);
+    return next;
   }
 
   /**
