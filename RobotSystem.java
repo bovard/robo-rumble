@@ -19,10 +19,11 @@ import battlecode.common.*;
  * @author bovard
  */
 public class RobotSystem {
+  protected MapLocation birthPlace;
   protected RobotController robotControl;
   protected MovementController moveControl;
 
-  protected final int MINIMUM = 20;
+  protected final int MINIMUM = 5;
 
 
 
@@ -31,6 +32,7 @@ public class RobotSystem {
 
     //as of 1.07 the movementcontroller is always the first item in the components list
     moveControl = (MovementController)robotControl.components()[0];
+    birthPlace = robotControl.getLocation();
 
   }
 

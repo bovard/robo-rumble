@@ -19,21 +19,32 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
 
   public RecyclerRobotSystem(RobotController robotControl) {
     super(robotControl);
-    if(Clock.getRoundNum() < 10 && moveControl.canMove(Direction.NORTH) && moveControl.canMove(Direction.WEST)) {
-      shouldBuild=true;
-    }
+
     robotControl.setIndicatorString(0, "Recycler");
     buildControl = (BuilderController)robotControl.components()[2];
     buildSys = new BuilderSystem(robotControl, buildControl);
     rand = new Random();
 
+    //check to see if this Recycler is the most NorthWestern at the start of the game
+    //if it is set shouldBuild to true so it knows it should start building troops
+    try {
+      if(Clock.getRoundNum() < 10
+              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) == null
+              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null) {
+        shouldBuild=true;
+      }
+    }catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+    }
   }
 
   public void go() {
     while(true) {
-      if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.BUILDER_SCOUT_COST*5)
+      if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.BUILDER_SCOUT_COST*3)
         selBuildScouts();
-      yield();
+      for (int i=0; i<5; i++)
+        yield();
     }
   }
 
@@ -73,14 +84,15 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
    * @return if the build was successful
    */
   protected boolean seqBuild(Object[] buildOrder) {
-
-  //keep rotating until we find a free square and have enough resources
+    actTurn(Direction.WEST);
+    //keep rotating until we find a free square and have enough resources
     while(!moveControl.canMove(robotControl.getDirection()) ||
             robotControl.getTeamResources() < MINIMUM + ((Chassis)buildOrder[0]).cost) {
       actTurn(robotControl.getDirection().rotateRight());
     }
     //call to the buildSys to initiate the build sequence
     return buildSys.seqBuild(buildOrder,robotControl.getLocation().add(robotControl.getDirection()));
+
   }
 
 }

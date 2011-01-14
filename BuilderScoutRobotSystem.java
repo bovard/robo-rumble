@@ -72,13 +72,16 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
     robotControl.setIndicatorString(1, "selBuildRecycler");
     // find a free square adjacent to target mine and move there
     if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())) {
-      //turn toward the mine
-      actTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
       //wait till we have enough money
       while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.RECYCLER_COST) {
         robotControl.setIndicatorString(1, "selBuildRecycler -waiting for funds");
         yield();
       }
+      if (!moveControl.isActive()) {
+        actTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
+
+      }
+
       //build the recycler
       if (buildSys.seqBuild(RobotBuildOrder.RECYCLER, uncoveredMineLoc)) {
         //once it's been built we should reset the uncovered mine location to null
@@ -221,6 +224,11 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
           e.printStackTrace();
         }
         
+      }
+      //you're done if you are next to the mine
+      if (robotControl.getLocation().isAdjacentTo(uncoveredMineLoc)) {
+        done = true;
+        yield();
       }
     }
     return done && keepGoing;

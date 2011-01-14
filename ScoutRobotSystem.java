@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public class ScoutRobotSystem extends MobileRobotSystem {
   
-  protected MapLocation birthPlace;
+  
   protected SensorController sensorControl;
   protected SensorSystem sensorSys;
   protected Random rand = new Random();
@@ -28,7 +28,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
       sensorControl = (SensorController)robotControl.components()[1];
     sensorSys = new SensorSystem(sensorControl);
 
-    birthPlace = robotControl.getLocation();
+    
 
   }
   
