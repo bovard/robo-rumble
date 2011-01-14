@@ -87,6 +87,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
    * @return if the approach was successful
    */
   protected boolean seqApproachLocation(MapLocation location, RobotLevel level) {
+    robotControl.setIndicatorString(1, "seqApproachLocation");
     navSys.setDestination(location);
     boolean safe = true;
     while(!sensorControl.canSenseSquare(location) && safe) {
@@ -94,6 +95,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
       actMove();
     }
 
+    robotControl.setIndicatorString(1, "seqApproachLocation - canSee");
     boolean done = false;
     while(safe && !done) {
       for (int x = -1; x < 2; x++) {
@@ -102,6 +104,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
             try {
               if(sensorControl.senseObjectAtLocation(location.add(x,y), level)==null) {
                 navSys.setDestination(location.add(x,y));
+                done = true;
               }
             } catch (Exception e) {
               System.out.println("caught exception:");
@@ -111,6 +114,8 @@ public class ScoutRobotSystem extends MobileRobotSystem {
         }
       }
     }
+
+    robotControl.setIndicatorString(1, "seqApproachLocation - foundFree");
     //if we found a location, try to move to that location and return the results
     if(done) {
       return seqMove();

@@ -53,6 +53,7 @@ public class RobotSystem {
    * @return if the turn was executed successfully
    */
   protected boolean actTurn(Direction dir) {
+    robotControl.setIndicatorString(1, "actTurn");
     try {
       moveControl.setDirection(dir);
       yield();

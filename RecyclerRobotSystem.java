@@ -28,6 +28,9 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   public void go() {
     while(true) {
       selBuildScouts();
+      //TODO: remove this (for testing only)
+      for (int i = 0; i<1000; i++)
+        yield();
     }
   }
 
@@ -38,7 +41,8 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
    * @return if one has been successfully made
    */
   protected boolean selBuildScouts() {
-    if(rand.nextBoolean()) {
+    //if(rand.nextBoolean()) {
+    if (true) {
       //wait until we have enough resources
       while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.BUILDER_SCOUT_COST ) {
         yield();

@@ -68,8 +68,11 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
     robotControl.setIndicatorString(1, "selBuildRecycler");
     // find a free square adjacent to target mine and move there
     if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())) {
+      //turn toward the mine
+      actTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
       //wait till we have enough money
       while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.RECYCLER_COST) {
+        robotControl.setIndicatorString(1, "selBuildRecycler -waiting for funds");
         yield();
       }
       //build the recycler
@@ -91,11 +94,12 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
     robotControl.setIndicatorString(1, "seqScoutUncoveredMine");
     navSys.setDestination(chooseNextDestination());
     boolean done = false;
-
+    robotControl.setIndicatorString(1, "seqScoutUncoveredMine - newDest");
     //while we haven't found an uncovered mine and we aren't at our destination
     while(!done && !actMove()) {
-
+      robotControl.setIndicatorString(1, "seqScoutUncoveredMine - sensingMines");
       Mine[] mines = sensorSys.getMines();
+      robotControl.setIndicatorString(1, "seqScoutUncoveredMine - checkingMines");
       int i = 0;
       while (i < mines.length && !done) {
         try {
@@ -108,10 +112,10 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
           System.out.println("caught exception:");
           e.printStackTrace();
         }
+        i++;
       }
-      return done;
     }
-    return false;
+    return done;
   }
 
 
