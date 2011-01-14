@@ -79,6 +79,8 @@ public class NavigationSystem {
 
   private void a_star() {
     //TODO: Implement this
+    //prevents a loop
+    has_dest = false;
   }
 
   /**
@@ -172,5 +174,7 @@ public class NavigationSystem {
 
   private void flock() {
     //TODO: Implement this
+    //prevents a loop
+    has_dest = false;
   }
 }

@@ -13,9 +13,6 @@ public class ScoutRobotSystem extends MobileRobotSystem {
   protected SensorSystem sensorSys;
   protected MapLocation[] oldDestinations;
 
-  public ScoutRobotSystem() {
-    
-  }
   
   public ScoutRobotSystem(RobotController robotControl) {
     super(robotControl);

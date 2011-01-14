@@ -9,10 +9,6 @@ import battlecode.common.*;
 public class BuilderScoutRobotSystem extends ScoutRobotSystem {
   protected BuilderController buildControl;
 
-  public BuilderScoutRobotSystem() {
-
-  }
-
   public BuilderScoutRobotSystem(RobotController robotControl) {
     super(robotControl);
 

@@ -10,9 +10,6 @@ public class BuildingRobotSystem extends RobotSystem {
   SensorController sensorControl;
   SensorSystem sensorSys;
 
-  public BuildingRobotSystem() {
-
-  }
 
   public BuildingRobotSystem(RobotController robotControl) {
     super(robotControl);

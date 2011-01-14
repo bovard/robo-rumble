@@ -1,7 +1,6 @@
 package team122;
 
 import battlecode.common.*;
-import static battlecode.common.GameConstants.*;
 
 public class RobotPlayer implements Runnable {
 
@@ -37,7 +36,7 @@ public class RobotPlayer implements Runnable {
           BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC);
           system.go();
         }
-        //provided BuilderScout
+        //provided BuilderScout (the one that we start off the game with)
         else if (components.length == 3 && components[2].type()==ComponentType.SIGHT &&
                 components[1].type()==ComponentType.CONSTRUCTOR) {
           BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC);

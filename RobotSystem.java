@@ -23,9 +23,6 @@ public class RobotSystem {
   protected MovementController moveControl;
 
 
-  public RobotSystem() {
-
-  }
 
   public RobotSystem(RobotController robotControl) {
     this.robotControl = robotControl;

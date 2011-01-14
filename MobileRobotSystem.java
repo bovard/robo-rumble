@@ -9,16 +9,11 @@ public class MobileRobotSystem extends RobotSystem {
 
   protected NavigationSystem navSys;
 
-  public MobileRobotSystem() {
-
-  }
 
   public MobileRobotSystem(RobotController robotControl) {
     super(robotControl);
     navSys = new NavigationSystem(moveControl);
   }
-
-
 
   protected boolean actMove(MapLocation dest) {
     navSys.setDestination(dest);
@@ -26,13 +21,10 @@ public class MobileRobotSystem extends RobotSystem {
     boolean safeToMove = true;
     boolean done = false;
     while(safeToMove && !done) {
-
+      //TODO: check to make sure the bot isn't under attack here
       done = navSys.nextMove();
       yield();
     }
-
-    //TODO: check to make sure the bot isn't under attack here
     return done;
   }
-
 }

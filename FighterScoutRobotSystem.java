@@ -12,9 +12,6 @@ public class FighterScoutRobotSystem extends ScoutRobotSystem {
   protected WeaponSystem weaponSys;
   protected WeaponController weaponControl;
 
-  public FighterScoutRobotSystem() {
-
-  }
 
   public FighterScoutRobotSystem(RobotController robotControl) {
     super(robotControl);

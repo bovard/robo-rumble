@@ -14,10 +14,6 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   protected BuilderController buildControl;
   private Random rand;
 
-  public RecyclerRobotSystem() {
-
-  }
-
   public RecyclerRobotSystem(RobotController robotControl) {
     super(robotControl);
 
