@@ -8,7 +8,7 @@ public class RobotPlayer implements Runnable {
   private final RobotController myRC;
 
   public RobotPlayer(RobotController rc) {
-    System.out.println("System Constant: "+GameConstants.SHIELD_MIN_DAMAGE);
+    System.out.println("System Constant: "+GameConstants.REGEN_AMOUNT);
     myRC = rc;
   }
 
@@ -28,6 +28,8 @@ public class RobotPlayer implements Runnable {
   /**
    * staging will house a robot until it has enough components to be a recognized system
    * after that it will pass the robotControl to the system and call the go() method
+   *
+   * Note: requires version 1.07 or later to work correctly
    */
   public void staging() {
     ComponentController [] components;

@@ -40,16 +40,22 @@ public class RecyclerRobotSystem extends RobotSystem {
    */
   protected boolean selBuildScouts() {
     if(rand.nextBoolean()) {
-      if(robotControl.getTeamResources() > RobotBuildOrders.BUILDER_SCOUT_COST ) {
-        if(actBuild(RobotBuildOrders.BUILDER_SCOUT))
-          return true;
+      //wait until we have enough resources
+      while(robotControl.getTeamResources() < RobotBuildOrders.BUILDER_SCOUT_COST ) {
+        yield();
       }
+      //build
+      if(seqBuild(RobotBuildOrders.BUILDER_SCOUT))
+        return true;
     }
     else {
-      if(robotControl.getTeamResources() > RobotBuildOrders.FIGHTER_SCOUT_COST ) {
-        if(actBuild(RobotBuildOrders.FIGHTER_SCOUT))
-          return true;
+      //wait until we have enough resources
+      while(robotControl.getTeamResources() < RobotBuildOrders.FIGHTER_SCOUT_COST ) {
+        yield();
       }
+      //build
+      if(seqBuild(RobotBuildOrders.FIGHTER_SCOUT))
+        return true;
     }
     return false;
   }
@@ -59,9 +65,77 @@ public class RecyclerRobotSystem extends RobotSystem {
    * @param buildOrder an array of Object, the first being the chasis the rest being components
    * @return if the build was successful
    */
-  protected boolean actBuild(Object[] buildOrder) {
-    //TODO: implement this
+  protected boolean seqBuild(Object[] buildOrder) {
 
+    //keep rotating until we find a free square and have enough resources
+    try {
+      while(!moveControl.canMove(robotControl.getDirection()) ||
+              robotControl.getTeamResources() < ((Chassis)buildOrder[0]).cost) {
+        actTurn(robotControl.getDirection().rotateRight());
+      }
+      //build the chassis
+      boolean success = actBuildChasis((Chassis)buildOrder[0],robotControl.getLocation().add(robotControl.getDirection()));
+
+      //build the components, falling out if one fails
+      int i = 1;
+      while (i < buildOrder.length && success) {
+        //wait until there is enough resources
+        while(robotControl.getTeamResources() < ((ComponentType)buildOrder[i]).cost ) {
+          yield();
+        }
+        //build component
+        success = actBuildComponent((ComponentType)buildOrder[i],robotControl.getLocation().add(robotControl.getDirection()), 
+                ((Chassis)buildOrder[0]).level);
+        i++;
+      }
+      return success;
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+      return false;
+    }
+  }
+
+  /**
+   * Builds a chassis at the specified location
+   * @param toBuild the Chassis to build
+   * @param location the MapLocation to build it on
+   * @return if the build was successful
+   */
+  protected boolean actBuildChasis(Chassis toBuild, MapLocation location) {
+    if (robotControl.getTeamResources() >= toBuild.cost) {
+     try {
+       buildControl.build(toBuild, location);
+       yield();
+       return true;
+     }
+     catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+     }
+    }
+    return false;
+  }
+
+  /**
+   * Builds a component on the chassis location at location and level
+   * @param toBuild the ComponentType to build
+   * @param location the MapLocation to build it
+   * @param level the RobotLevel of the Chasis
+   * @return if the build was successful
+   */
+  protected boolean actBuildComponent(ComponentType toBuild, MapLocation location, RobotLevel level) {
+    if (robotControl.getTeamResources() >= toBuild.cost) {
+     try {
+       buildControl.build(toBuild, location, level);
+       yield();
+       return true;
+     }
+     catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+     }
+    }
     return false;
   }
 }

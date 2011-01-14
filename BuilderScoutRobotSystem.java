@@ -43,7 +43,7 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
 
   /**
    * sends the robot scouting to find an uncovered mine which it will build a recycler on
-   * @return
+   * @return if this was performed successfully
    */
   protected boolean seqScoutBuild() {
     if (actScoutUncoveredMine()) {

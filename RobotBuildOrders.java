@@ -6,8 +6,10 @@ import battlecode.common.*;
  * @author bovard
  */
 public class RobotBuildOrders {
-  //TODO: redo the costs to just a fixed number... I don't think the costs will ever change
-  //and it is computationally expensive to calculate all of these
+
+  //as the contest constants have been changing a lot recently I think we should let the cost
+  //calculations stay as opposed to hard coding them.
+
   public static final Object[] FIGHTER_SCOUT = {Chassis.LIGHT, ComponentType.RADAR, ComponentType.BLASTER, ComponentType.SHIELD};
   public static final int FIGHTER_SCOUT_COST = Chassis.LIGHT.cost + ComponentType.RADAR.cost + ComponentType.BLASTER.cost + ComponentType.SHIELD.cost;
   public static final Object[] FIGHTER_SCOUT_2 = {Chassis.LIGHT, ComponentType.RADAR, ComponentType.BLASTER};

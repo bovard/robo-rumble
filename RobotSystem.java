@@ -44,6 +44,24 @@ public class RobotSystem {
     }
   }
 
+
+    /**
+   * called to turn a robot
+   * @param dir direction to turn in
+   * @return if the turn was executed successfully
+   */
+  protected boolean actTurn(Direction dir) {
+    try {
+      moveControl.setDirection(dir);
+      yield();
+      return true;
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+      return false;
+    }
+  }
+
   /**
    * This will be coupled with the GameEvents class eventually
    */

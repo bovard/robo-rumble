@@ -18,7 +18,7 @@ public class MobileRobotSystem extends RobotSystem {
     navSys = new NavigationSystem(moveControl);
   }
 
-  
+
 
   protected boolean actMove(MapLocation dest) {
     navSys.setDestination(dest);
