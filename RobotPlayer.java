@@ -73,45 +73,8 @@ public class RobotPlayer implements Runnable {
 
   //this is a dirty hack to make light chassis bots with 3 SMGs and a radar
   public void runBuilder(MovementController motor, BuilderController builder) {
-
-    while (true) {
-      try {
-        //yield at the top of every loop
-        myRC.yield();
-        myRC.yield();
-        //if motor can't move in the given direction, rotate right
-        if(!motor.canMove(myRC.getDirection()))
-          motor.setDirection(myRC.getDirection().rotateRight());
-        //otherwise build a new light chassis in the direction you're pointing
-        else if(myRC.getTeamResources()>= Chassis.LIGHT.cost + ComponentType.RADAR.cost + 3 * ComponentType.SMG.cost + 1) {
-          System.out.println("Building a light chassis");
-          builder.build(Chassis.LIGHT,myRC.getLocation().add(myRC.getDirection()));
-          myRC.yield();
-          while(builder.isActive() && myRC.getTeamResources()<ComponentType.RADAR.cost)
-            System.out.println("Busy!");
-            myRC.yield();
-          System.out.println("Building a radar component");
-          builder.build(ComponentType.RADAR, myRC.getLocation().add(myRC.getDirection()), RobotLevel.ON_GROUND);
-          myRC.yield();
-          for (int i = 0 ; i<3; i++) {
-            while(builder.isActive() && myRC.getTeamResources()<ComponentType.SMG.cost)
-              myRC.yield();
-            System.out.println("Building an SMG component");
-            builder.build(ComponentType.SMG, myRC.getLocation().add(myRC.getDirection()), RobotLevel.ON_GROUND);
-            myRC.yield();
-          }
-          while(builder.isActive())
-            myRC.yield();
-          for (int i = 0 ; i<50 ; i++)
-            myRC.yield();
-        }
-
-
-      } catch (Exception e) {
-        System.out.println("caught exception:");
-        e.printStackTrace();
-      }
-    }
+    RecyclerRobotSystem system = new RecyclerRobotSystem(myRC);
+    system.go();
   }
 
   //This is a dirty hack for testing, looks for a light chassis with 1+ SMGs and a radar

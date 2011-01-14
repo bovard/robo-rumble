@@ -10,7 +10,7 @@ import java.util.Random;
  *
  * @author bovard
  */
-public class RecyclerRobotSystem extends RobotSystem {
+public class RecyclerRobotSystem extends BuildingRobotSystem {
   protected BuilderController buildControl;
   private Random rand;
 
@@ -21,7 +21,7 @@ public class RecyclerRobotSystem extends RobotSystem {
   public RecyclerRobotSystem(RobotController robotControl) {
     super(robotControl);
 
-    buildControl = (BuilderController)robotControl.components()[1];
+    buildControl = (BuilderController)robotControl.components()[2];
     rand = new Random();
 
   }
