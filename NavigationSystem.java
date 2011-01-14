@@ -51,6 +51,7 @@ public class NavigationSystem {
   public void setDestination(MapLocation new_dest) {
     dest = new_dest;
     has_dest = true;
+    tracking = false;
     robotControl.setIndicatorString(2, "Dest: "+dest.toString());
   }
 

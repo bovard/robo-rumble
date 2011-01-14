@@ -30,11 +30,6 @@ public class RobotPlayer implements Runnable {
     while(true) {
 
       components = myRC.components();
-      System.out.println("In staging with "+components.length+" components: "+ java.util.Arrays.toString(components));
-      System.out.println("with chassis "+myRC.getChassis());
-      for (int i=0;i<components.length;i++) {
-        System.out.println(i + ": " + components[i].type());
-      }
 
       if (myRC.getChassis() == Chassis.LIGHT) {
         //our BUILDER_SCOUT

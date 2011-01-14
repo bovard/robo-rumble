@@ -21,7 +21,6 @@ public class MobileRobotSystem extends RobotSystem {
    * @return if the destination was reached safely
    */
   protected boolean seqMove(MapLocation dest) {
-    robotControl.setIndicatorString(1, "seqMove");
     navSys.setDestination(dest);
 
     boolean safeToMove = true;
@@ -30,7 +29,6 @@ public class MobileRobotSystem extends RobotSystem {
       //TODO: check to make sure the bot isn't under attack here
       done = actMove();
     }
-    robotControl.setIndicatorString(1, "seqMove -exit");
     return done;
   }
 
@@ -40,14 +38,12 @@ public class MobileRobotSystem extends RobotSystem {
    * @return if the destination was reached safely
    */
   protected boolean seqMove() {
-    robotControl.setIndicatorString(1, "seqMove");
     boolean safeToMove = true;
     boolean done = false;
     while(safeToMove && !done) {
       //TODO: check to make sure the bot isn't under attack here
       done = actMove();
     }
-    robotControl.setIndicatorString(1, "seqMove -ext");
     return done;
   }
 
@@ -56,12 +52,11 @@ public class MobileRobotSystem extends RobotSystem {
    * @return if robot is in its current destination
    */
   protected boolean actMove() {
-    robotControl.setIndicatorString(1, "actMove");
     if(navSys.getDestination()==null)
       return false;
     boolean done = navSys.nextMove();
     yield();
-    robotControl.setIndicatorString(1, "actMove - exit");
+    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
     return done;
   }
 

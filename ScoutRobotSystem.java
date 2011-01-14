@@ -69,6 +69,7 @@ public class ScoutRobotSystem extends MobileRobotSystem {
    * @return if it has fleed sucessfully
    */
   protected boolean actFlee() {
+    robotControl.setIndicatorString(1, "actFlee!!");
     navSys.setDestination(birthPlace);
 
     boolean done = false;

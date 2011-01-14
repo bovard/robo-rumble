@@ -25,13 +25,17 @@ public class BuilderSystem {
 
     try {
       //build the chassis
+      while(buildControl.isActive()) {
+        robotControl.yield();
+      }
       boolean success = actBuildChasis((Chassis)buildOrder[0],location);
 
       //build the components, falling out if one fails
       int i = 1;
       while (i < buildOrder.length && success) {
         //wait until there is enough resources
-        while(robotControl.getTeamResources() < ((ComponentType)buildOrder[i]).cost ) {
+        while(robotControl.getTeamResources() < ((ComponentType)buildOrder[i]).cost &&
+                buildControl.isActive()) {
           robotControl.yield();
         }
         //build component

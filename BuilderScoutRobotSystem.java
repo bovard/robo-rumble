@@ -26,6 +26,10 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
 
   }
 
+  /**
+   * The main loop, called to run a BuilderScout (or child)
+   */
+  @Override
   public void go() {
     robotControl.setIndicatorString(0,"BuilderScout");
     while(true) {
@@ -34,14 +38,14 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
   }
 
   /**
-   * the bot attempts to perform the ScoutBuild sequence, if it can't it tries to flee
-   * @return if either action was sucessfull
+   * the bot attempts to perform the ScoutBuild sequence
+   * @return if the action was sucessfull
    */
   protected boolean selScout() {
     robotControl.setIndicatorString(1, "selScout");
     if(seqScoutBuild())
       return true;
-    return actFlee();
+    return false;
   }
 
   /**
@@ -77,6 +81,8 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
       }
       //build the recycler
       if (buildSys.seqBuild(RobotBuildOrder.RECYCLER, uncoveredMineLoc)) {
+        //once it's been built we should reset the uncovered mine location to null
+        uncoveredMineLoc = null;
         return true;
       }
     }
@@ -93,30 +99,130 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
   protected boolean seqScoutUncoveredMine() {
     robotControl.setIndicatorString(1, "seqScoutUncoveredMine");
     navSys.setDestination(chooseNextDestination());
-    boolean done = false;
+    boolean done = seqSenseMine();
     robotControl.setIndicatorString(1, "seqScoutUncoveredMine - newDest");
     //while we haven't found an uncovered mine and we aren't at our destination
     while(!done && !actMove()) {
-      robotControl.setIndicatorString(1, "seqScoutUncoveredMine - sensingMines");
-      Mine[] mines = sensorSys.getMines();
-      robotControl.setIndicatorString(1, "seqScoutUncoveredMine - checkingMines");
-      int i = 0;
-      while (i < mines.length && !done) {
-        try {
-          if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
-            uncoveredMineLoc = mines[i].getLocation();
-            done = true;
-          }
-            
-        } catch (Exception e) {
-          System.out.println("caught exception:");
-          e.printStackTrace();
-        }
-        i++;
-      }
+      done = seqSenseMine();
     }
     return done;
   }
 
+  /**
+   * Detects if there is an uncovered mine within sensor range
+   * @return If an uncovered mine was found within sensor range
+   */
+  protected boolean seqSenseMine() {
+    boolean foundNewMine = false;
+    Mine[] mines = sensorSys.getMines();
+    int i = 0;
+    while (i < mines.length && !foundNewMine) {
+      try {
+        //check to see if these is anything built on the mine
+        if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
+          //if this is a new uncovered mine
+          if (mines[i].getLocation()!=uncoveredMineLoc) {
+            uncoveredMineLoc = mines[i].getLocation();
+            foundNewMine = true;
+            return true;
+          }
+          //otherwise we've just detected the same mine and should return
+          else {
+            return false;
+          }
+        }
 
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+      }
+      i++;
+    }
+    return foundNewMine;
+  }
+
+    /**
+   * Tell the robot to move to a square adjacent to location that is free of units at the
+   * imputted level
+   * Overridden to stop when it hits mines
+   * @param location the target square
+   * @param level the level to approach at
+   * @return if the approach was successful
+   */
+  @Override
+  protected boolean seqApproachLocation(MapLocation location, RobotLevel level) {
+    robotControl.setIndicatorString(1, "seqApproachLocation");
+    navSys.setDestination(location);
+    boolean keepGoing = true;
+    while(!sensorControl.canSenseSquare(location) && keepGoing) {
+      //TODO: add code here check to see if enemies are seen or under attack
+      keepGoing = !seqSenseMine();
+      actMove();
+    }
+
+    robotControl.setIndicatorString(1, "seqApproachLocation - canSee");
+    boolean done = false;
+    while(keepGoing && !done) {
+      for (int x = -1; x < 2; x++) {
+        if (done) {
+          break;
+        }
+        for (int y = -1; y < 2; y++) {
+          if (done) {
+            break;
+          }
+          if(sensorControl.canSenseSquare(location.add(x,y)) && !(x==0 && y==0)) {
+            try {
+              if(sensorControl.senseObjectAtLocation(location.add(x,y), level)==null &&
+                      robotControl.senseTerrainTile(location.add(x,y)).isTraversableAtHeight(robotControl.getRobot().getRobotLevel())) {
+                navSys.setDestination(location.add(x,y));
+                done = true;
+                break;
+              }
+            } catch (Exception e) {
+              System.out.println("caught exception:");
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+      if (!done)
+        actMove();
+    }
+
+    robotControl.setIndicatorString(1, "seqApproachLocation - foundFree");
+    //if we found a location, try to move to that location and return the results
+    if(done) {
+      return seqMove();
+    }
+    return false;
+  }
+
+    /**
+   * Called to move multiple times to a destination, assumes the destination is already set
+   * @param dest place to move to
+   * @return if the destination was reached safely
+   */
+  @Override
+  protected boolean seqMove() {
+    boolean keepGoing = true;
+    boolean done = false;
+    while(keepGoing && !done) {
+      //TODO: check to make sure the bot isn't under attack here
+      done = actMove();
+      //stop if you find a new mine
+      keepGoing = !seqSenseMine();
+      //stop if you see the mine is now covered
+      if(sensorControl.canSenseSquare(uncoveredMineLoc)) {
+        try {
+          keepGoing = keepGoing && sensorControl.senseObjectAtLocation(uncoveredMineLoc, RobotLevel.ON_GROUND)==null;
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
+        
+      }
+    }
+    return done && keepGoing;
+  }
 }

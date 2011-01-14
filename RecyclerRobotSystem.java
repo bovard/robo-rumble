@@ -14,10 +14,14 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   protected BuilderController buildControl;
   protected BuilderSystem buildSys;
   private Random rand;
+  protected boolean shouldBuild = false;
 
 
   public RecyclerRobotSystem(RobotController robotControl) {
     super(robotControl);
+    if(Clock.getRoundNum() < 10 && moveControl.canMove(Direction.NORTH) && moveControl.canMove(Direction.WEST)) {
+      shouldBuild=true;
+    }
     robotControl.setIndicatorString(0, "Recycler");
     buildControl = (BuilderController)robotControl.components()[2];
     buildSys = new BuilderSystem(robotControl, buildControl);
@@ -27,10 +31,9 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
 
   public void go() {
     while(true) {
-      selBuildScouts();
-      //TODO: remove this (for testing only)
-      for (int i = 0; i<1000; i++)
-        yield();
+      if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.BUILDER_SCOUT_COST*5)
+        selBuildScouts();
+      yield();
     }
   }
 
@@ -41,6 +44,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
    * @return if one has been successfully made
    */
   protected boolean selBuildScouts() {
+    robotControl.setIndicatorString(2, "selBuildScouts");
     //if(rand.nextBoolean()) {
     if (true) {
       //wait until we have enough resources

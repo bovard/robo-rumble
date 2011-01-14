@@ -22,7 +22,7 @@ public class RobotSystem {
   protected RobotController robotControl;
   protected MovementController moveControl;
 
-  protected final int MINIMUM = 100;
+  protected final int MINIMUM = 20;
 
 
 
@@ -53,7 +53,6 @@ public class RobotSystem {
    * @return if the turn was executed successfully
    */
   protected boolean actTurn(Direction dir) {
-    robotControl.setIndicatorString(1, "actTurn");
     try {
       moveControl.setDirection(dir);
       yield();
@@ -70,6 +69,7 @@ public class RobotSystem {
    */
   protected void yield() {
     robotControl.yield();
+    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
   }
 
 }
