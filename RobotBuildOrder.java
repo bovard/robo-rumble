@@ -5,7 +5,7 @@ import battlecode.common.*;
  * Descibes the compositions and build orders for robots
  * @author bovard
  */
-public class RobotBuildOrders {
+public class RobotBuildOrder {
 
   //as the contest constants have been changing a lot recently I think we should let the cost
   //calculations stay as opposed to hard coding them.
@@ -24,4 +24,6 @@ public class RobotBuildOrders {
   public static final Object[] BUILDER_SCOUT_2 = {Chassis.LIGHT, ComponentType.SIGHT, ComponentType.CONSTRUCTOR, ComponentType.SHIELD};
   public static final int BUILDER_SCOUT_2_COST = Chassis.LIGHT.cost + ComponentType.SIGHT.cost + ComponentType.CONSTRUCTOR.cost + ComponentType.SHIELD.cost;
 
+  public static final Object[] RECYCLER = {Chassis.BUILDING, ComponentType.RECYCLER};
+  public static final int RECYCLER_COST = Chassis.BUILDING.cost + ComponentType.RECYCLER.cost;
 }

@@ -79,4 +79,43 @@ public class ScoutRobotSystem extends MobileRobotSystem {
 
     return done;
   }
+
+  /**
+   * Tell the robot to move to a square adjacent to location that is free of units at the
+   * imputted level
+   * @param location the target square
+   * @param level the level to approach at
+   * @return if the approach was successful
+   */
+  protected boolean seqApproachLocation(MapLocation location, RobotLevel level) {
+    navSys.setDestination(location);
+    boolean safe = true;
+    while(!sensorControl.canSenseSquare(location) && safe) {
+      //TODO: add code here check to see if enemies are seen or under attack
+      actMove();
+    }
+
+    boolean done = false;
+    while(safe && !done) {
+      for (int x = -1; x < 2; x++) {
+        for (int y = -1; y < 2; y++) {
+          if(sensorControl.canSenseSquare(location.add(x,y))) {
+            try {
+              if(sensorControl.senseObjectAtLocation(location.add(x,y), level)==null) {
+                navSys.setDestination(location.add(x,y));
+              }
+            } catch (Exception e) {
+              System.out.println("caught exception:");
+              e.printStackTrace();
+            }
+          }
+        }
+      }
+    }
+    //if we found a location, try to move to that location and return the results
+    if(done) {
+      return seqMove();
+    }
+    return false;
+  }
 }

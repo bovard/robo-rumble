@@ -8,6 +8,7 @@ import battlecode.common.*;
  */
 public class BuilderScoutRobotSystem extends ScoutRobotSystem {
   protected BuilderController buildControl;
+  protected BuilderSystem buildSys;
   protected MapLocation uncoveredMineLoc;
 
   public BuilderScoutRobotSystem(RobotController robotControl) {
@@ -19,6 +20,7 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
       buildControl = (BuilderController)robotControl.components()[1];
     else
       buildControl = (BuilderController)robotControl.components()[2];
+    buildSys = new BuilderSystem(robotControl, buildControl);
 
   }
 
@@ -43,7 +45,9 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return if this was performed successfully
    */
   protected boolean seqScoutBuild() {
+    //move around until you find an uncoverd mine
     if (seqScoutUncoveredMine()) {
+      //try to build a recycler on that mine
       if(seqBuildRecycler()) {
         return true;
       }
@@ -56,36 +60,24 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
    * @return whether or not the action was completeled sucessfully
    */
   protected boolean seqBuildRecycler() {
-    // TODO: implement this
-    // find a mine that isn't covered already and pull the locaiton
-    Mine[] mines = sensorSys.getMines();
-    MapLocation mineLoc;
-    for (int i=0; i<mines.length;i++) {
-
+    // find a free square adjacent to target mine and move there
+    if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())) {
+      //wait till we have enough money
+      while(robotControl.getTeamResources() < RobotBuildOrder.RECYCLER_COST) {
+        yield();
+      }
+      //build the recycler
+      if (buildSys.seqBuild(RobotBuildOrder.RECYCLER, uncoveredMineLoc)) {
+        return true;
+      }
     }
-    // find a free square adjacent to target mine, return false if can't
-    // move adjacent to target mine, return false if can't
-    // build a building on target mine, return false if can't
-    // build a recycler on the building, return false if can't
-    // return true if all these are done
-    return false;
-  }
-
-
-  /**
-   * Tries to build object obj at location loc
-   * @param obj the game object to build
-   * @param loc the location to build the object
-   * @return if the build was successful
-   */
-  protected boolean actBuild(GameObject obj, MapLocation loc) {
-    //TODO: implement this
     return false;
   }
   
 
     /**
-   * sends the bot to find an uncovered mine, when one is sensed, returns true
+   * sends the bot to find an uncovered mine, when one is sensed, returns true and also
+   * set unCoveredMineLoc to the location of the uncovered mine.
    * returns false if scouting is stopped for any other reason
    * @return if an uncovered mine was found
    */
@@ -100,14 +92,20 @@ public class BuilderScoutRobotSystem extends ScoutRobotSystem {
       int i = 0;
       while (i < mines.length && !done) {
         try {
-          sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND);
+          if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
+            uncoveredMineLoc = mines[i].getLocation();
+            done = true;
+          }
+            
         } catch (Exception e) {
           System.out.println("caught exception:");
           e.printStackTrace();
         }
       }
+      return done;
     }
-
     return false;
   }
+
+
 }

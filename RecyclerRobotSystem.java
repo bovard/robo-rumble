@@ -5,7 +5,7 @@ import java.util.Random;
 
 /**
  * This is the System for a basic Recycler. It'll be needing to pump out two types of robots initially
- * BuilderScouts and FighterScouts (see RobotBuildOrders on how to build each, order matters)
+ * BuilderScouts and FighterScouts (see RobotBuildOrder on how to build each, order matters)
  *
  *
  * @author bovard
@@ -40,20 +40,20 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   protected boolean selBuildScouts() {
     if(rand.nextBoolean()) {
       //wait until we have enough resources
-      while(robotControl.getTeamResources() < RobotBuildOrders.BUILDER_SCOUT_COST ) {
+      while(robotControl.getTeamResources() < RobotBuildOrder.BUILDER_SCOUT_COST ) {
         yield();
       }
       //build
-      if(seqBuild(RobotBuildOrders.BUILDER_SCOUT))
+      if(seqBuild(RobotBuildOrder.BUILDER_SCOUT))
         return true;
     }
     else {
       //wait until we have enough resources
-      while(robotControl.getTeamResources() < RobotBuildOrders.FIGHTER_SCOUT_COST ) {
+      while(robotControl.getTeamResources() < RobotBuildOrder.FIGHTER_SCOUT_COST ) {
         yield();
       }
       //build
-      if(seqBuild(RobotBuildOrders.FIGHTER_SCOUT))
+      if(seqBuild(RobotBuildOrder.FIGHTER_SCOUT))
         return true;
     }
     return false;
@@ -71,7 +71,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
             robotControl.getTeamResources() < ((Chassis)buildOrder[0]).cost) {
       actTurn(robotControl.getDirection().rotateRight());
     }
-    //call to the build order to initiate the build sequence
+    //call to the buildSys to initiate the build sequence
     return buildSys.seqBuild(buildOrder,robotControl.getLocation().add(robotControl.getDirection()));
   }
 

@@ -68,10 +68,13 @@ public class NavigationSystem {
       switch(mode) {
         case NavigationMode.A_STAR:
           a_star();
+          break;
         case NavigationMode.BUG:
           bug();
+          break;
         case NavigationMode.FLOCK:
           flock();
+          break;
       }
     }
     if(has_dest)
