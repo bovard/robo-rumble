@@ -47,6 +47,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     //If they aren't building they should turn off to save their upkeep
     //Note: we'll still get income from the mines.
     if (!shouldBuild) {
+      robotControl.setIndicatorString(1, "Not Producing, turning off!");
       robotControl.turnOff();
     }
     while(true) {

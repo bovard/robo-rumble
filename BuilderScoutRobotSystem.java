@@ -36,6 +36,22 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
    */
   @Override
   public void go() {
+    //ensures that we'll point at our mines before waking up our first bot
+    // (so we can find the other two mines right off the bat)
+    if (Clock.getRoundNum() < 10)
+    {
+      Direction toTurn = robotControl.getDirection();
+      while(moveControl.canMove(toTurn)) {
+        toTurn = toTurn.rotateRight();
+      }
+      while(moveControl.isActive()) {
+        yield();
+      }
+      if(toTurn != robotControl.getDirection()) {
+        actTurn(toTurn);
+      }
+    }
+
     robotControl.setIndicatorString(0,"BuilderScout");
     while(true) {
       selScout();
