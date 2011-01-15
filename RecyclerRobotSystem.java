@@ -29,8 +29,8 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     //if it is set shouldBuild to true so it knows it should start building troops
     try {
       if(Clock.getRoundNum() < 10
-              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.ON_GROUND) == null
-              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.ON_GROUND) == null) {
+              && ( sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) == null
+              || sensorControl.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null)) {
         shouldBuild=true;
       }
     }catch (Exception e) {

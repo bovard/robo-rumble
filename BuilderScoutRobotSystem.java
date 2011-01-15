@@ -65,6 +65,26 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
   }
 
   /**
+   * sends the bot to find an uncovered mine, when one is sensed, returns true and also
+   * set unCoveredMineLoc to the location of the uncovered mine.
+   * returns false if scouting is stopped for any other reason
+   * @return if an uncovered mine was found
+   */
+  protected boolean seqScoutUncoveredMine() {
+    robotControl.setIndicatorString(1, "seqScoutUncoveredMine");
+    navSys.setDestination(chooseNextDestination());
+    boolean done = seqSenseMine();
+    robotControl.setIndicatorString(1, "seqScoutUncoveredMine - newDest");
+    //while we haven't found an uncovered mine and we aren't at our destination
+    while(!done && !actMove()) {
+      done = seqSenseMine();
+    }
+    return done;
+  }
+
+
+
+  /**
    * builds a recycler on the newly scouted uncovered mine
    * @return whether or not the action was completeled sucessfully
    */
@@ -99,24 +119,6 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
   }
   
 
-    /**
-   * sends the bot to find an uncovered mine, when one is sensed, returns true and also
-   * set unCoveredMineLoc to the location of the uncovered mine.
-   * returns false if scouting is stopped for any other reason
-   * @return if an uncovered mine was found
-   */
-  protected boolean seqScoutUncoveredMine() {
-    robotControl.setIndicatorString(1, "seqScoutUncoveredMine");
-    navSys.setDestination(chooseNextDestination());
-    boolean done = seqSenseMine();
-    robotControl.setIndicatorString(1, "seqScoutUncoveredMine - newDest");
-    //while we haven't found an uncovered mine and we aren't at our destination
-    while(!done && !actMove()) {
-      done = seqSenseMine();
-    }
-    return done;
-  }
-
   /**
    * Detects if there is an uncovered mine within sensor range
    * @return If an uncovered mine was found within sensor range
@@ -124,28 +126,39 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
   protected boolean seqSenseMine() {
     boolean foundNewMine = false;
     Mine[] mines = sensorSys.getMines();
-    int i = 0;
-    while (i < mines.length && !foundNewMine) {
-      try {
-        //check to see if these is anything built on the mine
-        if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
-          //if this is a new uncovered mine
-          if (mines[i].getLocation()!=uncoveredMineLoc) {
-            uncoveredMineLoc = mines[i].getLocation();
-            foundNewMine = true;
-            return true;
-          }
-          //otherwise we've just detected the same mine and should return
-          else {
-            return false;
-          }
-        }
-
-      } catch (Exception e) {
-        System.out.println("caught exception:");
-        e.printStackTrace();
+    
+    boolean oldMineInSight = false;
+    //check to see if we can still see the old mine
+    for (int j=0; j<mines.length; j++) {
+      if (mines[j].getLocation()==uncoveredMineLoc) {
+        oldMineInSight = true;
       }
-      i++;
+    }
+    //if we can't see the old mine, check if we can see a new mine
+    if (!oldMineInSight) {
+      int i = 0;
+      while (i < mines.length && !foundNewMine) {
+        try {
+          //check to see if these is anything built on the mine
+          if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
+            //if this is a new uncovered mine
+            if (mines[i].getLocation()!=uncoveredMineLoc) {
+              uncoveredMineLoc = mines[i].getLocation();
+              foundNewMine = true;
+              return true;
+            }
+            //otherwise we've just detected the same mine and should return
+            else {
+              return false;
+            }
+          }
+
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
+        i++;
+      }
     }
     return foundNewMine;
   }
@@ -224,7 +237,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       //stop if you see the mine is now covered
       if(sensorControl.canSenseSquare(uncoveredMineLoc)) {
         try {
-          keepGoing = keepGoing && sensorControl.senseObjectAtLocation(uncoveredMineLoc, RobotLevel.ON_GROUND)==null;
+          keepGoing = keepGoing && (sensorControl.senseObjectAtLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())==null);
         } catch (Exception e) {
           System.out.println("caught exception:");
           e.printStackTrace();

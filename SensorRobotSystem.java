@@ -187,16 +187,33 @@ public class SensorRobotSystem extends MobileRobotSystem {
    * @return the validity of the destination
    */
   protected boolean checkDestinationValidity() {
+    //if the destination is out of x bounds it's invalid, return false
     if (navSys.getDestination().x < minX || navSys.getDestination().x > maxX) {
-      robotControl.setIndicatorString(2, "BAD DEST");
+      robotControl.setIndicatorString(2, "BAD X DEST: "+minX+"<"+navSys.getDestination().x+"<"+maxX );
       return false;
     }
+    //if the destination is out of y bounds it's invalid, return false
     if (navSys.getDestination().y < minY || navSys.getDestination().y > maxY) {
-      robotControl.setIndicatorString(2, "BAD DEST");
+      robotControl.setIndicatorString(2, "BAD Y DEST: "+minY+"<"+navSys.getDestination().y+"<"+maxY );
       return false;
     }
+    //check if we can currently sense the destination
     if (sensorControl.canSenseSquare(navSys.getDestination()))
-      return robotControl.senseTerrainTile(navSys.getDestination()).isTraversableAtHeight(robotControl.getRobot().getRobotLevel());
+      try {
+        //check to see if there is someone there at the robots level
+        if(sensorControl.senseObjectAtLocation(navSys.getDestination(), robotControl.getRobot().getRobotLevel())==null) {
+          //if there isn't check to see if the location can be traversed and return the result
+          return robotControl.senseTerrainTile(navSys.getDestination()).isTraversableAtHeight(robotControl.getRobot().getRobotLevel());
+        }
+        else {
+          //if there is someone there, the destination is invalid
+          return false;
+        }
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+      }
+    //if we fall through everything, the destination is valid, return true
     return true;
   }
 
@@ -208,24 +225,46 @@ public class SensorRobotSystem extends MobileRobotSystem {
     MapLocation canSee = robotControl.getLocation().add(robotControl.getDirection(),
             sensorSys.getRange(robotControl.getDirection()));
 
-    //if we're looking at a tile off map, update the min/max x/y as needed
-    if(robotControl.senseTerrainTile(canSee)==TerrainTile.OFF_MAP) {
-      if (canSee.x > minX || canSee.x < maxX) {
-        if (canSee.x < robotControl.getLocation().x && canSee.x > minX) {
-          minX = canSee.x;
+    try {
+      //if we're looking at a tile off map, update the min/max x/y as needed
+      if(robotControl.senseTerrainTile(canSee)==TerrainTile.OFF_MAP) {
+        //figure what edge we're looking over
+
+        //Check the X edges
+        //looking at the minX edge
+        if( sensorControl.canSenseSquare(canSee.add(1, 0)) && robotControl.senseTerrainTile(canSee.add(1,0))!=TerrainTile.OFF_MAP) {
+          if (canSee.x > minX) {
+            System.out.println("UPDATING minX: "+minX+" to "+canSee.x);
+            minX = canSee.x;
+          }
         }
-        else if (canSee.x > robotControl.getLocation().x && canSee.x < maxX) {
-          maxX = canSee.x;
+        //looking at the maxX edge
+        else if (sensorControl.canSenseSquare(canSee.add(-1, 0)) && robotControl.senseTerrainTile(canSee.add(-1,0))!=TerrainTile.OFF_MAP) {
+          if(canSee.x < maxX) {
+            System.out.println("UPDATING maxX: "+maxX+" to "+canSee.x);
+            maxX = canSee.x;
+          }
+        }
+
+        //Check the Y edges
+        //looking at the minY edge
+        if( sensorControl.canSenseSquare(canSee.add(0, 1)) && robotControl.senseTerrainTile(canSee.add(0,1))!=TerrainTile.OFF_MAP) {
+          if (canSee.y > minY) {
+            System.out.println("UPDATING minY: "+minY+" to "+canSee.y);
+            minY = canSee.y;
+          }
+        }
+        //looking at the maxY edge
+        else if (sensorControl.canSenseSquare(canSee.add(0, -1)) && robotControl.senseTerrainTile(canSee.add(0, -1))!=TerrainTile.OFF_MAP) {
+          if(canSee.y < maxY) {
+            System.out.println("UPDATING maxY: "+maxY+" to "+canSee.y);
+            maxY = canSee.y;
+          }
         }
       }
-      if (canSee.y > minY || canSee.y < maxY) {
-        if (canSee.y < robotControl.getLocation().y && canSee.y > minY) {
-          minY = canSee.y;
-        }
-        else if (canSee.y > robotControl.getLocation().y && canSee.y < maxY) {
-          maxY = canSee.y;
-        }
-      }
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
     }
   }
 }
