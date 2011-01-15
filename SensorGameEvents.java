@@ -6,7 +6,7 @@ import battlecode.common.*;
  * SensorGameEvents, the events in GameEvents plus those that can be found with a sensor
  * @author bovard
  */
-public class SensorGameEvents extends GameEvents implements GameEventsInterface {
+public class SensorGameEvents extends GameEvents {
   SensorSystem sensorSys;
 
   /**

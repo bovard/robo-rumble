@@ -6,7 +6,7 @@ import battlecode.common.*;
  * going for a walk in the park, getting shot at by enemey robots, etc...
  * @author bovard
  */
-public class GameEvents implements GameEventsInterface {
+public class GameEvents {
 
   private RobotController robotControl;
 
