@@ -2,7 +2,7 @@
 package team122;
 import battlecode.common.*;
 import java.util.Random;
-import java.lang.Integer;
+
 /**
  * A scout robot system is assumed to be mobile and have a sensor in component slot 1
  * @author bovard
@@ -57,6 +57,7 @@ public class SensorRobotSystem extends MobileRobotSystem {
     int x, y;
     do {
       next = birthPlace;
+      //TODO: make these not hard-coded values
       x = rand.nextInt(30);
       y = rand.nextInt(30);
       if (rand.nextBoolean())
@@ -64,7 +65,7 @@ public class SensorRobotSystem extends MobileRobotSystem {
       if (rand.nextBoolean())
         y *= -1;
       next = next.add(x, y);
-    } while (x < minX || x > maxX || y < minY || y > maxY);
+    } while (next.x < minX || next.x > maxX || next.y < minY || next.y > maxY);
     return next;
   }
 
@@ -127,5 +128,104 @@ public class SensorRobotSystem extends MobileRobotSystem {
       return seqMove();
     }
     return false;
+  }
+
+  /**
+   * Called to move multiple times to a destination
+   * @param dest place to move to
+   * @return if the destination was reached safely
+   */
+  @Override
+  protected boolean seqMove(MapLocation dest) {
+    navSys.setDestination(dest);
+
+    boolean safeToMove = true;
+    boolean done = false;
+    while(safeToMove && !done) {
+      //TODO: check to make sure the bot isn't under attack here
+      done = actMove();
+    }
+    return done;
+  }
+
+  /**
+   * Called to move multiple times to a destination, assumes the destination is already set
+   * @param dest place to move to
+   * @return if the destination was reached safely
+   */
+  @Override
+  protected boolean seqMove() {
+    boolean safeToMove = true;
+    boolean done = false;
+    while(safeToMove && !done) {
+      //TODO: check to make sure the bot isn't under attack here
+      done = actMove();
+    }
+    return done;
+  }
+
+ /**
+   * Called to move once (and yield) Assumes the robot already has a destination
+   * @return if robot is in its current destination
+   */
+  @Override
+  protected boolean actMove() {
+    if(navSys.getDestination()==null)
+      return false;
+    boolean done = navSys.nextMove();
+    yield();
+    //check for map boundary conditions
+    updateMapExtrema();
+    //update your position for the GUI
+    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
+    done = !checkDestinationValidity() || done;
+    return done;
+  }
+
+  /**
+   * checks to see if the destination is a valid one
+   * @return the validity of the destination
+   */
+  protected boolean checkDestinationValidity() {
+    if (navSys.getDestination().x < minX || navSys.getDestination().x > maxX) {
+      robotControl.setIndicatorString(2, "BAD DEST");
+      return false;
+    }
+    if (navSys.getDestination().y < minY || navSys.getDestination().y > maxY) {
+      robotControl.setIndicatorString(2, "BAD DEST");
+      return false;
+    }
+    if (sensorControl.canSenseSquare(navSys.getDestination()))
+      return robotControl.senseTerrainTile(navSys.getDestination()).isTraversableAtHeight(robotControl.getRobot().getRobotLevel());
+    return true;
+  }
+
+
+  /**
+   * used to update the information that we know about the edges of the map
+   */
+  protected void updateMapExtrema() {
+    MapLocation canSee = robotControl.getLocation().add(robotControl.getDirection(),
+            sensorSys.getRange(robotControl.getDirection()));
+
+    //if we're looking at a tile off map, update the min/max x/y as needed
+    if(robotControl.senseTerrainTile(canSee)==TerrainTile.OFF_MAP) {
+      if (canSee.x > minX || canSee.x < maxX) {
+        if (canSee.x < robotControl.getLocation().x && canSee.x > minX) {
+          minX = canSee.x;
+        }
+        else if (canSee.x > robotControl.getLocation().x && canSee.x < maxX) {
+          maxX = canSee.x;
+        }
+      }
+      if (canSee.y > minY || canSee.y < maxY) {
+        if (canSee.y < robotControl.getLocation().y && canSee.y > minY) {
+          minY = canSee.y;
+        }
+        else if (canSee.y > robotControl.getLocation().y && canSee.y < maxY) {
+          maxY = canSee.y;
+        }
+      }
+    }
   }
 }

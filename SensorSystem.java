@@ -115,4 +115,41 @@ public class SensorSystem {
     return bots;
   }
 
+  /**
+   * Returns the max number of squares a bot can see in the given direction
+   * @param dir the direction
+   * @return the max distance seen
+   */
+  public int getRange(Direction dir) {
+    //if facing orthogonally
+    //TODO: put these in a Constants file somewhere, hardcoding == terrible
+    if (dir == Direction.EAST || dir == Direction.NORTH || dir == Direction.WEST ||
+            dir == Direction.SOUTH) {
+      if (sensor.type() == ComponentType.SIGHT)
+        return 3;
+      else if (sensor.type() == ComponentType.RADAR)
+        return 6;
+      else if (sensor.type() == ComponentType.TELESCOPE)
+        return 12;
+      else if (sensor.type() == ComponentType.SATELLITE)
+        return 10;
+      else if (sensor.type() == ComponentType.BUILDING_SENSOR)
+        return 1;
+    }
+    //facing diagonally
+    else {
+      if (sensor.type() == ComponentType.SIGHT)
+        return 2;
+      else if (sensor.type() == ComponentType.RADAR)
+        return 4;
+      else if (sensor.type() == ComponentType.TELESCOPE)
+        return 8;
+      else if (sensor.type() == ComponentType.SATELLITE)
+        return 7;
+      else if (sensor.type() == ComponentType.BUILDING_SENSOR)
+        return 1;
+    }
+    return 0;
+  }
+
 }

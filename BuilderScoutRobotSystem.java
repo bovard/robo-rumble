@@ -71,14 +71,20 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
   protected boolean seqBuildRecycler() {
     robotControl.setIndicatorString(1, "selBuildRecycler");
     // find a free square adjacent to target mine and move there
-    if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())) {
+    if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())
+            && robotControl.getLocation().isAdjacentTo(uncoveredMineLoc)) {
       //wait till we have enough money
       while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.RECYCLER_COST) {
         robotControl.setIndicatorString(1, "selBuildRecycler -waiting for funds");
         yield();
       }
       if (!moveControl.isActive()) {
-        actTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
+        try {
+          moveControl.setDirection(robotControl.getLocation().directionTo(uncoveredMineLoc));
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
 
       }
 
