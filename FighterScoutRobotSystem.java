@@ -27,9 +27,39 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     //TODO: Implement this!
     robotControl.setIndicatorString(0, "FighterScout");
     while(true) {
-      
+      selFightNScout();
       yield();
     }
+  }
+
+  /**
+   * the basic selector for the fighter class. decides when to patrol and when to engage
+   * @return if one action was performed sucessfully
+   */
+  public boolean selFightNScout() {
+    //TODO: when a fighter sees an enemy or is shot he should engage with the enemy
+    navSys.setDestination(chooseNextDestination());
+    return seqMove();
+  }
+
+   /**
+   * Called to move once (and yield) Assumes the robot already has a destination
+   * Overridded to provide for weapons capabilities
+   * @return if robot is in its current destination
+   */
+  @Override
+  protected boolean actMove() {
+    if(navSys.getDestination()==null)
+      return false;
+    boolean done = navSys.nextMove();
+    weaponSys.fire();
+    yield();
+    //check for map boundary conditions
+    updateMapExtrema();
+    //update your position for the GUI
+    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
+    done = !checkDestinationValidity() || done;
+    return done;
   }
 
 }
