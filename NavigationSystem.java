@@ -33,13 +33,23 @@ public class NavigationSystem {
   private boolean trackingRight;
 
   
-  
+  /**
+   * Creates a NavigationSystem that attempts pathfinding for mobile robots
+   * Note: currently this class only requires that a robot can move, not that it has
+   * any sensors
+   * @param control the movementController
+   */
   public NavigationSystem(MovementController control) {
     moveControl = control;
     robotControl = moveControl.getRC();
     mode = NavigationMode.BUG;
   }
 
+  /**
+   * Creates a navSystem with a destination already in mind
+   * @param control the MovementController
+   * @param dest the MapLocation to be the destination
+   */
   public NavigationSystem(MovementController control, MapLocation dest) {
     moveControl = control;
     this.dest = dest;
@@ -48,6 +58,10 @@ public class NavigationSystem {
     mode = NavigationMode.BUG;
   }
 
+  /**
+   * Stops the robot tracking and gives it a new destination
+   * @param new_dest the new MapLocation to try and move to
+   */
   public void setDestination(MapLocation new_dest) {
     dest = new_dest;
     has_dest = true;
@@ -55,10 +69,19 @@ public class NavigationSystem {
     robotControl.setIndicatorString(2, "Dest: "+dest.toString());
   }
 
+  /**
+   * Returns the map location that the robot is currently trying to move toward
+   * @return the MapLocation destination
+   */
   public MapLocation getDestination() {
     return dest;
   }
 
+  /**
+   * Allows a choice of what navigation mode to use (A*, bug, flock, etc...)
+   * Note: currently only bug is implemented
+   * @param mode The navigation mode taken from NavigationMode.java
+   */
   public void setMode(int mode) {
     this.mode = mode;
   }
@@ -88,7 +111,13 @@ public class NavigationSystem {
 
   }
 
-
+  /**
+   * The A* algorithm, I don't know how well this will work until later in the game
+   * as newly created robots can get very little information about the map until they've moved
+   * around for a while. It might be worth switching too after the robot has been around
+   * for a few hundred turns however
+   * Note: not implemented
+   */
   private void a_star() {
     //TODO: Implement this
     //prevents a loop
@@ -185,6 +214,10 @@ public class NavigationSystem {
     }
   }
 
+  /**
+   * The robot tries to flock with other robots around it, mimicing their movement
+   * Note: not implemented
+   */
   private void flock() {
     //TODO: Implement this
     //prevents a loop

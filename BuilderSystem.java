@@ -2,7 +2,8 @@ package team122;
 import battlecode.common.*;
 
 /**
- *
+ * Implements functions for any construction device (buildercontroller). Allows anything in
+ * RobotBuildOrder to be built
  * @author bovard
  */
 public class BuilderSystem {
@@ -11,6 +12,12 @@ public class BuilderSystem {
   private BuilderController buildControl;
   private MovementController moveControl;
 
+  /**
+   * Constructor for the BuildSystem
+   * @param robotControl the RobotController
+   * @param buildControl the BuilderController
+   * @param moveControl the MovementController (used to see if you can build in a space)
+   */
   public BuilderSystem(RobotController robotControl, BuilderController buildControl, MovementController moveControl) {
    this.robotControl = robotControl;
    this.buildControl = buildControl;
@@ -74,7 +81,7 @@ public class BuilderSystem {
   }
 
   /**
-   * Builds a component on the chassis location at location and level
+   * Builds a component at location and level (there better be a chassis there!)
    * @param toBuild the ComponentType to build
    * @param location the MapLocation to build it
    * @param level the RobotLevel of the Chasis

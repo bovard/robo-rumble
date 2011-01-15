@@ -3,7 +3,8 @@ package team122;
 import battlecode.common.*;
 
 /**
- *
+ * BuilderScouts are robots that have at least a sensor and a constructor component
+ * They will roam the board looking for mines to build recyclers on.
  * @author bovard
  */
 public class BuilderScoutRobotSystem extends SensorRobotSystem {
@@ -11,6 +12,10 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
   protected BuilderSystem buildSys;
   protected MapLocation uncoveredMineLoc;
 
+  /**
+   * Constructor for the BuilderScout, assumes a Constructor component on the bot
+   * @param robotControl
+   */
   public BuilderScoutRobotSystem(RobotController robotControl) {
 
     super(robotControl);

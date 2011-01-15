@@ -22,16 +22,27 @@ public class SensorSystem {
   private Robot[] bots;
   private Robot[] aBots;
   private Robot[] bBots;
+  private Robot[] neutralBots;
 
+  /**
+   * Creates a new SensorSystem, needs a sensorcontroller to function, in charge of
+   * sensor based functions
+   * @param sensor
+   */
   public SensorSystem(SensorController sensor) {
     this.sensor = sensor;
     lastMineScan = -1;
     lastBotScan = -1;
   }
 
+  /**
+   * returns the sensorController
+   * @return the SensorController
+   */
   public SensorController getSensor() {
     return sensor;
   }
+
   /**
    * Checks to see if the Mine info is current, if not does a scan for mines
    *
@@ -71,21 +82,30 @@ public class SensorSystem {
           bCount++;
       }
 
+      //prepping to divide the bots into three arrays by team
       aBots = new Robot[aCount];
       bBots = new Robot[bCount];
+      neutralBots = new Robot[bots.length-aCount-bCount];
 
-      //System.out.println("We found "+aCount+" team A bots and "+bCount+" team B bots");
       
       aCount=0;
       bCount=0;
+      int neutralCount=0;
       for (int i=0;i<bots.length;i++) {
+        //if the bot comes from team A
         if(bots[i].getTeam()==Team.A) {
           aBots[aCount]=bots[i];
           aCount++;
         }
+        //if the bot comes from team B
         else if (bots[i].getTeam()==Team.B) {
           bBots[bCount]=bots[i];
           bCount++;
+        }
+        //if the bots comes from team neutral
+        else {
+          neutralBots[neutralCount]=bots[i];
+          neutralCount++;
         }
       }
 
@@ -95,9 +115,8 @@ public class SensorSystem {
   }
 
   /**
-   * returns all sensed bots from Team team, refreshing sensors if needed
-   * Note: Don't call this with neutral
-   * //TODO: support calling from neutral?
+   * returns all sensed bots from Team team, refreshing sensors if needed, supports finding
+   * neutral bots
    *
    * @param team - team of the robots to send back
    * @return an array or Robot objects that are on team team
@@ -110,9 +129,9 @@ public class SensorSystem {
       return aBots;
     else if (team == Team.B)
       return bBots;
+    //must be Santa... i mean neutral
     else
-      System.out.println("NOT A GOOD IDEA!! (called getBots with 'neutral' as the team");
-    return bots;
+      return neutralBots;
   }
 
   /**

@@ -17,6 +17,10 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   protected boolean shouldBuild = false;
 
 
+  /**
+   * Creates a new Recycler, which can build scout units
+   * @param robotControl
+   */
   public RecyclerRobotSystem(RobotController robotControl) {
     super(robotControl);
 
@@ -40,6 +44,11 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   }
 
   public void go() {
+    //If they aren't building they should turn off to save their upkeep
+    //Note: we'll still get income from the mines.
+    if (!shouldBuild) {
+      robotControl.turnOff();
+    }
     while(true) {
       if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.BUILDER_SCOUT_COST*3)
         selBuildScouts();

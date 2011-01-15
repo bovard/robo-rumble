@@ -15,7 +15,11 @@ public class SensorRobotSystem extends MobileRobotSystem {
   protected SensorSystem sensorSys;
   protected Random rand = new Random();
 
-  
+  /**
+   * Creates a new SensorRobotSystem, requires that the robot have a movementcontroller
+   * and a sensor of some sort
+   * @param robotControl
+   */
   public SensorRobotSystem(RobotController robotControl) {
     super(robotControl);
 

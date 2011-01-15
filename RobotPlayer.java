@@ -2,14 +2,26 @@ package team122;
 
 import battlecode.common.*;
 
+/**
+ * The first thing that will be loaded by a robot waking up,
+ * This should hold the robot until a suitable RobotSystem is found for it
+ * @author bovard
+ */
 public class RobotPlayer implements Runnable {
 
   private final RobotController myRC;
 
+  /**
+   * constructor
+   * @param rc the robotController
+   */
   public RobotPlayer(RobotController rc) {
     myRC = rc;
   }
 
+  /**
+   * Called after the constructor, if we return from this method the robot explodes
+   */
   public void run() {
     System.out.println(java.util.Arrays.toString(myRC.components()));
     System.out.flush();
@@ -19,8 +31,12 @@ public class RobotPlayer implements Runnable {
   /**
    * staging will house a robot until it has enough components to be a recognized system
    * after that it will pass the robotControl to the system and call the go() method
+   * This depends heavily on the order in which the components of the robot are built (the
+   * order in which their built is the order that they'll return in when you call the
+   * component() function). Making sure there isn't any ambigouity is important.
    *
    * Note: requires version 1.07 or later to work correctly
+   * Note: not very efficient at the moment, we'll have to clean it up later
    */
   public void staging() {
     ComponentController [] components;

@@ -13,6 +13,10 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
   protected WeaponController weaponControl;
 
 
+  /**
+   * Makes a FighterScoutRobot, currently only looks for 1 weapon (slot 2)
+   * @param robotControl The RobotController
+   */
   public FighterScoutRobotSystem(RobotController robotControl) {
     super(robotControl);
     robotControl.setIndicatorString(0,"FighterScoutConstructor");
@@ -23,6 +27,10 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
 
   }
 
+  /**
+   * the main loop for a FigtherScout
+   */
+  @Override
   public void go() {
     //TODO: Implement this!
     robotControl.setIndicatorString(0, "FighterScout");

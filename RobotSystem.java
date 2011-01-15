@@ -26,7 +26,10 @@ public class RobotSystem {
   protected final int MINIMUM = 5;
 
 
-
+  /**
+   * Creates a new RobotSystem base class, assumes that there is a movement controller
+   * @param robotControl the RobotController
+   */
   public RobotSystem(RobotController robotControl) {
     this.robotControl = robotControl;
 
@@ -38,7 +41,8 @@ public class RobotSystem {
 
   /**
    * This function will be called after the system is created, it should house the loop
-   * for any robot
+   * for any robot, this is the base class, we shouldn't fall back to this as it has no
+   * functionality, if we return from this the robot dies
    */
   public void go() {
     while(true) {
@@ -49,8 +53,8 @@ public class RobotSystem {
   }
 
 
-    /**
-   * called to turn a robot
+  /**
+   * called to turn a robot, all robots can turn (even buildings)
    * @param dir direction to turn in
    * @return if the turn was executed successfully
    */
@@ -67,7 +71,8 @@ public class RobotSystem {
   }
 
   /**
-   * This will be coupled with the GameEvents class eventually
+   * This will be coupled with the GameEvents class eventually, events should be reset just
+   * before yielding, and recalcuated just after yielding
    */
   protected void yield() {
     robotControl.yield();

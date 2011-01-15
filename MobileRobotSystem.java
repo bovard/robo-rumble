@@ -2,14 +2,17 @@ package team122;
 import battlecode.common.*;
 
 /**
- * Serves as a base class for all mobile robots. 
+ * Serves as a base class for all mobile robots (robots able to move)
  * @author bovard
  */
 public class MobileRobotSystem extends RobotSystem {
 
   protected NavigationSystem navSys;
 
-
+  /**
+   * creates a new MobileRobotSystem, takes the moveControl and adds a navSystem
+   * @param robotControl The robotController
+   */
   public MobileRobotSystem(RobotController robotControl) {
     super(robotControl);
     navSys = new NavigationSystem(moveControl);
