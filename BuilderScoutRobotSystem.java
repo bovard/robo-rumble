@@ -71,6 +71,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
    * @return if an uncovered mine was found
    */
   protected boolean seqScoutUncoveredMine() {
+    uncoveredMineLoc = null;
     robotControl.setIndicatorString(1, "seqScoutUncoveredMine");
     navSys.setDestination(chooseNextDestination());
     boolean done = seqSenseMine();
@@ -159,6 +160,9 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
         }
         i++;
       }
+    }
+    if (foundNewMine) {
+      uncoveredMineLoc = null;
     }
     return foundNewMine;
   }

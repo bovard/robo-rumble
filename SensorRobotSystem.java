@@ -58,8 +58,8 @@ public class SensorRobotSystem extends MobileRobotSystem {
     do {
       next = birthPlace;
       //TODO: make these not hard-coded values
-      x = rand.nextInt(30);
-      y = rand.nextInt(30);
+      x = rand.nextInt(70);
+      y = rand.nextInt(70);
       if (rand.nextBoolean())
         x *= -1;
       if (rand.nextBoolean())
