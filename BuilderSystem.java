@@ -9,10 +9,12 @@ public class BuilderSystem {
 
   private RobotController robotControl;
   private BuilderController buildControl;
+  private MovementController moveControl;
 
-  public BuilderSystem(RobotController robotControl, BuilderController buildControl) {
+  public BuilderSystem(RobotController robotControl, BuilderController buildControl, MovementController moveControl) {
    this.robotControl = robotControl;
    this.buildControl = buildControl;
+   this.moveControl = moveControl;
   }
 
     /**
@@ -57,7 +59,7 @@ public class BuilderSystem {
    * @return if the build was successful
    */
   protected boolean actBuildChasis(Chassis toBuild, MapLocation location) {
-    if (robotControl.getTeamResources() >= toBuild.cost) {
+    if (robotControl.getTeamResources() >= toBuild.cost && moveControl.canMove(robotControl.getLocation().directionTo(location))) {
      try {
        buildControl.build(toBuild, location);
        robotControl.yield();

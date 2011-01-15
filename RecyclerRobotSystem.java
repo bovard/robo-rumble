@@ -22,7 +22,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
 
     robotControl.setIndicatorString(0, "Recycler");
     buildControl = (BuilderController)robotControl.components()[2];
-    buildSys = new BuilderSystem(robotControl, buildControl);
+    buildSys = new BuilderSystem(robotControl, buildControl, moveControl);
     rand = new Random();
 
     //check to see if this Recycler is the most NorthWestern at the start of the game
