@@ -5,6 +5,9 @@ import battlecode.common.*;
 /**
  * The first thing that will be loaded by a robot waking up,
  * This should hold the robot until a suitable RobotSystem is found for it
+ *
+ * Note: to build a submission file navigate to the base install file of BC and type
+ * "ant jar -Dteam=team122"
  * @author bovard
  */
 public class RobotPlayer implements Runnable {

@@ -96,6 +96,9 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
     robotControl.setIndicatorString(1, "seqScoutUncoveredMine");
     navSys.setDestination(chooseNextDestination());
     boolean done = seqSenseMine();
+    if(done) {
+      return done;
+    }
     robotControl.setIndicatorString(1, "seqScoutUncoveredMine - newDest");
     //while we haven't found an uncovered mine and we aren't at our destination
     while(!done && !actMove()) {
@@ -133,6 +136,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       //build the recycler
       if (buildSys.seqBuild(RobotBuildOrder.RECYCLER, uncoveredMineLoc)) {
         //once it's been built we should reset the uncovered mine location to null
+        actTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
         uncoveredMineLoc = null;
         return true;
       }

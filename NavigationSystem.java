@@ -29,6 +29,7 @@ public class NavigationSystem {
 
   //used in bug movement algorithm
   private boolean tracking = false;
+  private boolean lastTrackRight = false;
   private Direction lastTargetDirection;
   private boolean trackingRight;
 
@@ -189,10 +190,14 @@ public class NavigationSystem {
           //choose a direction to track in (by making it random we can avoid (some) loops
           //TODO: Change this to favor the direction that would require the least turning
           //to continue in (so when hitting an object at an angle they would continue
-          if (rand.nextBoolean())
+          if (!lastTrackRight) {
             trackingRight = true;
-          else
+            lastTrackRight = true;
+          }
+          else {
             trackingRight = false;
+            lastTrackRight = false;
+          }
           //TODO: do we need to make this pass-by-value?
           Direction toMove = lastTargetDirection;
           //a count prevents the robot from turning in circles forever
