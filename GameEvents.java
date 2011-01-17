@@ -44,8 +44,8 @@ public class GameEvents {
    * @return if any game events happened
    */
   public boolean calcGameEvents() {
-    lostHealth = calcLostHealth();
-    lowHealth = calcLowHealth();
+    calcLostHealth();
+    calcLowHealth();
 
     return lostHealth || lowHealth;
   }
@@ -54,22 +54,26 @@ public class GameEvents {
    * calculates if the robot has lost health since last turn
    * @return if the robot has lost health
    */
-  private boolean calcLostHealth() {
+  protected void calcLostHealth() {
     if (robotControl.getHitpoints() < formerHP) {
-      return true;
+      lostHealth = true;
     }
-    return false;
+    else {
+      lostHealth = false;
+    }
   }
 
   /**
    * calculates if the robot has low health
    * @return if the robot has low health
    */
-  private boolean calcLowHealth() {
+  protected void calcLowHealth() {
     if (robotControl.getHitpoints() < .1*robotControl.getMaxHp()) {
-      return true;
+      lowHealth = true;
     }
-    return false;
+    else {
+      lowHealth = false;
+    }
   }
 
   /**
