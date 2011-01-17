@@ -23,8 +23,20 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     weaponControl = (WeaponController)robotControl.components()[2];
     WeaponController[] weapons = new WeaponController[1];
     weapons[0] = weaponControl;
-    weaponSys = new WeaponSystem(weapons, sensorSys);
+    weaponSys = new WeaponSystem(weapons, sensorSys, sensorGameEvents);
 
+  }
+
+  /**
+   * the yield method overridden for soldiers, doesn't check for the seeMine game event
+   * to save bytecode
+   */
+  @Override
+  protected void yield() {
+    sensorGameEvents.resetGameEvents();
+    robotControl.yield();
+    sensorGameEvents.calcSoldierGameEvents();
+    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
   }
 
   /**
@@ -44,10 +56,102 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
    * the basic selector for the fighter class. decides when to patrol and when to engage
    * @return if one action was performed sucessfully
    */
-  public boolean selFightNScout() {
+  protected boolean selFightNScout() {
     //TODO: when a fighter sees an enemy or is shot he should engage with the enemy
-    navSys.setDestination(chooseNextDestination());
-    return seqMove();
+    robotControl.setIndicatorString(1, "selFightNScout");
+    if(seqScoutEnemy()) {
+      return seqEngageEnemy();
+    }
+    return false;
+  }
+
+  /**
+   * Finds the enemy and engages until the enemy is destroyed (or moves away)
+   * //TODO: redo this to have to robot keep track of the enemy instead of the current implementation/hack
+   * @return if there is still an enemy
+   */
+  protected boolean seqEngageEnemy() {
+    robotControl.setIndicatorString(1, "seqEngageEnemy");
+    //if we can see the enemy or we can rotate to see them
+    if(sensorGameEvents.canSeeEnemy() || seqRotateToEnemy()) {
+      //while we can see the enemy, fire at them or move toward them
+      try {
+        while(sensorGameEvents.canSeeEnemy()) {
+          MapLocation toFire = weaponSys.fire();
+          if(toFire != null) {
+            robotControl.setIndicatorString(1, "seqEngageEnemy - turnAndFire!");
+            actTurn(robotControl.getLocation().directionTo(toFire));
+          }
+          else {
+            if (weaponSys.allActive())
+            {
+              robotControl.setIndicatorString(1, "seqEngageEnemy - wait");
+              yield();
+            }
+            else {
+              robotControl.setIndicatorString(1, "seqEngageEnemy - closeTheGap");
+              //find the nearest opponent
+              MapLocation nearestOpponent = sensorSys.getSensor().senseLocationOf(sensorSys.getNearestOpponent());
+              //move toward it
+              if(nearestOpponent!=null) {
+                //if not facing the opponent, turn toward them
+                if(robotControl.getDirection() != robotControl.getLocation().directionTo(nearestOpponent)) {
+                  actTurn(robotControl.getLocation().directionTo(nearestOpponent));
+                }
+                //otherwise move forward if you can
+                else {
+                  if(moveControl.canMove(robotControl.getDirection()) && !moveControl.isActive()) {
+                    moveControl.moveForward();
+                    yield();
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Turns the robot and continues to look for the enemy
+   * //TODO: replace these hard coded values with constants (shared with the SensorSystem.java ones)
+   * @return if an enemy is seens
+   */
+  protected boolean seqRotateToEnemy() {
+    robotControl.setIndicatorString(1, "seqRotateToEnemy");
+    switch(sensorSys.getBreadth()) {
+      case 8:
+        for (int i=0; i<8; i++) {
+          if(!sensorGameEvents.seeEnemy) {
+            actTurn(robotControl.getDirection().rotateRight());
+          }
+        }
+        break;
+      case 4:
+        for (int i=0; i<4; i++) {
+          if(!sensorGameEvents.seeEnemy) {
+            actTurn(robotControl.getDirection().rotateRight().rotateRight());
+          }
+        }
+        break;
+      case 2:
+        for (int i=0; i<2; i++) {
+          if(!sensorGameEvents.seeEnemy) {
+            actTurn(robotControl.getDirection().opposite());
+          }
+        }
+        break;
+      case 1:
+        //in this case the sensor can see in all directions so the bot doesn't need to rotate
+        break;
+    }
+    return sensorGameEvents.seeEnemy;
   }
 
    /**
@@ -60,7 +164,9 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     if(navSys.getDestination()==null)
       return false;
     boolean done = navSys.nextMove();
-    weaponSys.fire();
+    if (sensorGameEvents.canSeeEnemy()) {
+      weaponSys.fire();
+    }
     yield();
     //check for map boundary conditions
     updateMapExtrema();

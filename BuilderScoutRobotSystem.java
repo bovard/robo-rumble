@@ -146,46 +146,51 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
    * @return If an uncovered mine was found within sensor range
    */
   protected boolean seqSenseMine() {
-    boolean foundNewMine = false;
-    Mine[] mines = sensorSys.getMines();
-    
-    boolean oldMineInSight = false;
-    //check to see if we can still see the old mine
-    for (int j=0; j<mines.length; j++) {
-      if (mines[j].getLocation()==uncoveredMineLoc) {
-        oldMineInSight = true;
-      }
-    }
-    //if we can't see the old mine, check if we can see a new mine
-    if (!oldMineInSight) {
-      int i = 0;
-      while (i < mines.length && !foundNewMine) {
-        try {
-          //check to see if these is anything built on the mine
-          if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
-            //if this is a new uncovered mine
-            if (mines[i].getLocation()!=uncoveredMineLoc) {
-              uncoveredMineLoc = mines[i].getLocation();
-              foundNewMine = true;
-              return true;
-            }
-            //otherwise we've just detected the same mine and should return
-            else {
-              return false;
-            }
-          }
+    if (sensorGameEvents.seeMine) {
+      boolean foundNewMine = false;
+      Mine[] mines = sensorSys.getMines();
 
-        } catch (Exception e) {
-          System.out.println("caught exception:");
-          e.printStackTrace();
+      boolean oldMineInSight = false;
+      //check to see if we can still see the old mine
+      for (int j=0; j<mines.length; j++) {
+        if (mines[j].getLocation()==uncoveredMineLoc) {
+          oldMineInSight = true;
         }
-        i++;
       }
+      //if we can't see the old mine, check if we can see a new mine
+      if (!oldMineInSight) {
+        int i = 0;
+        while (i < mines.length && !foundNewMine) {
+          try {
+            //check to see if these is anything built on the mine
+            if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
+              //if this is a new uncovered mine
+              if (mines[i].getLocation()!=uncoveredMineLoc) {
+                uncoveredMineLoc = mines[i].getLocation();
+                foundNewMine = true;
+                return true;
+              }
+              //otherwise we've just detected the same mine and should return
+              else {
+                return false;
+              }
+            }
+
+          } catch (Exception e) {
+            System.out.println("caught exception:");
+            e.printStackTrace();
+          }
+          i++;
+        }
+      }
+      if (foundNewMine) {
+        uncoveredMineLoc = null;
+      }
+      return foundNewMine;
     }
-    if (foundNewMine) {
-      uncoveredMineLoc = null;
+    else {
+      return false;
     }
-    return foundNewMine;
   }
 
     /**
@@ -203,7 +208,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
     boolean keepGoing = true;
     while(!sensorControl.canSenseSquare(location) && keepGoing) {
       //TODO: add code here check to see if enemies are seen or under attack
-      keepGoing = !seqSenseMine();
+      keepGoing = keepGoing && !seqSenseMine();
       actMove();
     }
 

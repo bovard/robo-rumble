@@ -20,6 +20,7 @@ public class WeaponSystem {
   private WeaponController[] weapons;
   private SensorSystem sensorSys;
   private int mode;
+  private SensorGameEvents sensorGameEvents;
 
   /**
    * Creates a new WeaponSystem, capable of handling multiple weapons
@@ -29,9 +30,10 @@ public class WeaponSystem {
    * @param weapons an array of the weapons currently held by the robot
    * @param sensor the SensorSystem for the robot
    */
-  public WeaponSystem(WeaponController[] weapons, SensorSystem sensor) {
+  public WeaponSystem(WeaponController[] weapons, SensorSystem sensor, SensorGameEvents sensorGameEvents) {
     this.weapons = weapons;
     this.sensorSys = sensor;
+    this.sensorGameEvents = sensorGameEvents;
     mode = WeaponMode.OPEN_FIRE;
   }
 
@@ -57,10 +59,37 @@ public class WeaponSystem {
   }
 
   /**
-   * cycles through each weapon, if they aren't busy finds a target for it
+   * Checks to see if ALL weapons system are active
+   * @return
    */
-  public void fire() {
-    if (mode!=WeaponMode.HOLD_FIRE) {
+  public boolean allActive() {
+    boolean isActive = true;
+    for (int i=0; i<weapons.length; i++) {
+      isActive = isActive && weapons[i].isActive();
+    }
+    return isActive;
+  }
+
+  /**
+   * Checks to see if at least one weapon system are active
+   * @return
+   */
+  public boolean isActive() {
+    boolean isActive = false;
+    for (int i=0; i<weapons.length; i++) {
+      isActive = isActive || weapons[i].isActive();
+    }
+    return isActive;
+  }
+
+
+  /**
+   * cycles through each weapon, if they aren't busy finds a target for it
+   * @return the MapLocation where (at least one) weapon is firing
+   */
+  public MapLocation fire() {
+    MapLocation toFire = null;
+    if (mode!=WeaponMode.HOLD_FIRE && sensorGameEvents.seeEnemy) {
       try {
         //gets enemy bots in sensor range
         Robot[] targets = sensorSys.getBots(weapons[0].getRC().getTeam().opponent());
@@ -77,6 +106,7 @@ public class WeaponSystem {
           if (!weapons[j].isActive()) {
             for (int i=0; i<targets.length; i++) {
               if(weapons[j].withinRange(locations[i])) {
+                toFire = locations[i];
                 weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
                 break;
               }
@@ -88,6 +118,7 @@ public class WeaponSystem {
         e.printStackTrace();
       }
     }
+    return toFire;
   }
-
+  
 }

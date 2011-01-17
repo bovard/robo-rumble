@@ -20,7 +20,7 @@ public class BuildingRobotSystem extends RobotSystem {
   public BuildingRobotSystem(RobotController robotControl) {
     super(robotControl);
     sensorControl = (SensorController)robotControl.components()[1];
-    sensorSys = new SensorSystem(sensorControl);
+    sensorSys = new SensorSystem(sensorControl, robotControl.getTeam());
   }
 
 }

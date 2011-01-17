@@ -22,6 +22,7 @@ public class RobotSystem {
   protected MapLocation birthPlace;
   protected RobotController robotControl;
   protected MovementController moveControl;
+  protected GameEvents gameEvents;
 
   protected final int MINIMUM = 5;
 
@@ -36,6 +37,7 @@ public class RobotSystem {
     //as of 1.07 the movementcontroller is always the first item in the components list
     moveControl = (MovementController)robotControl.components()[0];
     birthPlace = robotControl.getLocation();
+    gameEvents = new GameEvents(robotControl);
 
   }
 
@@ -60,7 +62,9 @@ public class RobotSystem {
    */
   protected boolean actTurn(Direction dir) {
     try {
-      moveControl.setDirection(dir);
+      if(!moveControl.isActive()) {
+        moveControl.setDirection(dir);
+      }
       yield();
       return true;
     } catch (Exception e) {
@@ -71,11 +75,13 @@ public class RobotSystem {
   }
 
   /**
-   * This will be coupled with the GameEvents class eventually, events should be reset just
-   * before yielding, and recalcuated just after yielding
+   * Couples the yield function with game events, resetting the game events just before
+   * calling yield and calculating them again as the first action for the robot
    */
   protected void yield() {
+    gameEvents.resetGameEvents();
     robotControl.yield();
+    gameEvents.calcGameEvents();
     robotControl.setIndicatorString(0, robotControl.getLocation().toString());
   }
 

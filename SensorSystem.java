@@ -23,14 +23,16 @@ public class SensorSystem {
   private Robot[] aBots;
   private Robot[] bBots;
   private Robot[] neutralBots;
+  private Team myTeam;
 
   /**
    * Creates a new SensorSystem, needs a sensorcontroller to function, in charge of
    * sensor based functions
    * @param sensor
    */
-  public SensorSystem(SensorController sensor) {
+  public SensorSystem(SensorController sensor, Team myTeam) {
     this.sensor = sensor;
+    this.myTeam = myTeam;
     lastMineScan = -1;
     lastBotScan = -1;
   }
@@ -41,6 +43,21 @@ public class SensorSystem {
    */
   public SensorController getSensor() {
     return sensor;
+  }
+
+  /**
+   * returns the nearest enemy robot
+   * //TODO: actually make this return the nearest enemy robot instead of the first in the queue
+   * @return the nearest enemy robot
+   */
+  public Robot getNearestOpponent() {
+    if (lastBotScan < Clock.getRoundNum()) {
+      getBots();
+    }
+    if (getBots(myTeam.opponent()).length > 0) {
+      return getBots(myTeam.opponent())[0];
+    }
+    return null;
   }
 
   /**
@@ -69,9 +86,8 @@ public class SensorSystem {
    */
   public Robot[] getBots() {
     if (lastBotScan < Clock.getRoundNum()) {
-      lastMineScan = Clock.getRoundNum();
+      lastBotScan = Clock.getRoundNum();
       bots = sensor.senseNearbyGameObjects(Robot.class);
-      this.bots = bots;
 
       int aCount = 0;
       int bCount = 0;
@@ -116,7 +132,7 @@ public class SensorSystem {
 
   /**
    * returns all sensed bots from Team team, refreshing sensors if needed, supports finding
-   * neutral bots
+   * neutral bots (debris)
    *
    * @param team - team of the robots to send back
    * @return an array or Robot objects that are on team team
@@ -129,7 +145,7 @@ public class SensorSystem {
       return aBots;
     else if (team == Team.B)
       return bBots;
-    //must be Santa... i mean neutral
+    //must be neutral
     else
       return neutralBots;
   }
@@ -168,6 +184,27 @@ public class SensorSystem {
       else if (sensor.type() == ComponentType.BUILDING_SENSOR)
         return 1;
     }
+    return 0;
+  }
+
+  /**
+   * returns the amount of turning a robot would need to do to look at the world around it
+   * //TODO: put these values in a constant file somewhere
+   * @return the number of portions of the screen the robot needs to look at to see it all
+   */
+  public int getBreadth() {
+    if (sensor.type() == ComponentType.SIGHT)
+      return 4;
+    else if (sensor.type() == ComponentType.RADAR)
+      return 2;
+    else if (sensor.type() == ComponentType.TELESCOPE)
+      return 8;
+    else if (sensor.type() == ComponentType.SATELLITE)
+      return 1;
+    else if (sensor.type() == ComponentType.BUILDING_SENSOR)
+      return 1;
+    else
+      System.out.println("Error: called getBreadth() without a sensor");
     return 0;
   }
 

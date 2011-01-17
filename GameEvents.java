@@ -8,7 +8,7 @@ import battlecode.common.*;
  */
 public class GameEvents {
 
-  private RobotController robotControl;
+  protected RobotController robotControl;
 
   //list of GameEvents, we'll add more as we get more complex behavoir
   boolean lowHealth;

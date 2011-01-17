@@ -90,7 +90,7 @@ public class SensorGameEvents extends GameEvents {
    * calculates to see if the bot can sense an enemy
    */
   protected void calcSeeEnemy() {
-    if(sensorSys.getBots(sensorSys.sensor.getRC().getTeam().opponent()).length > 0) {
+    if(sensorSys.getBots(robotControl.getTeam().opponent()).length > 0) {
       seeEnemy = true;
     }
     else {

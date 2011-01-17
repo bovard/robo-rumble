@@ -14,6 +14,7 @@ public class SensorRobotSystem extends MobileRobotSystem {
   protected SensorController sensorControl;
   protected SensorSystem sensorSys;
   protected Random rand = new Random();
+  protected SensorGameEvents sensorGameEvents;
 
   /**
    * Creates a new SensorRobotSystem, requires that the robot have a movementcontroller
@@ -31,12 +32,26 @@ public class SensorRobotSystem extends MobileRobotSystem {
       sensorControl = (SensorController)robotControl.components()[2];
     else
       sensorControl = (SensorController)robotControl.components()[1];
-    sensorSys = new SensorSystem(sensorControl);
+    sensorSys = new SensorSystem(sensorControl, robotControl.getTeam());
+
+
+    sensorGameEvents = new SensorGameEvents(robotControl, sensorSys);
 
     
 
   }
   
+  /**
+   * the yield method overridden for sensor robots, uses the SensorGameEvents
+   * to save bytecode
+   */
+  @Override
+  protected void yield() {
+    sensorGameEvents.resetGameEvents();
+    robotControl.yield();
+    sensorGameEvents.calcGameEvents();
+    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
+  }
 
 
   /**
@@ -46,9 +61,15 @@ public class SensorRobotSystem extends MobileRobotSystem {
    * @return if an enemy is sensed
    */
   protected boolean seqScoutEnemy() {
+    robotControl.setIndicatorString(1, "seqScoutEnemy");
     navSys.setDestination(chooseNextDestination());
-    //TODO: Implement this
-    return false;
+    //check to see if we already sense an enemy (we've been shot or see one)
+    boolean done = sensorGameEvents.checkCriticalGameEvents();
+    //while we haven't found an enemy
+    while(!done && !actMove()) {
+      done = sensorGameEvents.checkCriticalGameEvents();
+    }
+    return sensorGameEvents.checkCriticalGameEvents();
   }
   
   /**
@@ -193,12 +214,12 @@ public class SensorRobotSystem extends MobileRobotSystem {
   protected boolean checkDestinationValidity() {
     //if the destination is out of x bounds it's invalid, return false
     if (navSys.getDestination().x < minX || navSys.getDestination().x > maxX) {
-      robotControl.setIndicatorString(2, "BAD X DEST: "+minX+"<"+navSys.getDestination().x+"<"+maxX );
+      //robotControl.setIndicatorString(2, "BAD X DEST: "+minX+"<"+navSys.getDestination().x+"<"+maxX );
       return false;
     }
     //if the destination is out of y bounds it's invalid, return false
     if (navSys.getDestination().y < minY || navSys.getDestination().y > maxY) {
-      robotControl.setIndicatorString(2, "BAD Y DEST: "+minY+"<"+navSys.getDestination().y+"<"+maxY );
+      //robotControl.setIndicatorString(2, "BAD Y DEST: "+minY+"<"+navSys.getDestination().y+"<"+maxY );
       return false;
     }
     //check if we can currently sense the destination
@@ -238,14 +259,14 @@ public class SensorRobotSystem extends MobileRobotSystem {
         //looking at the minX edge
         if( sensorControl.canSenseSquare(canSee.add(1, 0)) && robotControl.senseTerrainTile(canSee.add(1,0))!=TerrainTile.OFF_MAP) {
           if (canSee.x > minX) {
-            System.out.println("UPDATING minX: "+minX+" to "+canSee.x);
+            //System.out.println("UPDATING minX: "+minX+" to "+canSee.x);
             minX = canSee.x;
           }
         }
         //looking at the maxX edge
         else if (sensorControl.canSenseSquare(canSee.add(-1, 0)) && robotControl.senseTerrainTile(canSee.add(-1,0))!=TerrainTile.OFF_MAP) {
           if(canSee.x < maxX) {
-            System.out.println("UPDATING maxX: "+maxX+" to "+canSee.x);
+            //System.out.println("UPDATING maxX: "+maxX+" to "+canSee.x);
             maxX = canSee.x;
           }
         }
@@ -254,14 +275,14 @@ public class SensorRobotSystem extends MobileRobotSystem {
         //looking at the minY edge
         if( sensorControl.canSenseSquare(canSee.add(0, 1)) && robotControl.senseTerrainTile(canSee.add(0,1))!=TerrainTile.OFF_MAP) {
           if (canSee.y > minY) {
-            System.out.println("UPDATING minY: "+minY+" to "+canSee.y);
+            //System.out.println("UPDATING minY: "+minY+" to "+canSee.y);
             minY = canSee.y;
           }
         }
         //looking at the maxY edge
         else if (sensorControl.canSenseSquare(canSee.add(0, -1)) && robotControl.senseTerrainTile(canSee.add(0, -1))!=TerrainTile.OFF_MAP) {
           if(canSee.y < maxY) {
-            System.out.println("UPDATING maxY: "+maxY+" to "+canSee.y);
+            //System.out.println("UPDATING maxY: "+maxY+" to "+canSee.y);
             maxY = canSee.y;
           }
         }
