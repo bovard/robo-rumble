@@ -5,12 +5,10 @@ import battlecode.common.*;
 
 /**
  * this controls our scout fighters, they have the build lightmotor, radar, blaster, shield
- * //TODO: flesh this class out
  * @author bovard
  */
 public class FighterScoutRobotSystem extends SensorRobotSystem {
   protected WeaponSystem weaponSys;
-  protected WeaponController weaponControl;
 
 
   /**
@@ -20,9 +18,20 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
   public FighterScoutRobotSystem(RobotController robotControl) {
     super(robotControl);
     robotControl.setIndicatorString(0,"FighterScoutConstructor");
-    weaponControl = (WeaponController)robotControl.components()[2];
+    WeaponController weaponControl = (WeaponController)robotControl.components()[2];
     WeaponController[] weapons = new WeaponController[1];
     weapons[0] = weaponControl;
+    weaponSys = new WeaponSystem(weapons, sensorSys, sensorGameEvents);
+
+  }
+
+  /**
+   * Makes a FighterScoutRobot, given the weapons in a WeaponsController array
+   * @param robotControl The RobotController
+   */
+  public FighterScoutRobotSystem(RobotController robotControl, WeaponController[] weapons) {
+    super(robotControl);
+    robotControl.setIndicatorString(0,"FighterScoutConstructor");
     weaponSys = new WeaponSystem(weapons, sensorSys, sensorGameEvents);
 
   }
@@ -90,21 +99,35 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
             }
             else {
               robotControl.setIndicatorString(1, "seqEngageEnemy - closeTheGap");
-              //find the nearest opponent
-              MapLocation nearestOpponent = sensorSys.getSensor().senseLocationOf(sensorSys.getNearestOpponent());
-              //move toward it
-              if(nearestOpponent!=null) {
-                //if not facing the opponent, turn toward them
-                if(robotControl.getDirection() != robotControl.getLocation().directionTo(nearestOpponent)) {
-                  actTurn(robotControl.getLocation().directionTo(nearestOpponent));
-                }
-                //otherwise move forward if you can
-                else {
-                  if(moveControl.canMove(robotControl.getDirection()) && !moveControl.isActive()) {
-                    moveControl.moveForward();
-                    yield();
+              if (sensorSys.getNearestOpponent() != null) {
+                //find the nearest opponent
+                MapLocation nearestOpponent = sensorSys.getSensor().senseLocationOf(sensorSys.getNearestOpponent());
+                //move toward it
+                if(nearestOpponent!=null) {
+                  //if not facing the opponent, turn toward them
+                  if(robotControl.getDirection() != robotControl.getLocation().directionTo(nearestOpponent)) {
+                    actTurn(robotControl.getLocation().directionTo(nearestOpponent));
+                  }
+                  //otherwise move forward if you can
+                  else {
+                    if(moveControl.canMove(robotControl.getDirection()) && !moveControl.isActive()) {
+                      moveControl.moveForward();
+                      yield();
+                    }
+                    //if you can't move forward just sit there like a slub
+                    else {
+                      yield();
+                    }
                   }
                 }
+                else {
+                  yield();
+                  return false;
+                }
+              }
+              else {
+                yield();
+                return false;
               }
             }
           }

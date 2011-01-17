@@ -83,12 +83,8 @@ public class SensorRobotSystem extends MobileRobotSystem {
     do {
       next = birthPlace;
       //TODO: make these not hard-coded values
-      x = rand.nextInt(70);
-      y = rand.nextInt(70);
-      if (rand.nextBoolean())
-        x *= -1;
-      if (rand.nextBoolean())
-        y *= -1;
+      x = ((rand.nextInt(141) * Clock.getRoundNum()) % 140)-70;
+      y = ((rand.nextInt(141) * Clock.getRoundNum()) % 140)-70;
       next = next.add(x, y);
     } while (next.x < minX || next.x > maxX || next.y < minY || next.y > maxY);
     return next;

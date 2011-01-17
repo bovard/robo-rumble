@@ -66,6 +66,43 @@ public class RobotPlayer implements Runnable {
           FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC);
           system.go();
         }
+        //FIGHTER_SCOUT 2
+        if (components.length == 5 && components[1].type()==ComponentType.RADAR &&
+                components[2].type()==ComponentType.SMG && components[3].type()==ComponentType.SMG
+                && components[4].type()==ComponentType.SHIELD) {
+          WeaponController[] weapons = new WeaponController[2];
+          weapons[0]=(WeaponController)components[2];
+          weapons[1]=(WeaponController)components[3];
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, weapons);
+          system.go();
+        }
+        //FIGHTER_SCOUT 3
+        if (components.length == 4 && components[1].type()==ComponentType.RADAR &&
+                components[2].type()==ComponentType.BLASTER && components[3].type()==ComponentType.SMG) {
+          WeaponController[] weapons = new WeaponController[2];
+          weapons[0]=(WeaponController)components[2];
+          weapons[1]=(WeaponController)components[3];
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, weapons);
+          system.go();
+        }
+        //FIGHTER_SCOUT 4
+        if (components.length == 5 && components[1].type()==ComponentType.RADAR &&
+                components[2].type()==ComponentType.SMG && components[3].type()==ComponentType.SMG
+                && components[4].type()==ComponentType.SMG) {
+          WeaponController[] weapons = new WeaponController[3];
+          weapons[0]=(WeaponController)components[2];
+          weapons[1]=(WeaponController)components[3];
+          weapons[2]=(WeaponController)components[4];
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, weapons);
+          system.go();
+        }
+        //FIGHTER_SCOUT_5
+        if (components.length == 5 && components[1].type()==ComponentType.SIGHT &&
+                components[2].type()==ComponentType.BLASTER && components[3].type()==ComponentType.BLASTER
+                && components[4].type()==ComponentType.SHIELD) {
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC);
+          system.go();
+        }
       }
       if (myRC.getChassis()==Chassis.BUILDING) {
         //RECYCLER

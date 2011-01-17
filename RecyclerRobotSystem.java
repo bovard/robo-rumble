@@ -43,6 +43,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     }
   }
 
+  @Override
   public void go() {
     //If they aren't building they should turn off to save their upkeep
     //Note: we'll still get income from the mines.
@@ -66,25 +67,73 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
    */
   protected boolean selBuildScouts() {
     robotControl.setIndicatorString(2, "selBuildScouts");
-    if(rand.nextBoolean()) {
+    double decider = rand.nextDouble();
+    // the higher the decider the greater chance of producing Builders
+    if (Clock.getRoundNum() < 300) {
+      decider += .3;
+    }
+    else if (Clock.getRoundNum() > 3000){
+      decider -= .3;
+    }
+    if(decider >= .5) {
       //wait until we have enough resources
       while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.BUILDER_SCOUT_COST ) {
         yield();
       }
       //build
-      if(seqBuild(RobotBuildOrder.BUILDER_SCOUT))
+      if(seqBuild(RobotBuildOrder.BUILDER_SCOUT)) {
         return true;
+      }
+      else {
+        return false;
+      }
     }
     else {
-      //wait until we have enough resources
-      while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.FIGHTER_SCOUT_COST ) {
-        yield();
-      }
-      //build
-      if(seqBuild(RobotBuildOrder.FIGHTER_SCOUT))
-        return true;
+      return buildRandomSoldierScout();
     }
-    return false;
+  }
+
+  /**
+   * Builds a random soldier scout
+   * @return if teh build was sucessfull
+   */
+  protected boolean buildRandomSoldierScout() {
+    Object[] buildOrder = RobotBuildOrder.FIGHTER_SCOUT;
+    int buildCost = RobotBuildOrder.FIGHTER_SCOUT_COST;
+
+    switch(rand.nextInt(5)+1) {
+      case 1:
+        //buildOrder = RobotBuildOrder.FIGHTER_SCOUT;
+        //buildCost = RobotBuildOrder.FIGHTER_SCOUT_COST;
+        break;
+      case 2:
+        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_2;
+        buildCost = RobotBuildOrder.FIGHTER_SCOUT_2_COST;
+        break;
+      case 3:
+        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_3;
+        buildCost = RobotBuildOrder.FIGHTER_SCOUT_3_COST;
+        break;
+      case 4:
+        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_4;
+        buildCost = RobotBuildOrder.FIGHTER_SCOUT_4_COST;
+        break;
+      case 5:
+        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_5;
+        buildCost = RobotBuildOrder.FIGHTER_SCOUT_5_COST;
+        break;
+    }
+    //wait until we have enough resources
+    while(robotControl.getTeamResources() < MINIMUM + buildCost ) {
+      yield();
+    }
+    //build
+    if(seqBuild(buildOrder)) {
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   /**
