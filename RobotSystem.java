@@ -23,6 +23,7 @@ public class RobotSystem {
   protected RobotController robotControl;
   protected MovementController moveControl;
   protected GameEvents gameEvents;
+  protected CommunicationsSystem comSys;
 
   protected final int MINIMUM = 5;
 
@@ -38,6 +39,7 @@ public class RobotSystem {
     moveControl = (MovementController)robotControl.components()[0];
     birthPlace = robotControl.getLocation();
     gameEvents = new GameEvents(robotControl);
+    comSys = new CommunicationsSystem(robotControl);
 
   }
 
