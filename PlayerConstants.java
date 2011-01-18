@@ -32,6 +32,10 @@ public final class PlayerConstants {
   public static final int SATELLITE_TURNS = 1;
   public static final int BUILDING_SENSOR_TURNS = 1;
 
-  //new destination constants
-  public static final int NEW_DEST_RANGE = 20;
+  //the types of messages, used to send a receive messenges
+  public static final int MESSAGE_INFO = 0;
+  public static final int MESSAGE_BUILD_DIRECTIVE = 1;
+  public static final int MESSAGE_FIGHT_DIRECTIVE = 2;
+  
+
 }
