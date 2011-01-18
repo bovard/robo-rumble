@@ -20,18 +20,18 @@ import java.util.Random;
  */
 public class NavigationSystem {
 
-  private Random rand = new Random();
-  private MovementController moveControl;
-  private RobotController robotControl;
-  private int mode;
-  private MapLocation dest;
-  private boolean has_dest = false;
+  protected Random rand = new Random();
+  protected MovementController moveControl;
+  protected RobotController robotControl;
+  protected int mode;
+  protected MapLocation dest;
+  protected boolean has_dest = false;
 
   //used in bug movement algorithm
-  private boolean tracking = false;
-  private boolean lastTrackRight = false;
-  private Direction lastTargetDirection;
-  private boolean trackingRight;
+  protected boolean tracking = false;
+  protected boolean lastTrackRight = false;
+  protected Direction lastTargetDirection;
+  protected boolean trackingRight;
 
   
   /**
