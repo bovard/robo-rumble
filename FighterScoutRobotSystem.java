@@ -187,7 +187,9 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     if(navSys.getDestination()==null)
       return false;
     boolean done = navSys.nextMove();
-    weaponSys.fire();
+    if(sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy()) {
+      weaponSys.fire();
+    }
     yield();
     //check for map boundary conditions
     updateMapExtrema();

@@ -89,50 +89,58 @@ public class WeaponSystem {
    */
   public MapLocation fire() {
     MapLocation toFire = null;
-    if (mode!=WeaponMode.HOLD_FIRE) {
+    if (mode!=WeaponMode.HOLD_FIRE && (sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy())) {
       try {
         //gets enemy bots in sensor range
-        Robot[] targets = sensorSys.getBots(weapons[0].getRC().getTeam().opponent());
-        MapLocation[] locations = new MapLocation[targets.length];
+        Robot[] targets;
+        MapLocation[] locations;
 
-        //pulls their location
-        for (int i = 0; i<targets.length;i++) {
-          locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
-        }
+        if (sensorGameEvents.canSeeEnemy()) {
+
+          targets = sensorSys.getBots(weapons[0].getRC().getTeam().opponent());
+          locations = new MapLocation[targets.length];
+
+          //pulls their location
+          for (int i = 0; i<targets.length;i++) {
+            locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
+          }
 
 
-        //TODO: implement targetting logic (this is too simple)
-        for (int j=0; j<weapons.length; j++){
-          if (!weapons[j].isActive()) {
-            for (int i=0; i<targets.length; i++) {
-              if(weapons[j].withinRange(locations[i])) {
-                toFire = locations[i];
-                weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
-                break;
+          //TODO: implement targetting logic (this is too simple)
+          for (int j=0; j<weapons.length; j++){
+            if (!weapons[j].isActive()) {
+              for (int i=0; i<targets.length; i++) {
+                if(weapons[j].withinRange(locations[i])) {
+                  toFire = locations[i];
+                  weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
+                  break;
+                }
               }
             }
           }
         }
 
-        //Fire at neutrals
-        //gets enemy bots in sensor range
-        targets = sensorSys.getBots(Team.NEUTRAL);
-        locations = new MapLocation[targets.length];
+        if (sensorGameEvents.canSeeDebris()) {
+          //Fire at neutrals
+          //gets enemy bots in sensor range
+          targets = sensorSys.getBots(Team.NEUTRAL);
+          locations = new MapLocation[targets.length];
 
-        //pulls their location
-        for (int i = 0; i<targets.length;i++) {
-          locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
-        }
+          //pulls their location
+          for (int i = 0; i<targets.length;i++) {
+            locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
+          }
 
 
-        //TODO: implement targetting logic (this is too simple)
-        for (int j=0; j<weapons.length; j++){
-          if (!weapons[j].isActive()) {
-            for (int i=0; i<targets.length; i++) {
-              if(weapons[j].withinRange(locations[i])) {
-                toFire = locations[i];
-                weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
-                break;
+          //TODO: implement targetting logic (this is too simple)
+          for (int j=0; j<weapons.length; j++){
+            if (!weapons[j].isActive()) {
+              for (int i=0; i<targets.length; i++) {
+                if(weapons[j].withinRange(locations[i])) {
+                  toFire = locations[i];
+                  weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
+                  break;
+                }
               }
             }
           }
