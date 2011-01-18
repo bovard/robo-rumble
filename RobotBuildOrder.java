@@ -45,9 +45,10 @@ public class RobotBuildOrder {
 
   //BUILDINGS
   //TURRET DESIGNS: CONSTRUCTOR COMPONENTS / RECYCLER COMPONENTS / FACTORY COMPONENTS
-  //TURRET_1: BUILDING, / RADAR, SHIELD, SHIELD, SHIELD, SHIELD, SHIELD, SMG / RAILGUN, REGEN
-  //TURRET_2: BUILDING, / RADAR, SMG, SMG, SHIELD, / RAILGUN, REGEN, HARDENED
-  //TURRET_3: BUILDING, / RADAR, ANTENNA, SMG, SMG, SHIELD / MEDIC, MEDIC, HARDENED
+  //NOTE: Turret 1 is stand-alone, Turret 2&3 should be placed together
+  //TURRET_1: BUILDING, / RADAR, SHIELD, SMG, SMG / RAILGUN, REGEN, HARDENED
+  //TURRET_2: BUILDING, / RADAR, SMG, SHIELD, / RAILGUN, RAILGUN, HARDENED
+  //TURRET_3: BUILDING, / RADAR, / MEDIC, MEDIC, MEDIC, HARDENED
   //TURRET BASE
   public static final Object[] BUILDING = {Chassis.BUILDING};
   public static final int BUILDING_COST = Chassis.BUILDING.cost;
@@ -55,30 +56,30 @@ public class RobotBuildOrder {
 
   //TURRET RECYCLER PARTS
   //TURRET_1_RECYCLER_PART
-  public static final ComponentType[] TURRET_1_RECYCLER_PART = {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SMG};
-  public static final int TURRET_1_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SMG.cost;
+  public static final ComponentType[] TURRET_1_RECYCLER_PART = {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SMG};
+  public static final int TURRET_1_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.SHIELD.cost + ComponentType.SMG.cost + ComponentType.SMG.cost;
   public static final int TURRET_1_RECYCLER_PART_ID = 4011;
   //TURRET_2_RECYCLER_PART
-  public static final ComponentType[] TURRET_2_RECYCLER_PART = {ComponentType.RADAR, ComponentType.SMG, ComponentType.SMG, ComponentType.SHIELD};
-  public static final int TURRET_2_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.SMG.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost;
+  public static final ComponentType[] TURRET_2_RECYCLER_PART = {ComponentType.RADAR, ComponentType.SMG, ComponentType.SHIELD};
+  public static final int TURRET_2_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost;
   public static final int TURRET_2_RECYCLER_PART_ID = 4021;
   //TURRET_3_RECYCLER_PART
-  public static final ComponentType[] TURRET_3_RECYCLER_PART = {ComponentType.RADAR, ComponentType.ANTENNA, ComponentType.SMG, ComponentType.SMG, ComponentType.SHIELD};
-  public static final int TURRET_3_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.ANTENNA.cost + ComponentType.SMG.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost;
+  public static final ComponentType[] TURRET_3_RECYCLER_PART = {ComponentType.RADAR};
+  public static final int TURRET_3_RECYCLER_PART_COST = ComponentType.RADAR.cost;
   public static final int TURRET_3_RECYCLER_PART_ID = 4031;
 
   //TURRET FACTOR PARTS
   //TURRET_1_FACTORY_PART
-  public static final ComponentType[] TURRET_1_FACTORY_PART = {ComponentType.RAILGUN, ComponentType.REGEN};
-  public static final int TURRET_1_FACTORY_PART_COST = ComponentType.RAILGUN.cost + ComponentType.REGEN.cost;
+  public static final ComponentType[] TURRET_1_FACTORY_PART = {ComponentType.RAILGUN, ComponentType.REGEN, ComponentType.HARDENED};
+  public static final int TURRET_1_FACTORY_PART_COST = ComponentType.RAILGUN.cost + ComponentType.REGEN.cost + ComponentType.HARDENED.cost;
   public static final int TURRET_1_FACTORY_PART_ID = 4012;
   //TURRET_2_FACTORY_PART
-  public static final ComponentType[] TURRET_2_FACTORY_PART = {ComponentType.RAILGUN, ComponentType.REGEN, ComponentType.HARDENED};
-  public static final int TURRET_2_FACTORY_PART_COST = ComponentType.RAILGUN.cost + ComponentType.REGEN.cost + ComponentType.HARDENED.cost;
+  public static final ComponentType[] TURRET_2_FACTORY_PART = {ComponentType.RAILGUN, ComponentType.RAILGUN, ComponentType.HARDENED};
+  public static final int TURRET_2_FACTORY_PART_COST = ComponentType.RAILGUN.cost + ComponentType.RAILGUN.cost + ComponentType.HARDENED.cost;
   public static final int TURRET_2_FACTORY_PART_ID = 4022;
   //TURRET_3_FACTORY_PART
-  public static final ComponentType[] TURRET_3_FACTORY_PART = {ComponentType.MEDIC, ComponentType.MEDIC, ComponentType.HARDENED};
-  public static final int TURRET_3_FACTORY_PART_COST = ComponentType.MEDIC.cost + ComponentType.MEDIC.cost + ComponentType.HARDENED.cost;
+  public static final ComponentType[] TURRET_3_FACTORY_PART = {ComponentType.MEDIC, ComponentType.MEDIC, ComponentType.MEDIC, ComponentType.HARDENED};
+  public static final int TURRET_3_FACTORY_PART_COST = ComponentType.MEDIC.cost + ComponentType.MEDIC.cost + ComponentType.MEDIC.cost + ComponentType.HARDENED.cost;
   public static final int TURRET_3_FACTORY_PART_ID = 4032;
 
   //TURRET COSTS
