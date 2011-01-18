@@ -1,13 +1,21 @@
 package team122;
 import battlecode.common.*;
+import java.util.Random;
 
 /**
  * System used to send messages
+ * the int[] of messages are reserved as follows:
+ * 0: reserved for checksum
+ * 1: round sent
+ * 2: message type
+ * 3: TTL - a TTL greater than zero will be rebroadcast if able
+ * last: reserved for checksum
  * @author bovard
  */
 public class BroadcastSystem {
   protected RobotController robotControl;
   protected BroadcastController broadcastControl;
+  protected Random rand = new Random();
 
   public BroadcastSystem(RobotController robotControl, BroadcastController broadcastControl) {
     this.robotControl = robotControl;
@@ -22,16 +30,42 @@ public class BroadcastSystem {
    */
   private Message encrypt(Message toEncrypt) {
     //takes the structure and encrypts it
+    if(PlayerConstants.ENCRYPTION) {
+
+    }
     return toEncrypt;
   }
 
   /**
-   * //TODO: implement this, see CommunicationsSystem.checkMessage()
+   * adds a checksum to the first and last positions of the int array in any message
    * @param message the message to add checksums to
    * @return the checked message
    */
   private Message addCheckSums(Message message) {
     //takes a message and adds checks
+
+    //add a random assurance bit in position 0
+    switch(rand.nextInt(3)) {
+      case 0:
+        message.ints[0] = PlayerConstants.ASSURANCE_BIT_0;
+        break;
+      case 1:
+        message.ints[1] = PlayerConstants.ASSURANCE_BIT_1;
+        break;
+      case 2:
+        message.ints[1] = PlayerConstants.ASSURANCE_BIT_2;
+        break;
+    }
+
+    //calculate the positional sum
+    int sum = 0;
+    for (int i=0; i<message.ints.length-1; i++) {
+      sum += message.ints[i] * (i+1);
+      //note: adding a multiplication of the place of the number prevents swapping array elements
+    }
+
+    //set the last int place equal to the positional sum
+    message.ints[message.ints.length-1] = sum * PlayerConstants.ASSURANCE_FACTOR;
     return message;
   }
 
@@ -80,6 +114,23 @@ public class BroadcastSystem {
     //and that message is not encrypted
     //deincrement ttl, etc...
     return sendMessage(message);
+  }
+
+  /**
+   * sends a build directive, receiving units should build a structure specified by 
+   * buildOrderID at MapLocation location
+   * Note: zeroeth and last positions are reserved for the addCheckSums function, the first position
+   * is always the round number, the second is the message type, third is the time to live (TTL)
+   * @param buildOrderID teh BuildOrderID from RobotBuildOrder of the thing to make
+   * @param location the location to build
+   * @return if the message was sent successfully
+   */
+  public boolean sendBuildDirective(int buildOrderID, MapLocation location) {
+    Message toSend = new Message();
+    int[] intArray = {0, Clock.getRoundNum(), PlayerConstants.MESSAGE_BUILD_DIRECTIVE, 0, 
+                          buildOrderID, location.x, location.y, 0};
+    toSend.ints = intArray;
+    return sendMessage(encrypt(addCheckSums(toSend)));
   }
 
 }

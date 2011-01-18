@@ -11,6 +11,8 @@ package team122;
  */
 public final class PlayerConstants {
 
+  //SENSOR CONSTANTS
+  
   //ranges for sensors
   //orthogonal ranges
   public static final int SIGHT_ORTH_RANGE = 3;
@@ -32,10 +34,24 @@ public final class PlayerConstants {
   public static final int SATELLITE_TURNS = 1;
   public static final int BUILDING_SENSOR_TURNS = 1;
 
+  //COMMUNICATION CONSTANTS
+
+  //should we use encryption/decryption?
+  public static final boolean ENCRYPTION = false;
+
   //the types of messages, used to send a receive messenges
+  //Note: these have to be in array order as we're using a filter based on these in CommunicationsSystem
   public static final int MESSAGE_INFO = 0;
   public static final int MESSAGE_BUILD_DIRECTIVE = 1;
   public static final int MESSAGE_FIGHT_DIRECTIVE = 2;
-  
+
+
+  //communications check sum constants
+  public static final int ASSURANCE_BIT_0 = 387;
+  public static final int ASSURANCE_BIT_1 = 6372;
+  public static final int ASSURANCE_BIT_2 = 15;
+  public static final int ASSURANCE_FACTOR = 7;
+  public static final int MAX_MESSAGE_LIFE = 5;
+
 
 }

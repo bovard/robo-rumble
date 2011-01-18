@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class CommunicationsSystem {
   private RobotController robotControl;
-  private ArrayList<Message> oldMessages;
+  private ArrayList<Message> messages;
   private int[] filter;
 
   public CommunicationsSystem(RobotController robotControl) {
@@ -18,10 +18,44 @@ public class CommunicationsSystem {
   /**
    * tells the system what kind of messages to look for, as defined as message types in
    * PlayerConstants. only messages of that type should be stored
+   * Filters are binary int arrays (so either 1,0) a 1 in the position of PlayerConstants.MESSAGE_SUBTYPE
+   * indicates that it should be accepted, a 0 indicates it should be rejected.
    * @param filter an array of messages to listen for
    */
   public void setFilter(int[] filter) {
     this.filter = filter;
+  }
+
+  public boolean checkMail() {
+    boolean gotMail = false;
+    Message[] received = robotControl.getAllMessages();
+    Message toCheck;
+    for (int i=0; i<received.length; i++) {
+      toCheck = decrypt(received[i]);
+      if (checkMessage(toCheck)) {
+        switch (toCheck.ints[1]) {
+          case PlayerConstants.MESSAGE_INFO:
+            if(filter[PlayerConstants.MESSAGE_INFO]==1) {
+              messages.add(toCheck);
+              gotMail = true;
+            }
+            break;
+          case PlayerConstants.MESSAGE_FIGHT_DIRECTIVE:
+            if(filter[PlayerConstants.MESSAGE_FIGHT_DIRECTIVE]==1) {
+              messages.add(toCheck);
+              gotMail = true;
+            }
+            break;
+          case PlayerConstants.MESSAGE_BUILD_DIRECTIVE:
+            if(filter[PlayerConstants.MESSAGE_BUILD_DIRECTIVE]==1) {
+              messages.add(toCheck);
+              gotMail = true;
+            }
+            break;
+        }
+      }
+    }
+    return gotMail;
   }
 
   /**
@@ -47,6 +81,9 @@ public class CommunicationsSystem {
    * @return the decrypted message
    */
   private Message decrypt(Message message) {
+    if(PlayerConstants.ENCRYPTION) {
+      
+    }
     return message;
   }
 
@@ -56,7 +93,24 @@ public class CommunicationsSystem {
    * @return if the message is a valid message (aka hasn't been tampared with)
    */
   private boolean checkMessage(Message message) {
-    return true;
+    //check to make sure the message was sent last round and the TTL isn't too high
+    if (message.ints[1] == Clock.getRoundNum() - 1 &&
+            message.ints[3] <= PlayerConstants.MAX_MESSAGE_LIFE) {
+      //check to make sure the assurance bit isn't messed with
+      if(message.ints[0] == PlayerConstants.ASSURANCE_BIT_0
+              || message.ints[0] == PlayerConstants.ASSURANCE_BIT_1
+              || message.ints[0] == PlayerConstants.ASSURANCE_BIT_2) {
+        int sum = 0;
+        for (int i = 0; i< message.ints.length-1; i++) {
+          sum += message.ints[i]*(i+1);
+        }
+        //check to see if the positional sum is correct
+        if (sum*PlayerConstants.ASSURANCE_FACTOR == message.ints[message.ints.length-1]) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 
