@@ -44,9 +44,153 @@ public class RobotBuildOrder {
 
 
   //BUILDINGS
+  //TURRET DESIGNS: CONSTRUCTOR COMPONENTS / RECYCLER COMPONENTS / FACTORY COMPONENTS
+  //TURRET_1: BUILDING, / RADAR, SHIELD, SHIELD, SHIELD, SHIELD, SHIELD, SMG / RAILGUN, REGEN
+  //TURRET_2: BUILDING, / RADAR, SMG, SMG, SHIELD, / RAILGUN, REGEN, HARDENED
+  //TURRET_3: BUILDING, / RADAR, ANTENNA, SMG, SMG, SHIELD / MEDIC, MEDIC, HARDENED
+  //TURRET BASE
+  public static final Object[] BUILDING = {Chassis.BUILDING};
+  public static final int BUILDING_COST = Chassis.BUILDING.cost;
+  public static final int BUILDING_ID = 4000;
+
+  //TURRET RECYCLER PARTS
+  //TURRET_1_RECYCLER_PART
+  public static final ComponentType[] TURRET_1_RECYCLER_PART = {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SMG};
+  public static final int TURRET_1_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SMG.cost;
+  public static final int TURRET_1_RECYCLER_PART_ID = 4011;
+  //TURRET_2_RECYCLER_PART
+  public static final ComponentType[] TURRET_2_RECYCLER_PART = {ComponentType.RADAR, ComponentType.SMG, ComponentType.SMG, ComponentType.SHIELD};
+  public static final int TURRET_2_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.SMG.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost;
+  public static final int TURRET_2_RECYCLER_PART_ID = 4021;
+  //TURRET_3_RECYCLER_PART
+  public static final ComponentType[] TURRET_3_RECYCLER_PART = {ComponentType.RADAR, ComponentType.ANTENNA, ComponentType.SMG, ComponentType.SMG, ComponentType.SHIELD};
+  public static final int TURRET_3_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.ANTENNA.cost + ComponentType.SMG.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost;
+  public static final int TURRET_3_RECYCLER_PART_ID = 4031;
+
+  //TURRET FACTOR PARTS
+  //TURRET_1_FACTORY_PART
+  public static final ComponentType[] TURRET_1_FACTORY_PART = {ComponentType.RAILGUN, ComponentType.REGEN};
+  public static final int TURRET_1_FACTORY_PART_COST = ComponentType.RAILGUN.cost + ComponentType.REGEN.cost;
+  public static final int TURRET_1_FACTORY_PART_ID = 4012;
+  //TURRET_2_FACTORY_PART
+  public static final ComponentType[] TURRET_2_FACTORY_PART = {ComponentType.RAILGUN, ComponentType.REGEN, ComponentType.HARDENED};
+  public static final int TURRET_2_FACTORY_PART_COST = ComponentType.RAILGUN.cost + ComponentType.REGEN.cost + ComponentType.HARDENED.cost;
+  public static final int TURRET_2_FACTORY_PART_ID = 4022;
+  //TURRET_3_FACTORY_PART
+  public static final ComponentType[] TURRET_3_FACTORY_PART = {ComponentType.MEDIC, ComponentType.MEDIC, ComponentType.HARDENED};
+  public static final int TURRET_3_FACTORY_PART_COST = ComponentType.MEDIC.cost + ComponentType.MEDIC.cost + ComponentType.HARDENED.cost;
+  public static final int TURRET_3_FACTORY_PART_ID = 4032;
+
+  //TURRET COSTS
+  public static final int TURRET_1_COST = BUILDING_COST + TURRET_1_RECYCLER_PART_COST + TURRET_1_FACTORY_PART_COST;
+  public static final int TURRET_1_ID = 4010;
+  public static final int TURRET_2_COST = BUILDING_COST + TURRET_2_RECYCLER_PART_COST + TURRET_2_FACTORY_PART_COST;
+  public static final int TURRET_2_ID = 4020;
+  public static final int TURRET_3_COST = BUILDING_COST + TURRET_3_RECYCLER_PART_COST + TURRET_3_FACTORY_PART_COST;
+  public static final int TURRET_3_ID = 4030;
+
 
   //RECYCLER
   public static final Object[] RECYCLER = {Chassis.BUILDING, ComponentType.RECYCLER};
   public static final int RECYCLER_COST = Chassis.BUILDING.cost + ComponentType.RECYCLER.cost;
-  public static final int RECYCLER_ID = 4001;
+  public static final int RECYCLER_ID = 4101;
+
+  //FACTORY
+  public static final Object[] FACTORY = {Chassis.BUILDING, ComponentType.FACTORY};
+  public static final int FACTORY_COST = Chassis.BUILDING.cost + ComponentType.FACTORY.cost;
+  public static final int FACTORY_ID = 4102;
+
+  //ARMORY
+  public static final Object[] ARMORY = {Chassis.BUILDING, ComponentType.ARMORY};
+  public static final int ARMORY_COST = Chassis.BUILDING.cost + ComponentType.ARMORY.cost;
+  public static final int ARMORY_ID = 4103;
+
+
+  public static final int getCost(int buildOrderID) {
+    switch(buildOrderID) {
+      case FIGHTER_SCOUT_ID:
+        return FIGHTER_SCOUT_COST;
+      case FIGHTER_SCOUT_2_ID:
+        return FIGHTER_SCOUT_2_COST;
+      case FIGHTER_SCOUT_3_ID:
+        return FIGHTER_SCOUT_3_COST;
+      case FIGHTER_SCOUT_4_ID:
+        return FIGHTER_SCOUT_4_COST;
+      case FIGHTER_SCOUT_5_ID:
+        return FIGHTER_SCOUT_5_COST;
+      case BUILDER_SCOUT_ID:
+        return BUILDER_SCOUT_COST;
+      case BUILDER_SCOUT_2_ID:
+        return BUILDER_SCOUT_2_COST;
+      case BUILDING_ID:
+        return BUILDING_COST;
+      case TURRET_1_RECYCLER_PART_ID:
+        return TURRET_1_RECYCLER_PART_COST;
+      case TURRET_2_RECYCLER_PART_ID:
+        return TURRET_2_RECYCLER_PART_COST;
+      case TURRET_3_RECYCLER_PART_ID:
+        return TURRET_3_RECYCLER_PART_COST;
+      case TURRET_1_FACTORY_PART_ID:
+        return TURRET_1_FACTORY_PART_COST;
+      case TURRET_2_FACTORY_PART_ID:
+        return TURRET_2_FACTORY_PART_COST;
+      case TURRET_3_FACTORY_PART_ID:
+        return TURRET_3_FACTORY_PART_COST;
+      case TURRET_1_ID:
+        return TURRET_1_COST;
+      case TURRET_2_ID:
+        return TURRET_2_COST;
+      case TURRET_3_ID:
+        return TURRET_3_COST;
+      case RECYCLER_ID:
+        return RECYCLER_COST;
+      case FACTORY_ID:
+        return FACTORY_COST;
+      case ARMORY_ID:
+        return ARMORY_COST;
+    }
+    System.out.println("WARNING: Bad call to RobotBuildOrder.getCost");
+    return 0;
+  }
+
+  public static final Object[] getBuildOrder(int buildOrderID) {
+    switch(buildOrderID) {
+      case FIGHTER_SCOUT_ID:
+        return FIGHTER_SCOUT;
+      case FIGHTER_SCOUT_2_ID:
+        return FIGHTER_SCOUT_2;
+      case FIGHTER_SCOUT_3_ID:
+        return FIGHTER_SCOUT_3;
+      case FIGHTER_SCOUT_4_ID:
+        return FIGHTER_SCOUT_4;
+      case FIGHTER_SCOUT_5_ID:
+        return FIGHTER_SCOUT_5;
+      case BUILDER_SCOUT_ID:
+        return BUILDER_SCOUT;
+      case BUILDER_SCOUT_2_ID:
+        return BUILDER_SCOUT_2;
+      case BUILDING_ID:
+        return BUILDING;
+      case TURRET_1_RECYCLER_PART_ID:
+        return TURRET_1_RECYCLER_PART;
+      case TURRET_2_RECYCLER_PART_ID:
+        return TURRET_2_RECYCLER_PART;
+      case TURRET_3_RECYCLER_PART_ID:
+        return TURRET_3_RECYCLER_PART;
+      case TURRET_1_FACTORY_PART_ID:
+        return TURRET_1_FACTORY_PART;
+      case TURRET_2_FACTORY_PART_ID:
+        return TURRET_2_FACTORY_PART;
+      case TURRET_3_FACTORY_PART_ID:
+        return TURRET_3_FACTORY_PART;
+      case RECYCLER_ID:
+        return RECYCLER;
+      case FACTORY_ID:
+        return FACTORY;
+      case ARMORY_ID:
+        return ARMORY;
+    }
+    System.out.println("WARNING: Bad call to RobotBuildOrder.getBuildOrder");
+    return null;
+  }
 }

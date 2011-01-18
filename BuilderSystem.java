@@ -22,9 +22,10 @@ public class BuilderSystem {
    this.buildControl = buildControl;
   }
 
-    /**
+  /**
    * Takes a RobotBuildOrder and builds a robot to match the specification
    * @param buildOrder an array of Object, the first being the chasis the rest being components
+   * @param location the location to build the robot
    * @return if the build was successful
    */
   protected boolean seqBuild(Object[] buildOrder, MapLocation location) {
@@ -47,6 +48,43 @@ public class BuilderSystem {
         }
         //build component
         success = actBuildComponent((ComponentType)buildOrder[i],location,((Chassis)buildOrder[0]).level);
+        i++;
+      }
+      return success;
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+      return false;
+    }
+  }
+
+  /**
+   * Takes a RobotBuildOrder of components and builds them at the specificied location at the specified height
+   * @param buildOrder an array of Object, the first being the chasis the rest being components
+   * @param location the location to build the components
+   * @parm level the level to build the components
+   * @return if the build was successful
+   */
+  protected boolean seqBuildComponents(ComponentType[] buildOrder, MapLocation location, RobotLevel level) {
+
+
+    try {
+      //build the chassis
+      while(buildControl.isActive()) {
+        robotControl.yield();
+      }
+      boolean success = true;
+
+      //build the components, falling out if one fails
+      int i = 1;
+      while (i < buildOrder.length && success) {
+        //wait until there is enough resources
+        while(robotControl.getTeamResources() < (buildOrder[i]).cost &&
+                buildControl.isActive()) {
+          robotControl.yield();
+        }
+        //build component
+        success = actBuildComponent(buildOrder[i],location, level);
         i++;
       }
       return success;

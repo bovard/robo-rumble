@@ -15,6 +15,7 @@ public class JumpNavigationSystem extends NavigationSystem {
   public JumpNavigationSystem(MovementController moveControl, SensorSystem sensorSys, JumpController jumpControl) {
     super(moveControl);
     this.jumpControl = jumpControl;
+    this.sensorSys = sensorSys;
   }
 
 
