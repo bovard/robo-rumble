@@ -106,6 +106,11 @@ public class RobotBuildOrder {
   public static final int ARMORY_ID = 4103;
 
 
+  /**
+   * Given a RobotBuildOrder ID, it returns the cost
+   * @param buildOrderID the ID to lookeup
+   * @return the cost of building the item with that id
+   */
   public static final int getCost(int buildOrderID) {
     switch(buildOrderID) {
       case FIGHTER_SCOUT_ID:
@@ -153,6 +158,11 @@ public class RobotBuildOrder {
     return 0;
   }
 
+  /**
+   * given a buildOrder ID, it looks up the Object[] buildOrder
+   * @param buildOrderID the buildOrder to build
+   * @return the Object[] build order
+   */
   public static final Object[] getBuildOrder(int buildOrderID) {
     switch(buildOrderID) {
       case FIGHTER_SCOUT_ID:
@@ -192,5 +202,52 @@ public class RobotBuildOrder {
     }
     System.out.println("WARNING: Bad call to RobotBuildOrder.getBuildOrder");
     return null;
+  }
+
+  /**
+   * used for finding if a buildorder starts with a chasis or not (from there you can choose
+   * the appropriate method in BuilderSystem).
+   * @param buildOrderID the buildOrderID to lookup
+   * @return if it starts with a chasis
+   */
+  public static final boolean startsWithChasis(int buildOrderID) {
+    switch(buildOrderID) {
+      case FIGHTER_SCOUT_ID:
+        return true;
+      case FIGHTER_SCOUT_2_ID:
+        return true;
+      case FIGHTER_SCOUT_3_ID:
+        return true;
+      case FIGHTER_SCOUT_4_ID:
+        return true;
+      case FIGHTER_SCOUT_5_ID:
+        return true;
+      case BUILDER_SCOUT_ID:
+        return true;
+      case BUILDER_SCOUT_2_ID:
+        return true;
+      case BUILDING_ID:
+        return true;
+      case TURRET_1_RECYCLER_PART_ID:
+        return false;
+      case TURRET_2_RECYCLER_PART_ID:
+        return false;
+      case TURRET_3_RECYCLER_PART_ID:
+        return false;
+      case TURRET_1_FACTORY_PART_ID:
+        return false;
+      case TURRET_2_FACTORY_PART_ID:
+        return false;
+      case TURRET_3_FACTORY_PART_ID:
+        return false;
+      case RECYCLER_ID:
+        return true;
+      case FACTORY_ID:
+        return true;
+      case ARMORY_ID:
+        return true;
+    }
+    System.out.println("WARNING: Bad call to RobotBuildOrder.startsWithChasis");
+    return false;
   }
 }

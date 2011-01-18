@@ -76,7 +76,7 @@ public class BuilderSystem {
       boolean success = true;
 
       //build the components, falling out if one fails
-      int i = 1;
+      int i = 0;
       while (i < buildOrder.length && success) {
         //wait until there is enough resources
         while(robotControl.getTeamResources() < (buildOrder[i]).cost &&
