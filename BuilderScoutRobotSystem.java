@@ -119,7 +119,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
     if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())
             && robotControl.getLocation().isAdjacentTo(uncoveredMineLoc)) {
       //wait till we have enough money
-      while(robotControl.getTeamResources() < MINIMUM + RobotBuildOrder.RECYCLER_COST) {
+      while(robotControl.getTeamResources() < MINIMUM_ENERGON + RobotBuildOrder.RECYCLER_COST) {
         robotControl.setIndicatorString(1, "selBuildRecycler -waiting for funds");
         yield();
       }

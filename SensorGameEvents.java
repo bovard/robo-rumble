@@ -20,8 +20,8 @@ public class SensorGameEvents extends GameEvents {
    * @param robotControl the robotcontroller
    * @param sensorControl the sensorcontroller
    */
-  public SensorGameEvents(RobotController robotControl, SensorSystem sensorSys) {
-    super(robotControl);
+  public SensorGameEvents(RobotController robotControl, CommunicationsSystem comSys, SensorSystem sensorSys) {
+    super(robotControl, comSys);
     this.sensorSys = sensorSys;
   }
 

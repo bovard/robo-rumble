@@ -5,7 +5,7 @@
  * ->BuildingRobotSystem
  * --->RecyclerRobotSystem
  * ->MobileRobotSystem
- * --->ScoutRobotSystem
+ * --->SensorRobotSystem
  * ----->BuilderScoutRobotSystem
  * ----->FighterScoutRobotSystem
  */
@@ -25,7 +25,7 @@ public class RobotSystem {
   protected GameEvents gameEvents;
   protected CommunicationsSystem comSys;
 
-  protected final int MINIMUM = 5;
+  protected final int MINIMUM_ENERGON = 5;
 
 
   /**
@@ -38,8 +38,9 @@ public class RobotSystem {
     //as of 1.07 the movementcontroller is always the first item in the components list
     moveControl = (MovementController)robotControl.components()[0];
     birthPlace = robotControl.getLocation();
-    gameEvents = new GameEvents(robotControl);
     comSys = new CommunicationsSystem(robotControl);
+    gameEvents = new GameEvents(robotControl, comSys);
+    
 
   }
 

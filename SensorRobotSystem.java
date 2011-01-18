@@ -38,7 +38,7 @@ public class SensorRobotSystem extends MobileRobotSystem {
     sensorSys = new SensorSystem(sensorControl, robotControl.getTeam());
 
 
-    sensorGameEvents = new SensorGameEvents(robotControl, sensorSys);
+    sensorGameEvents = new SensorGameEvents(robotControl, comSys, sensorSys);
 
     
 

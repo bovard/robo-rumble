@@ -26,8 +26,6 @@ public class RobotPlayer implements Runnable {
    * Called after the constructor, if we return from this method the robot explodes
    */
   public void run() {
-    System.out.println(java.util.Arrays.toString(myRC.components()));
-    System.out.flush();
     staging();
   }
 

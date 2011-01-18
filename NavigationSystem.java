@@ -119,7 +119,7 @@ public class NavigationSystem {
    * for a few hundred turns however
    * Note: not implemented
    */
-  private void a_star() {
+  protected void a_star() {
     //TODO: Implement this
     //prevents a loop
     has_dest = false;
@@ -132,7 +132,7 @@ public class NavigationSystem {
    * TODO: be smarter about what direction to choose to trace
    * Note: currently the bug will fall off of convex curves but will hug concave
    */
-  private void bug() {
+  protected void bug() {
     try {
       Direction currentDirection = moveControl.getRC().getDirection();
       if (moveControl.getRC().getLocation().equals(dest)) {
@@ -223,7 +223,7 @@ public class NavigationSystem {
    * The robot tries to flock with other robots around it, mimicing their movement
    * Note: not implemented
    */
-  private void flock() {
+  protected void flock() {
     //TODO: Implement this
     //prevents a loop
     has_dest = false;

@@ -8,8 +8,10 @@ import java.util.ArrayList;
  */
 public class CommunicationsSystem {
   private RobotController robotControl;
-  private ArrayList<Message> messages;
+  private ArrayList<Message> messages = new ArrayList<Message>();
+  private ArrayList<Message> directives = new ArrayList<Message>();
   private int[] filter;
+  private int lastMailCheck = -1;
 
   public CommunicationsSystem(RobotController robotControl) {
     this.robotControl = robotControl;
@@ -27,35 +29,39 @@ public class CommunicationsSystem {
   }
 
   public boolean checkMail() {
-    boolean gotMail = false;
-    Message[] received = robotControl.getAllMessages();
-    Message toCheck;
-    for (int i=0; i<received.length; i++) {
-      toCheck = decrypt(received[i]);
-      if (checkMessage(toCheck)) {
-        switch (toCheck.ints[1]) {
-          case PlayerConstants.MESSAGE_INFO:
-            if(filter[PlayerConstants.MESSAGE_INFO]==1) {
-              messages.add(toCheck);
-              gotMail = true;
-            }
-            break;
-          case PlayerConstants.MESSAGE_FIGHT_DIRECTIVE:
-            if(filter[PlayerConstants.MESSAGE_FIGHT_DIRECTIVE]==1) {
-              messages.add(toCheck);
-              gotMail = true;
-            }
-            break;
-          case PlayerConstants.MESSAGE_BUILD_DIRECTIVE:
-            if(filter[PlayerConstants.MESSAGE_BUILD_DIRECTIVE]==1) {
-              messages.add(toCheck);
-              gotMail = true;
-            }
-            break;
+    //if we haven't already checked our mail (messages) this turn, check them
+    if (lastMailCheck < Clock.getRoundNum()) {
+      lastMailCheck = Clock.getRoundNum();
+      Message[] received = robotControl.getAllMessages();
+      Message toCheck;
+      for (int i=0; i<received.length; i++) {
+        //grab a message and decrypt it
+        toCheck = decrypt(received[i]);
+        //if the message checks out
+        if (checkMessage(toCheck)) {
+          //see what type of message it is and act accordingly
+          switch (toCheck.ints[1]) {
+            case PlayerConstants.MESSAGE_INFO:
+              if(filter[PlayerConstants.MESSAGE_INFO]==1) {
+                messages.add(toCheck);
+              }
+              break;
+            case PlayerConstants.MESSAGE_FIGHT_DIRECTIVE:
+              if(filter[PlayerConstants.MESSAGE_FIGHT_DIRECTIVE]==1) {
+                directives.add(toCheck);
+              }
+              break;
+            case PlayerConstants.MESSAGE_BUILD_DIRECTIVE:
+              if(filter[PlayerConstants.MESSAGE_BUILD_DIRECTIVE]==1) {
+                directives.add(toCheck);
+              }
+              break;
+          }
         }
       }
     }
-    return gotMail;
+    //then return if we have mail
+    return !messages.isEmpty() || !directives.isEmpty();
   }
 
   /**
@@ -63,7 +69,7 @@ public class CommunicationsSystem {
    * @return
    */
   public boolean hasDirective() {
-    return false;
+    return !directives.isEmpty();
   }
 
   /**

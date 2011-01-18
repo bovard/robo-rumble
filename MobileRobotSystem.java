@@ -65,7 +65,7 @@ public class MobileRobotSystem extends RobotSystem {
   protected boolean actMoveForward() {
     if(moveControl.canMove(robotControl.getDirection()) && !moveControl.isActive()) {
       try {
-        System.out.println("Moving out!");
+        //System.out.println("Moving out!");
         moveControl.moveForward();
         yield();
         return true;
