@@ -27,7 +27,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       buildControl = (BuilderController)robotControl.components()[1];
     else
       buildControl = (BuilderController)robotControl.components()[2];
-    buildSys = new BuilderSystem(robotControl, buildControl, moveControl);
+    buildSys = new BuilderSystem(robotControl, buildControl);
 
   }
 

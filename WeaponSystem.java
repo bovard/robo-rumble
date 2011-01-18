@@ -120,7 +120,8 @@ public class WeaponSystem {
           }
         }
 
-        if (sensorGameEvents.canSeeDebris()) {
+        //if you can't see the enemy, but can see debris
+        else if (sensorGameEvents.canSeeDebris()) {
           //Fire at neutrals
           //gets enemy bots in sensor range
           targets = sensorSys.getBots(Team.NEUTRAL);

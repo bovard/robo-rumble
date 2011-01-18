@@ -157,52 +157,50 @@ public class SensorSystem {
    */
   public int getRange(Direction dir) {
     //if facing orthogonally
-    //TODO: put these in a Constants file somewhere, hardcoding == terrible
     if (dir == Direction.EAST || dir == Direction.NORTH || dir == Direction.WEST ||
             dir == Direction.SOUTH) {
       if (sensor.type() == ComponentType.SIGHT)
-        return 3;
+        return PlayerConstants.SIGHT_ORTH_RANGE;
       else if (sensor.type() == ComponentType.RADAR)
-        return 6;
+        return PlayerConstants.RADAR_ORTH_RANGE;
       else if (sensor.type() == ComponentType.TELESCOPE)
-        return 12;
+        return PlayerConstants.TELESCOPE_ORTH_RANGE;
       else if (sensor.type() == ComponentType.SATELLITE)
-        return 10;
+        return PlayerConstants.SATELLITE_ORTH_RANGE;
       else if (sensor.type() == ComponentType.BUILDING_SENSOR)
-        return 1;
+        return PlayerConstants.BUILDING_SENSOR_ORTH_RANGE;
     }
     //facing diagonally
     else {
       if (sensor.type() == ComponentType.SIGHT)
-        return 2;
+        return PlayerConstants.SIGHT_DIAG_RANGE;
       else if (sensor.type() == ComponentType.RADAR)
-        return 4;
+        return PlayerConstants.RADAR_DIAG_RANGE;
       else if (sensor.type() == ComponentType.TELESCOPE)
-        return 8;
+        return PlayerConstants.TELESCOPE_DIAG_RANGE;
       else if (sensor.type() == ComponentType.SATELLITE)
-        return 7;
+        return PlayerConstants.SATELLITE_DIAG_RANGE;
       else if (sensor.type() == ComponentType.BUILDING_SENSOR)
-        return 1;
+        return PlayerConstants.BUILDING_SENSOR_DIAG_RANGE;
     }
     return 0;
   }
 
   /**
    * returns the amount of turning a robot would need to do to look at the world around it
-   * //TODO: put these values in a constant file somewhere
    * @return the number of portions of the screen the robot needs to look at to see it all
    */
   public int getBreadth() {
     if (sensor.type() == ComponentType.SIGHT)
-      return 4;
+      return PlayerConstants.SIGHT_TURNS;
     else if (sensor.type() == ComponentType.RADAR)
-      return 2;
+      return PlayerConstants.RADAR_TURNS;
     else if (sensor.type() == ComponentType.TELESCOPE)
-      return 8;
+      return PlayerConstants.TELESCOPE_TURNS;
     else if (sensor.type() == ComponentType.SATELLITE)
-      return 1;
+      return PlayerConstants.SATELLITE_TURNS;
     else if (sensor.type() == ComponentType.BUILDING_SENSOR)
-      return 1;
+      return PlayerConstants.BUILDING_SENSOR_TURNS;
     else
       System.out.println("Error: called getBreadth() without a sensor");
     return 0;

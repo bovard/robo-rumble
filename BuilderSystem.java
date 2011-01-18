@@ -4,24 +4,22 @@ import battlecode.common.*;
 /**
  * Implements functions for any construction device (buildercontroller). Allows anything in
  * RobotBuildOrder to be built
+ * //Note: can only be used with v1.08 installed or later
  * @author bovard
  */
 public class BuilderSystem {
 
   private RobotController robotControl;
   private BuilderController buildControl;
-  private MovementController moveControl;
 
   /**
    * Constructor for the BuildSystem
    * @param robotControl the RobotController
    * @param buildControl the BuilderController
-   * @param moveControl the MovementController (used to see if you can build in a space)
    */
-  public BuilderSystem(RobotController robotControl, BuilderController buildControl, MovementController moveControl) {
+  public BuilderSystem(RobotController robotControl, BuilderController buildControl) {
    this.robotControl = robotControl;
    this.buildControl = buildControl;
-   this.moveControl = moveControl;
   }
 
     /**
@@ -66,7 +64,8 @@ public class BuilderSystem {
    * @return if the build was successful
    */
   protected boolean actBuildChasis(Chassis toBuild, MapLocation location) {
-    if (robotControl.getTeamResources() >= toBuild.cost && moveControl.canMove(robotControl.getLocation().directionTo(location))) {
+    if (robotControl.getTeamResources() >= toBuild.cost 
+            && buildControl.canBuild(robotControl.getLocation().directionTo(location), toBuild.level)) {
      try {
        buildControl.build(toBuild, location);
        robotControl.yield();

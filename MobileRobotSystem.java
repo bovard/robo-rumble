@@ -59,9 +59,43 @@ public class MobileRobotSystem extends RobotSystem {
       return false;
     boolean done = navSys.nextMove();
     yield();
-    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
     return done;
   }
 
+  protected boolean actMoveForward() {
+    if(moveControl.canMove(robotControl.getDirection()) && !moveControl.isActive()) {
+      try {
+        System.out.println("Moving out!");
+        moveControl.moveForward();
+        yield();
+        return true;
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * checks to see if the robot can move backwards and move backwards if it can
+   * @return if the move was performed successfully
+   */
+  protected boolean actMoveBackward() {
+    if(moveControl.canMove(robotControl.getDirection().opposite())
+            && !moveControl.isActive()) {
+      try {
+        moveControl.moveBackward();
+        yield();
+        return true;
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+        return false;
+      }
+    }
+    return false;
+  }
 
 }

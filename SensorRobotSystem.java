@@ -16,6 +16,9 @@ public class SensorRobotSystem extends MobileRobotSystem {
   protected Random rand = new Random();
   protected SensorGameEvents sensorGameEvents;
 
+  //new destination constants, used in chooseNewDestination()
+  protected static final int NEW_DEST_RANGE = 20;
+
   /**
    * Creates a new SensorRobotSystem, requires that the robot have a movementcontroller
    * and a sensor of some sort
@@ -74,17 +77,21 @@ public class SensorRobotSystem extends MobileRobotSystem {
   
   /**
    * Chooses the next destination to go to based on birthplace and previous destinations
-   * currently chooses a random location within 30 squares horizontally and vertically
-   * of the robots birthplace
+   * currently chooses a random location within NEXT_DEST_RANGE squares horizontally and vertically
+   * of the robots last destination
    */
   protected MapLocation chooseNextDestination() {
+    if (navSys.getDestination()==null) {
+      navSys.setDestination(birthPlace);
+    }
     MapLocation next;
     int x, y;
     do {
-      next = birthPlace;
-      //TODO: make these not hard-coded values
-      x = ((rand.nextInt(141) * Clock.getRoundNum()) % 140)-70;
-      y = ((rand.nextInt(141) * Clock.getRoundNum()) % 140)-70;
+      next = navSys.getDestination();
+      x = ((rand.nextInt(2*NEW_DEST_RANGE+1) * Clock.getRoundNum()) % (2*NEW_DEST_RANGE))
+              - NEW_DEST_RANGE;
+      y = ((rand.nextInt(2*NEW_DEST_RANGE+1) * Clock.getRoundNum()) % (2*NEW_DEST_RANGE))
+              - NEW_DEST_RANGE;
       next = next.add(x, y);
     } while (next.x < minX || next.x > maxX || next.y < minY || next.y > maxY);
     return next;
