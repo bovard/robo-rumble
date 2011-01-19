@@ -57,11 +57,9 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
       robotControl.setIndicatorString(1, "Not Producing, turning off!");
       robotControl.turnOff();
     }
-    while(true) {
-      if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.BUILDER_SCOUT_COST*3)
+    while(shouldBuild) {
+      if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.RECYCLER_COST + PlayerConstants.MINIMUM_FLUX)
         selBuildScouts();
-      for (int i=0; i<5; i++)
-        yield();
     }
   }
 
@@ -75,15 +73,15 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     robotControl.setIndicatorString(2, "selBuildScouts");
     double decider = rand.nextDouble();
     // the higher the decider the greater chance of producing Builders
-    if (Clock.getRoundNum() < 300) {
-      decider += .3;
+    if (Clock.getRoundNum() < 700) {
+      decider += .4;
     }
-    else if (Clock.getRoundNum() > 3000){
-      decider -= .3;
+    else if (Clock.getRoundNum() > 1500){
+      decider -= .4;
     }
     if(decider >= .5) {
       //wait until we have enough resources
-      while(robotControl.getTeamResources() < MINIMUM_ENERGON + RobotBuildOrder.BUILDER_SCOUT_COST ) {
+      while(robotControl.getTeamResources() < MINIMUM_ENERGON + RobotBuildOrder.BUILDER_SCOUT_COST + RobotBuildOrder.RECYCLER_COST) {
         yield();
       }
       //build

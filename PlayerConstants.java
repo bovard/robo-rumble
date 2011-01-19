@@ -10,6 +10,9 @@ package team122;
  * @author bovard
  */
 public final class PlayerConstants {
+  //ECONOMEY CONSTANTS
+  public static final int MINIMUM_FLUX = 3;
+
 
   //SENSOR CONSTANTS
   
