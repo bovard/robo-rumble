@@ -52,7 +52,7 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
   protected boolean seqEngageEnemy() {
     robotControl.setIndicatorString(1, "seqEngageEnemy");
     //if we can see the enemy or we can rotate to see them
-    if(sensorGameEvents.canSeeEnemy() || seqRotateToEnemy()) {
+    if(sensorGameEvents.canSeeEnemy()) {
       //while we can see the enemy, fire at them or move toward them
       try {
         while(sensorGameEvents.canSeeEnemy()) {
@@ -60,13 +60,6 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
           if(toFire != null) {
             robotControl.setIndicatorString(1, "seqEngageEnemy - turnAndFire!");
             actTurn(robotControl.getLocation().directionTo(toFire));
-          }
-          else {
-            if (weaponSys.allActive())
-            {
-              robotControl.setIndicatorString(1, "seqEngageEnemy - wait");
-              yield();
-            }
           }
         }
       } catch (Exception e) {
@@ -76,8 +69,7 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
       }
     }
     else {
-      weaponSys.fire();
-      yield();
+      seqRotate();
     }
     return false;
   }
@@ -114,37 +106,25 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
    * Turns the robot and continues to look for the enemy
    * @return if an enemy is seens
    */
-  protected boolean seqRotateToEnemy() {
-    robotControl.setIndicatorString(1, "seqRotateToEnemy");
+  protected boolean seqRotate() {
+    robotControl.setIndicatorString(1, "seqRotate");
     switch(sensorSys.getBreadth()) {
       case PlayerConstants.TELESCOPE_TURNS:
-        for (int i=0; i<PlayerConstants.TELESCOPE_TURNS; i++) {
-          if(!sensorGameEvents.seeEnemy) {
-            weaponSys.fire();
-            actTurn(robotControl.getDirection().rotateRight());
-          }
-        }
+        weaponSys.fire();
+        actTurn(robotControl.getDirection().rotateRight());
         break;
       case PlayerConstants.SIGHT_TURNS:
-        for (int i=0; i<PlayerConstants.SIGHT_TURNS; i++) {
-          if(!sensorGameEvents.seeEnemy) {
-            weaponSys.fire();
-            actTurn(robotControl.getDirection().rotateRight().rotateRight());
-          }
-        }
+        weaponSys.fire();
+        actTurn(robotControl.getDirection().rotateRight().rotateRight());
         break;
       case PlayerConstants.RADAR_TURNS:
-        for (int i=0; i<PlayerConstants.RADAR_TURNS; i++) {
-          if(!sensorGameEvents.seeEnemy) {
-            weaponSys.fire();
-            actTurn(robotControl.getDirection().opposite());
-          }
-        }
+        weaponSys.fire();
+        actTurn(robotControl.getDirection().opposite());
         break;
       case PlayerConstants.SATELLITE_TURNS:
         //in this case the sensor can see in all directions so the bot doesn't need to rotate
         break;
     }
-    return sensorGameEvents.seeEnemy;
+    return true;
   }
 }

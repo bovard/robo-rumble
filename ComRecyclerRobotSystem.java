@@ -66,24 +66,28 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
             yield();
           }
         } while(guardTower == null);
-
-        //something is there, wait for up to 15 turns, see that it doesn't leave
+        
+        //something is there, wait for up to 10 turns, see that it doesn't leave
         int i = 0;
-        while( i < 10 && moveControl.canMove(robotControl.getDirection())) {
+        while( i < 10 && !moveControl.canMove(robotControl.getDirection())) {
           i++;
           yield();
         }
         //if we've gone through 15 turns... it check to see if it's the same thing
-        if (i==15) {
+        if (i==10) {
           //check to see if the same thing is still there
-          if (sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND) == guardTower) {
+          int id = sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND).getID();
+          System.out.println("id = "+id+ " and towerID = "+guardTower.getID());
+          if (id == guardTower.getID()) {
             //if it is, chances are it's the building base we've been looking for
+            System.out.println("it's true!!!");
             done = true;
           }
         }
 
       }
 
+      System.out.println("Here3");
       guardTower = sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
 
       while(robotControl.getTeamResources() < RobotBuildOrder.TURRET_4_RECYCLER_PART_COST) {

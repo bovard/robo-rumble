@@ -15,6 +15,7 @@ public class CommunicationsSystem {
 
   public CommunicationsSystem(RobotController robotControl) {
     this.robotControl = robotControl;
+    this.filter = new int[] {0,0,0};
   }
 
   /**
@@ -40,7 +41,7 @@ public class CommunicationsSystem {
         //if the message checks out
         if (checkMessage(toCheck)) {
           //see what type of message it is and act accordingly
-          switch (toCheck.ints[1]) {
+          switch (toCheck.ints[2]) {
             case PlayerConstants.MESSAGE_INFO:
               if(filter[PlayerConstants.MESSAGE_INFO]==1) {
                 messages.add(toCheck);
@@ -78,7 +79,7 @@ public class CommunicationsSystem {
    * @return
    */
   public Message getLastDirective(int directiveType) {
-    return null;
+    return directives.remove(directives.size()-1);
   }
 
   /**

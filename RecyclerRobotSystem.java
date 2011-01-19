@@ -91,11 +91,12 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
       decider += .4;
     }
     else if (Clock.getRoundNum() > 1500){
-      decider -= .4;
+      decider -= .3;
     }
     if(decider >= .5) {
       //wait until we have enough resources
-      while(robotControl.getTeamResources() < MINIMUM_ENERGON + RobotBuildOrder.BUILDER_SCOUT_COST + RobotBuildOrder.RECYCLER_COST) {
+      while(robotControl.getTeamResources() < MINIMUM_ENERGON + RobotBuildOrder.BUILDER_SCOUT_COST 
+              + RobotBuildOrder.RECYCLER_COST + (Clock.getRoundNum()-150)/10 ) {
         yield();
       }
       //build

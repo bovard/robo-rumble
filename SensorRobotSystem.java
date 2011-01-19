@@ -138,13 +138,12 @@ public class SensorRobotSystem extends MobileRobotSystem {
       //TODO: add code here check to see if enemies are seen or under attack
       actMove();
     }
-
     robotControl.setIndicatorString(1, "seqApproachLocation - canSee");
     boolean done = false;
     while(safe && !done) {
       for (int x = -1; x < 2; x++) {
         for (int y = -1; y < 2; y++) {
-          if(sensorControl.canSenseSquare(location.add(x,y))) {
+          if( (x!=0 || y!=0 ) && sensorControl.canSenseSquare(location.add(x,y))) {
             try {
               if(sensorControl.senseObjectAtLocation(location.add(x,y), level)==null) {
                 navSys.setDestination(location.add(x,y));

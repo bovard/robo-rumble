@@ -103,7 +103,9 @@ public class WeaponSystem {
           //pulls their location
           for (int i = 0; i<targets.length;i++) {
             locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
+            toFire = locations[i];
           }
+
 
 
           //TODO: implement targetting logic (this is too simple)
@@ -111,7 +113,6 @@ public class WeaponSystem {
             if (!weapons[j].isActive()) {
               for (int i=0; i<targets.length; i++) {
                 if(weapons[j].withinRange(locations[i])) {
-                  toFire = locations[i];
                   weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
                   break;
                 }
@@ -130,6 +131,7 @@ public class WeaponSystem {
           //pulls their location
           for (int i = 0; i<targets.length;i++) {
             locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
+            toFire = locations[i];
           }
 
 
@@ -138,7 +140,6 @@ public class WeaponSystem {
             if (!weapons[j].isActive()) {
               for (int i=0; i<targets.length; i++) {
                 if(weapons[j].withinRange(locations[i])) {
-                  toFire = locations[i];
                   weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
                   break;
                 }

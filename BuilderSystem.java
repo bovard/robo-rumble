@@ -29,7 +29,7 @@ public class BuilderSystem {
    * @return if the build was successful
    */
   protected boolean seqBuild(Object[] buildOrder, MapLocation location) {
-
+    robotControl.setIndicatorString(1, "selBuild");
 
     try {
       //build the chassis
@@ -42,8 +42,8 @@ public class BuilderSystem {
       int i = 1;
       while (i < buildOrder.length && success) {
         //wait until there is enough resources
-        while(robotControl.getTeamResources() < ((ComponentType)buildOrder[i]).cost &&
-                buildControl.isActive()) {
+        while(robotControl.getTeamResources() < ((ComponentType)buildOrder[i]).cost + PlayerConstants.MINIMUM_FLUX
+                && buildControl.isActive()) {
           robotControl.yield();
         }
         //build component
@@ -66,7 +66,7 @@ public class BuilderSystem {
    * @return if the build was successful
    */
   protected boolean seqBuildComponents(ComponentType[] buildOrder, MapLocation location, RobotLevel level) {
-
+    robotControl.setIndicatorString(1, "selBuildComponents");
 
     try {
       //build the chassis
@@ -79,7 +79,8 @@ public class BuilderSystem {
       int i = 0;
       while (i < buildOrder.length && success) {
         //wait until there is enough resources
-        while(robotControl.getTeamResources() < (buildOrder[i]).cost && buildControl.isActive()) {
+        while(robotControl.getTeamResources() < (buildOrder[i]).cost + PlayerConstants.MINIMUM_FLUX
+                && buildControl.isActive()) {
           robotControl.yield();
         }
         //build component
@@ -101,7 +102,7 @@ public class BuilderSystem {
    * @return if the build was successful
    */
   protected boolean actBuildChasis(Chassis toBuild, MapLocation location) {
-    if (robotControl.getTeamResources() >= toBuild.cost 
+    if (robotControl.getTeamResources() >= toBuild.cost + PlayerConstants.MINIMUM_FLUX
             && buildControl.canBuild(robotControl.getLocation().directionTo(location), toBuild.level)) {
      try {
        buildControl.build(toBuild, location);

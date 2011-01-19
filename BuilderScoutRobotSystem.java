@@ -11,6 +11,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
   protected BuilderController buildControl;
   protected BuilderSystem buildSys;
   protected MapLocation uncoveredMineLoc;
+  protected Message buildDirective;
 
   /**
    * Constructor for the BuilderScout, assumes a Constructor component on the bot
@@ -28,6 +29,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
     else
       buildControl = (BuilderController)robotControl.components()[2];
     buildSys = new BuilderSystem(robotControl, buildControl);
+    comSys.setFilter(new int[] {1, 1, 0});
 
   }
 
@@ -36,7 +38,8 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
    */
   @Override
   public void go() {
-    //ensures that we'll point at our mines before waking up our first bot
+    
+    // hack that ensures that we'll point at our mines before waking up our first bot
     // (so we can find the other two mines right off the bat)
     if (Clock.getRoundNum() < 20)
     {
@@ -62,6 +65,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       }
     }
 
+    //main loop
     robotControl.setIndicatorString(0,"BuilderScout");
     while(true) {
       selScout();
@@ -74,8 +78,33 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
    */
   protected boolean selScout() {
     robotControl.setIndicatorString(1, "selScout");
-    if(seqScoutBuild())
+    if(sensorGameEvents.hasDirective) {
+      seqBuildDirective();
+    }
+    else if(seqScoutBuild()) {
       return true;
+    }
+    return false;
+  }
+
+  /**
+   * sets the robot off to fufill it's directive
+   * @return if it was completed successfully
+   */
+  protected boolean seqBuildDirective() {
+    robotControl.setIndicatorString(1, "seqBuildDirective");
+    buildDirective = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
+    MapLocation location = new MapLocation(buildDirective.ints[5],buildDirective.ints[6]);
+    if(super.seqApproachLocation(location, RobotLevel.ON_GROUND)) {
+      if(robotControl.getLocation() == location) {
+        actMoveBackward();
+      }
+      while(robotControl.getTeamResources() < RobotBuildOrder.getCost(buildDirective.ints[4]) 
+              + PlayerConstants.MINIMUM_FLUX + RobotBuildOrder.RECYCLER_COST) {
+        yield();
+      }
+      return buildSys.seqBuild(RobotBuildOrder.getBuildOrder(buildDirective.ints[4]), location);
+    }
     return false;
   }
 
@@ -113,6 +142,9 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
     //while we haven't found an uncovered mine and we aren't at our destination
     while(!done && !actMove()) {
       done = seqSenseMine();
+      if(sensorGameEvents.checkCriticalGameEvents()) {
+        return false;
+      }
     }
     return done;
   }
@@ -229,7 +261,8 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
     robotControl.setIndicatorString(1, "seqApproachLocation - canSee");
     boolean done = false;
     int loops = 0;
-    while(keepGoing && !done && loops<15) {
+    int maxLoops = 25;
+    while(keepGoing && !done && loops<maxLoops) {
       for (int x = -1; x < 2; x++) {
         if (done) {
           break;
@@ -258,7 +291,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       }
       loops++;
     }
-    if (loops >= 15)
+    if (loops >= maxLoops)
     {
       return false;
     }
@@ -286,19 +319,23 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       //stop if you find a new mine
       keepGoing = !seqSenseMine();
       //stop if you see the mine is now covered
-      if(sensorControl.canSenseSquare(uncoveredMineLoc)) {
-        try {
-          keepGoing = keepGoing && (sensorControl.senseObjectAtLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())==null);
-        } catch (Exception e) {
-          System.out.println("caught exception:");
-          e.printStackTrace();
+      if(uncoveredMineLoc !=null ) {
+        if(sensorControl.canSenseSquare(uncoveredMineLoc)) {
+          try {
+            keepGoing = keepGoing && (sensorControl.senseObjectAtLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())==null);
+          } catch (Exception e) {
+            System.out.println("caught exception:");
+            e.printStackTrace();
+          }
+
         }
-        
       }
       //you're done if you are next to the mine
-      if (robotControl.getLocation().isAdjacentTo(uncoveredMineLoc)) {
-        done = true;
-        yield();
+      if(uncoveredMineLoc != null) {
+        if (robotControl.getLocation().isAdjacentTo(uncoveredMineLoc)) {
+          done = true;
+          yield();
+        }
       }
     }
     return done && keepGoing;
