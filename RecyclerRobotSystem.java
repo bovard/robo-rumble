@@ -15,6 +15,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   protected BuilderSystem buildSys;
   private Random rand;
   protected boolean shouldBuild = false;
+  protected boolean stayActive = false;
 
 
   /**
@@ -29,13 +30,18 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     buildSys = new BuilderSystem(robotControl, buildControl);
     rand = new Random();
 
-    //check to see if this Recycler is the most NorthWestern at the start of the game
+    //check to see if this Recycler is the most NorthWestern in a group of four mines it should produce
     //if it is set shouldBuild to true so it knows it should start building troops
     try {
-      if(Clock.getRoundNum() < 10
-              && ( sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) == null
-              || sensorControl.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null)) {
+      if(sensorControl.senseObjectAtLocation(birthPlace.add(Direction.SOUTH), RobotLevel.MINE) != null
+              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.SOUTH_EAST), RobotLevel.MINE) != null
+              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.EAST), RobotLevel.MINE) != null) {
         shouldBuild=true;
+      }
+      //otherwise if the mine is the most northwestern it should stay active
+      else if (sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) == null
+              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null) {
+        stayActive = true;
       }
     }catch (Exception e) {
       System.out.println("caught exception:");

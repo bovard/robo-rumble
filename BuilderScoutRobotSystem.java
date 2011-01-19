@@ -38,17 +38,31 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
   public void go() {
     //ensures that we'll point at our mines before waking up our first bot
     // (so we can find the other two mines right off the bat)
-    if (Clock.getRoundNum() < 10)
+    if (Clock.getRoundNum() < 20)
     {
-      Direction toTurn = robotControl.getDirection();
-      while(moveControl.canMove(toTurn)) {
-        toTurn = toTurn.rotateRight();
-      }
-      while(moveControl.isActive()) {
-        yield();
-      }
-      if(toTurn != robotControl.getDirection()) {
-        actTurn(toTurn);
+      yield();
+      yield();
+      try {
+        while(sensorControl.isActive()) {
+          yield();
+          yield();
+        }
+        while(sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND) == null
+                || !(robotControl.getDirection() == Direction.NORTH || robotControl.getDirection() == Direction.EAST ||
+                robotControl.getDirection() == Direction.SOUTH || robotControl.getDirection() == Direction.WEST)) {
+          while(moveControl.isActive()) {
+            yield();
+          }
+          actTurn(robotControl.getDirection().rotateRight());
+          while(moveControl.isActive()) {
+            yield();
+          }
+        }
+        System.out.println("Direction is "+robotControl.getDirection());
+        System.out.println("Sensed: "+sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND));
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
       }
     }
 

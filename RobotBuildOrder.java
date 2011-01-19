@@ -45,10 +45,12 @@ public class RobotBuildOrder {
 
   //BUILDINGS
   //TURRET DESIGNS: CONSTRUCTOR COMPONENTS / RECYCLER COMPONENTS / FACTORY COMPONENTS
-  //NOTE: Turret 1 is stand-alone, Turret 2&3 should be placed together
+  //NOTE: Turret 1 is stand-alone, Turret 2&3 should be placed together,
+  //Turret 4 should be built when we don't want to have to build a factory (so pretty often)
   //TURRET_1: BUILDING, / RADAR, SHIELD, SMG, SMG / RAILGUN, REGEN, HARDENED
   //TURRET_2: BUILDING, / RADAR, SMG, SHIELD, / RAILGUN, RAILGUN, HARDENED
   //TURRET_3: BUILDING, / RADAR, / MEDIC, MEDIC, MEDIC, HARDENED
+  //TURRET_4: BUILDING, / RADAR, SHIELD, SMG, SMG, SMG, SMG, SMG, SMG, SMG, SMG, SMG, SMG, SMG, SMG, SMG, SMG
   //TURRET BASE
   public static final Object[] BUILDING = {Chassis.BUILDING};
   public static final int BUILDING_COST = Chassis.BUILDING.cost;
@@ -67,6 +69,11 @@ public class RobotBuildOrder {
   public static final ComponentType[] TURRET_3_RECYCLER_PART = {ComponentType.RADAR};
   public static final int TURRET_3_RECYCLER_PART_COST = ComponentType.RADAR.cost;
   public static final int TURRET_3_RECYCLER_PART_ID = 4031;
+
+  //TURRET_4_RECYCLER_PART
+  public static final ComponentType[] TURRET_4_RECYCLER_PART = {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG};
+  public static final int TURRET_4_RECYCLER_PART_COST = ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 14*ComponentType.SMG.cost;
+  public static final int TURRET_4_RECYCLER_PART_ID = 4041;
 
   //TURRET FACTOR PARTS
   //TURRET_1_FACTORY_PART
@@ -89,6 +96,8 @@ public class RobotBuildOrder {
   public static final int TURRET_2_ID = 4020;
   public static final int TURRET_3_COST = BUILDING_COST + TURRET_3_RECYCLER_PART_COST + TURRET_3_FACTORY_PART_COST;
   public static final int TURRET_3_ID = 4030;
+  public static final int TURRET_4_COST = BUILDING_COST + TURRET_4_RECYCLER_PART_COST;
+  public static final int TURRET_4_ID = 4040;
 
 
   //RECYCLER
@@ -136,6 +145,8 @@ public class RobotBuildOrder {
         return TURRET_2_RECYCLER_PART_COST;
       case TURRET_3_RECYCLER_PART_ID:
         return TURRET_3_RECYCLER_PART_COST;
+      case TURRET_4_RECYCLER_PART_ID:
+        return TURRET_4_RECYCLER_PART_COST;
       case TURRET_1_FACTORY_PART_ID:
         return TURRET_1_FACTORY_PART_COST;
       case TURRET_2_FACTORY_PART_ID:
@@ -148,6 +159,8 @@ public class RobotBuildOrder {
         return TURRET_2_COST;
       case TURRET_3_ID:
         return TURRET_3_COST;
+        case TURRET_4_ID:
+        return TURRET_4_COST;
       case RECYCLER_ID:
         return RECYCLER_COST;
       case FACTORY_ID:
@@ -188,6 +201,8 @@ public class RobotBuildOrder {
         return TURRET_2_RECYCLER_PART;
       case TURRET_3_RECYCLER_PART_ID:
         return TURRET_3_RECYCLER_PART;
+      case TURRET_4_RECYCLER_PART_ID:
+        return TURRET_4_RECYCLER_PART;
       case TURRET_1_FACTORY_PART_ID:
         return TURRET_1_FACTORY_PART;
       case TURRET_2_FACTORY_PART_ID:
@@ -234,6 +249,8 @@ public class RobotBuildOrder {
       case TURRET_2_RECYCLER_PART_ID:
         return false;
       case TURRET_3_RECYCLER_PART_ID:
+        return false;
+      case TURRET_4_RECYCLER_PART_ID:
         return false;
       case TURRET_1_FACTORY_PART_ID:
         return false;

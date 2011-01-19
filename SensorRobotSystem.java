@@ -66,6 +66,7 @@ public class SensorRobotSystem extends MobileRobotSystem {
   protected boolean seqScoutEnemy() {
     robotControl.setIndicatorString(1, "seqScoutEnemy");
     navSys.setDestination(chooseNextDestination());
+    robotControl.setIndicatorString(1, "seqScoutEnemy - newDest");
     //check to see if we already sense an enemy (we've been shot or see one)
     boolean done = sensorGameEvents.checkCriticalGameEvents();
     //while we haven't found an enemy
@@ -81,10 +82,12 @@ public class SensorRobotSystem extends MobileRobotSystem {
    * of the robots last destination
    */
   protected MapLocation chooseNextDestination() {
+    robotControl.setIndicatorString(1, "chooseNextDest");
     if (navSys.getDestination()==null) {
       navSys.setDestination(birthPlace);
     }
     MapLocation next;
+    int loops = 0;
     int x, y;
     do {
       next = navSys.getDestination();
@@ -93,8 +96,14 @@ public class SensorRobotSystem extends MobileRobotSystem {
       y = ((rand.nextInt(2*NEW_DEST_RANGE+1) * Clock.getRoundNum()) % (2*NEW_DEST_RANGE))
               - NEW_DEST_RANGE;
       next = next.add(x, y);
-    } while (next.x < minX || next.x > maxX || next.y < minY || next.y > maxY);
-    return next;
+      loops++;
+    } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<5);
+    if (loops<5) {
+      return next;
+    }
+    else {
+      return birthPlace;
+    }
   }
 
   /**
