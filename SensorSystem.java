@@ -61,6 +61,26 @@ public class SensorSystem {
   }
 
   /**
+   * returns the MapLocation of the nearest enemy
+   * bytecost cost: 45ish
+   * @return
+   */
+  public MapLocation getNearestOpponentLocation() {
+    Robot enemy = getNearestOpponent();
+    if (enemy != null) {
+      if (sensor.canSenseObject(enemy)) {
+        try {
+          return sensor.senseLocationOf(enemy);
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * Checks to see if the Mine info is current, if not does a scan for mines
    *
    * Note: since the mines aren't going anywhere, it might be good to not allow a sensor

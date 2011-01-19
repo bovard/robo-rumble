@@ -99,11 +99,15 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       if(robotControl.getLocation() == location) {
         actMoveBackward();
       }
+      robotControl.setIndicatorString(1, "seqBuildDirective - waiting for funds");
       while(robotControl.getTeamResources() < RobotBuildOrder.getCost(buildDirective.ints[4]) 
               + PlayerConstants.MINIMUM_FLUX + RobotBuildOrder.RECYCLER_COST) {
         yield();
       }
-      return buildSys.seqBuild(RobotBuildOrder.getBuildOrder(buildDirective.ints[4]), location);
+      if(robotControl.getLocation().isAdjacentTo(location)) {
+        return buildSys.seqBuild(RobotBuildOrder.getBuildOrder(buildDirective.ints[4]), location);
+      }
+      System.out.println("didn't end up at location");
     }
     return false;
   }

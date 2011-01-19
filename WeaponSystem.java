@@ -89,6 +89,7 @@ public class WeaponSystem {
    */
   public MapLocation fire() {
     MapLocation toFire = null;
+    RobotLevel level = null;
     if (mode!=WeaponMode.HOLD_FIRE && (sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy())) {
       try {
         //gets enemy bots in sensor range
@@ -103,7 +104,6 @@ public class WeaponSystem {
           //pulls their location
           for (int i = 0; i<targets.length;i++) {
             locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
-            toFire = locations[i];
           }
 
 
@@ -111,9 +111,17 @@ public class WeaponSystem {
           //TODO: implement targetting logic (this is too simple)
           for (int j=0; j<weapons.length; j++){
             if (!weapons[j].isActive()) {
+              if(toFire!=null) {
+                if(weapons[j].withinRange(toFire)) {
+                  weapons[j].attackSquare(toFire,level);
+                  break;
+                }
+              }
               for (int i=0; i<targets.length; i++) {
                 if(weapons[j].withinRange(locations[i])) {
-                  weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
+                  toFire = locations[i];
+                  level = sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level;
+                  weapons[j].attackSquare(toFire,level);
                   break;
                 }
               }
@@ -131,16 +139,23 @@ public class WeaponSystem {
           //pulls their location
           for (int i = 0; i<targets.length;i++) {
             locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
-            toFire = locations[i];
           }
 
 
           //TODO: implement targetting logic (this is too simple)
           for (int j=0; j<weapons.length; j++){
             if (!weapons[j].isActive()) {
+              if(toFire!=null) {
+                if(weapons[j].withinRange(toFire)) {
+                  weapons[j].attackSquare(toFire,level);
+                  break;
+                }
+              }
               for (int i=0; i<targets.length; i++) {
                 if(weapons[j].withinRange(locations[i])) {
-                  weapons[j].attackSquare(locations[i], sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level);
+                  toFire = locations[i];
+                  level = sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level;
+                  weapons[j].attackSquare(toFire,level);
                   break;
                 }
               }

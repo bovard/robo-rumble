@@ -53,13 +53,19 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
     robotControl.setIndicatorString(1, "seqEngageEnemy");
     //if we can see the enemy or we can rotate to see them
     if(sensorGameEvents.canSeeEnemy()) {
+      robotControl.setIndicatorString(1, "seqEngageEnemy - enemy in sight");
       //while we can see the enemy, fire at them or move toward them
       try {
         while(sensorGameEvents.canSeeEnemy()) {
           MapLocation toFire = weaponSys.fire();
           if(toFire != null) {
-            robotControl.setIndicatorString(1, "seqEngageEnemy - turnAndFire!");
+            robotControl.setIndicatorString(1, "seqEngageEnemy - Fire!");
             actTurn(robotControl.getLocation().directionTo(toFire));
+          }
+          else {
+            robotControl.setIndicatorString(1, "seqEngageEnemy - Turn");
+            MapLocation enemyLoc = sensorSys.getNearestOpponentLocation();
+            actTurn(robotControl.getLocation().directionTo(enemyLoc));
           }
         }
       } catch (Exception e) {
