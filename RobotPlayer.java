@@ -112,6 +112,19 @@ public class RobotPlayer implements Runnable {
           RecyclerRobotSystem system = new RecyclerRobotSystem(myRC);
           system.go();
         }
+        //TURRET (1,2,3, & 4) (don't know why it'd be more than 5, but better safe than sorry!)
+        if (components.length >= 5 && components[1].type() == ComponentType.BUILDING_SENSOR &&
+                components[2].type()==ComponentType.RADAR && components[3].type()==ComponentType.SHIELD) {
+          WeaponController[] weapons = new WeaponController[components.length-4];
+          
+          //grab the weapon controllers
+          for (int i=4; i<components.length;i++) {
+            weapons[i-4] = (WeaponController)components[i];
+          }
+          
+          AttackTurretRobotSystem system = new AttackTurretRobotSystem(myRC, (SensorController)components[2], weapons);
+          system.go();
+        }
       }
       //we didn't find our system, yield for a turn and try again next time
       myRC.yield();

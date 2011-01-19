@@ -23,4 +23,15 @@ public class BuildingRobotSystem extends RobotSystem {
     sensorSys = new SensorSystem(sensorControl, robotControl.getTeam());
   }
 
+  /**
+   * overloaded constructor for things wishing not to use the building sensor
+   * @param robotControl the RobotController
+   * @param sensorControl the SensorController to use
+   */
+  public BuildingRobotSystem(RobotController robotControl, SensorController sensorControl) {
+    super(robotControl);
+    this.sensorControl = sensorControl;
+    sensorSys = new SensorSystem(sensorControl, robotControl.getTeam());
+  }
+
 }
