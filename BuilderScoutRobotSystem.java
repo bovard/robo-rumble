@@ -43,10 +43,6 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       yield();
       yield();
       try {
-        while(sensorControl.isActive()) {
-          yield();
-          yield();
-        }
         while(sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND) == null
                 || !(robotControl.getDirection() == Direction.NORTH || robotControl.getDirection() == Direction.EAST ||
                 robotControl.getDirection() == Direction.SOUTH || robotControl.getDirection() == Direction.WEST)) {
@@ -58,8 +54,8 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
             yield();
           }
         }
-        System.out.println("Direction is "+robotControl.getDirection());
-        System.out.println("Sensed: "+sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND));
+        //System.out.println("Direction is "+robotControl.getDirection());
+        //System.out.println("Sensed: "+sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND));
       } catch (Exception e) {
         System.out.println("caught exception:");
         e.printStackTrace();
@@ -232,7 +228,8 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
 
     robotControl.setIndicatorString(1, "seqApproachLocation - canSee");
     boolean done = false;
-    while(keepGoing && !done) {
+    int loops = 0;
+    while(keepGoing && !done && loops<15) {
       for (int x = -1; x < 2; x++) {
         if (done) {
           break;
@@ -256,8 +253,14 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
           }
         }
       }
-      if (!done)
+      if (!done) {
         actMove();
+      }
+      loops++;
+    }
+    if (loops >= 15)
+    {
+      return false;
     }
 
     robotControl.setIndicatorString(1, "seqApproachLocation - foundFree");

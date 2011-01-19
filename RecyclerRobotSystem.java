@@ -30,16 +30,16 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     buildSys = new BuilderSystem(robotControl, buildControl);
     rand = new Random();
 
-    //check to see if this Recycler is the most NorthWestern in a group of four mines it should produce
+    //check to see if this Recycler is the most SouthWestern in a group of four mines it should produce
     //if it is set shouldBuild to true so it knows it should start building troops
     try {
-      if(sensorControl.senseObjectAtLocation(birthPlace.add(Direction.SOUTH), RobotLevel.MINE) != null
-              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.SOUTH_EAST), RobotLevel.MINE) != null
+      if(sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) != null
+              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH_EAST), RobotLevel.MINE) != null
               && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.EAST), RobotLevel.MINE) != null) {
         shouldBuild=true;
       }
-      //otherwise if the mine is the most northwestern it should stay active
-      else if (sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) == null
+      //otherwise if the mine is the most southwestern it should stay active
+      else if (sensorControl.senseObjectAtLocation(birthPlace.add(Direction.SOUTH), RobotLevel.MINE) == null
               && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null) {
         stayActive = true;
       }
@@ -51,16 +51,30 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
 
   @Override
   public void go() {
-    //If they aren't building they should turn off to save their upkeep
+    
     //Note: we'll still get income from the mines.
-    if (!shouldBuild) {
-      robotControl.setIndicatorString(1, "Not Producing, turning off!");
-      robotControl.turnOff();
-    }
     while(shouldBuild) {
       if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.RECYCLER_COST + PlayerConstants.MINIMUM_FLUX)
         selBuildScouts();
     }
+    while(stayActive) {
+      //wait until we want to start building gaurd towers then do it up!
+      while(Clock.getRoundNum() < PlayerConstants.START_BUILDING_GUARD_TOWERS) {
+        yield();
+      }
+      //wait for funds to build an antenna and our buildcontroller is free
+      while(robotControl.getTeamResources() < ComponentType.ANTENNA.cost + PlayerConstants.MINIMUM_FLUX
+              || buildControl.isActive()) {
+        yield();
+      }
+      //once we've built an antenna, make a new ComRecyclerRobotSystem and start it
+      if (buildSys.actBuildComponent(ComponentType.ANTENNA, birthPlace, RobotLevel.ON_GROUND)) {
+        new ComRecyclerRobotSystem(robotControl).go();
+      }
+    }
+    //If they aren't building they should turn off to save their upkeep
+    robotControl.setIndicatorString(1, "Not Producing, turning off!");
+    robotControl.turnOff();
   }
 
   /**
@@ -96,6 +110,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
       return buildRandomSoldierScout();
     }
   }
+
 
   /**
    * Builds a random soldier scout

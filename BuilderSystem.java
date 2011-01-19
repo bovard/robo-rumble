@@ -79,8 +79,7 @@ public class BuilderSystem {
       int i = 0;
       while (i < buildOrder.length && success) {
         //wait until there is enough resources
-        while(robotControl.getTeamResources() < (buildOrder[i]).cost &&
-                buildControl.isActive()) {
+        while(robotControl.getTeamResources() < (buildOrder[i]).cost && buildControl.isActive()) {
           robotControl.yield();
         }
         //build component

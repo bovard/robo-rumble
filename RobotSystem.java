@@ -85,7 +85,7 @@ public class RobotSystem {
     gameEvents.resetGameEvents();
     robotControl.yield();
     gameEvents.calcGameEvents();
-    robotControl.setIndicatorString(0, "Location: "+robotControl.getLocation().toString());
+    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
   }
 
 }

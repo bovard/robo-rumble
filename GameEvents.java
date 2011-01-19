@@ -8,7 +8,7 @@ import battlecode.common.*;
  * Game events should interface to the robot through this class or a child. Events that should
  * interrupt a robot's routine events are called critical events, whereas the rest are just
  * events. Critical events will stop a robot in mid step and make it reconsider it's path, whereas
- * regular events will only be processed once in a while.
+ * regular events will only be processed (or checked) once in a while.
  * 
  *
  * @author bovard
@@ -19,13 +19,15 @@ public class GameEvents {
   protected CommunicationsSystem comSys;
 
   //list of GameEvents, we'll add more as we get more complex behavoir
-  boolean lowHealth, hasMessages;
+  protected boolean lowHealth, hasMessages, negativeFluxRegen;
 
   //critcal GameEvents
-  boolean lostHealth, hasDirective;
+  protected boolean lostHealth, hasDirective;
 
   //class variables
-  double formerHP;
+  private double formerHP;
+  private int numTurnsNeg;
+  private double formerFlux;
 
   /**
    * Basic constructor for GameEvents, just requires a robotcontroller
@@ -46,6 +48,7 @@ public class GameEvents {
     lostHealth = false;
     lowHealth = false;
     hasDirective = false;
+    negativeFluxRegen = false;
     formerHP = robotControl.getHitpoints();
   }
 
@@ -58,7 +61,7 @@ public class GameEvents {
     calcLostHealth();
     calcLowHealth();
     calcHasDirective();
-    return lostHealth || lowHealth || hasDirective || hasMessages;
+    return lostHealth || lowHealth || hasDirective || hasMessages || negativeFluxRegen;
   }
 
   protected void calcHasDirective() {
@@ -77,6 +80,26 @@ public class GameEvents {
     else {
       lostHealth = false;
     }
+  }
+
+  /**
+   * calculates if there is a negativeflux regen and if this is above the threshold for
+   * number of turns negative
+   */
+  protected void calcNegativeFluxRegen() {
+    if (robotControl.getTeamResources() < formerFlux) {
+      numTurnsNeg++;
+      if (numTurnsNeg < PlayerConstants.NUM_TURNS_NEGATIVE) {
+        negativeFluxRegen = true;
+      }
+      else {
+        negativeFluxRegen = false;
+      }
+    }
+    else {
+      numTurnsNeg = 0;
+    }
+    formerFlux = robotControl.getTeamResources();
   }
 
   /**
@@ -126,15 +149,20 @@ public class GameEvents {
   }
 
   /**
+   * checks to see if the teams flux levels have a negative regen
+   * @return if there is negative flux regen
+   */
+  public boolean negativeFluxRegen() {
+    return negativeFluxRegen;
+  }
+
+  /**
    * checks to see if any GameEvents have occurred
    * @return true if a gameevent has occurred
    */
   public boolean checkGameEvents() {
-    return lostHealth || lowHealth || hasDirective;
+    return lostHealth || lowHealth || hasDirective || negativeFluxRegen;
   }
-
-
-
 
   /**
    * checks to see if any critical game events have occurred (game events that should

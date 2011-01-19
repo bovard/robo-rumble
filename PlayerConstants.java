@@ -10,8 +10,13 @@ package team122;
  * @author bovard
  */
 public final class PlayerConstants {
-  //ECONOMEY CONSTANTS
+  //STRATEGY CONSTANTS
+  public static final int START_BUILDING_GUARD_TOWERS = 1500;
+
+  //ECONOMY CONSTANTS
   public static final int MINIMUM_FLUX = 3;
+  //the number of turns in a row that the energon levels must be going down to consider having a negaive regen
+  public static final int NUM_TURNS_NEGATIVE = 20;
 
 
   //SENSOR CONSTANTS

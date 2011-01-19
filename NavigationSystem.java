@@ -135,7 +135,7 @@ public class NavigationSystem {
     try {
       Direction currentDirection = moveControl.getRC().getDirection();
       if (moveControl.getRC().getLocation().equals(dest)) {
-        System.out.println("DESTINATION REACHED!!");
+        //System.out.println("DESTINATION REACHED!!");
         has_dest = false;
         robotControl.setIndicatorString(2, "No Dest");
       }

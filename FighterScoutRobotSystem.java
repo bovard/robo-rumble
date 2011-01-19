@@ -45,7 +45,7 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     sensorGameEvents.resetGameEvents();
     robotControl.yield();
     sensorGameEvents.calcSoldierGameEvents();
-    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
+    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
   }
 
   /**
@@ -213,7 +213,7 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     //check for map boundary conditions
     updateMapExtrema();
     //update your position for the GUI
-    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
+    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
     done = !checkDestinationValidity() || done;
     return done;
   }

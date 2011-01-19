@@ -53,7 +53,7 @@ public class SensorRobotSystem extends MobileRobotSystem {
     sensorGameEvents.resetGameEvents();
     robotControl.yield();
     sensorGameEvents.calcGameEvents();
-    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
+    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
   }
 
 
@@ -214,7 +214,7 @@ public class SensorRobotSystem extends MobileRobotSystem {
     //check for map boundary conditions
     updateMapExtrema();
     //update your position for the GUI
-    robotControl.setIndicatorString(0, robotControl.getLocation().toString());
+    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
     done = !checkDestinationValidity() || done;
     return done;
   }
