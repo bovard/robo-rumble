@@ -4,11 +4,11 @@ import battlecode.common.*;
 
 /**
  * A navigation system for robots with a jump component
- * extends BlindNavigationSystem
+ * extends NavigationSystem
  * //TODO: Implement this class
  * @author bovard
  */
-public class JumpNavigationSystem extends BlindNavigationSystem {
+public class JumpNavigationSystem extends NavigationSystem {
   protected JumpController jumpControl;
   protected SensorSystem sensorSys;
 

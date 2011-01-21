@@ -4,8 +4,8 @@ import battlecode.common.*;
 import java.util.Random;
 
 /**
- * The BlindNavigationSystem takes care of selecting a move for the robot
- * The BlindNavigationSystem needs to be given a MovementController to issue commands to, it
+ * The NavigationSystem takes care of selecting a move for the robot
+ * The NavigationSystem needs to be given a MovementController to issue commands to, it
  * will check to see if the MovementController is idle before issuing any commands
  *
  * Note: we may need to give the NavSys access to the sensory gear
@@ -18,7 +18,7 @@ import java.util.Random;
  *
  * @author bovard
  */
-public class BlindNavigationSystem {
+public class NavigationSystem {
 
   protected Random rand = new Random();
   protected MovementController moveControl;
@@ -34,12 +34,12 @@ public class BlindNavigationSystem {
 
   
   /**
-   * Creates a BlindNavigationSystem that attempts pathfinding for mobile robots
+   * Creates a NavigationSystem that attempts pathfinding for mobile robots
    * Note: currently this class only requires that a robot can move, not that it has
    * any sensors
    * @param control the movementController
    */
-  public BlindNavigationSystem(MovementController control) {
+  public NavigationSystem(MovementController control) {
     moveControl = control;
     robotControl = moveControl.getRC();
     mode = NavigationMode.BUG;
@@ -50,7 +50,7 @@ public class BlindNavigationSystem {
    * @param control the MovementController
    * @param dest the MapLocation to be the destination
    */
-  public BlindNavigationSystem(MovementController control, MapLocation dest) {
+  public NavigationSystem(MovementController control, MapLocation dest) {
     moveControl = control;
     this.dest = dest;
     has_dest = true;
