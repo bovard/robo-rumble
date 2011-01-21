@@ -1,15 +1,15 @@
 /*
- * RobotSystem inheritance chart
+ * RobotSystem inheritance chart (base classes)
  *
  * RobotSytem
- * ->BuildingRobotSystem
- * --->RecyclerRobotSystem
- * ----->ComRecyclerRobotSystem
- * --->AttackTurretRobotSystem
- * ->MobileRobotSystem
- * --->SensorRobotSystem
- * ----->BuilderScoutRobotSystem
- * ----->FighterScoutRobotSystem
+ * ->SensorRobotSystem
+ * --->WeaponSensorRobotSystem
+ * --->BuilderSensorRobotSystem
+ *
+ * Base Systems: Communication, Navigation, Weapon, Builder
+ *
+ * Note: all other systems are implemented in specific RobotSystems
+ *
  */
 
 package team122;
@@ -35,7 +35,6 @@ public class RobotSystem {
   protected CommunicationsSystem comSys;
   protected NavigationSystem navSys;
 
-
   /**
    * Creates a new RobotSystem base class, assumes that there is a movement controller
    * @param robotControl the RobotController
@@ -43,7 +42,7 @@ public class RobotSystem {
   public RobotSystem(RobotController robotControl) {
     this.robotControl = robotControl;
 
-    //as of 1.07 the movementcontroller is always the first item in the components list
+    //as of 1.07 the movementcontroller is ALWAYS the first item in the components list
     MovementController moveControl = (MovementController)robotControl.components()[0];
     navSys = new NavigationSystem(robotControl, moveControl);
     birthPlace = robotControl.getLocation();
@@ -92,30 +91,6 @@ public class RobotSystem {
     robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
   }
 
-
-  /**
-   * Called to move multiple times to a destination
-   * @param dest place to move to
-   * @return if the destination was reached safely
-   */
-  protected boolean seqMove(MapLocation dest) {
-    navSys.setDestination(dest);
-
-    boolean hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
-    boolean done = navSys.isAtDestination();
-    while(!hasGameEvents && !done) {
-      //waits until it can move, then does so
-      while(navSys.isActive() && !hasGameEvents) {
-        yield();
-        hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
-      }
-      //moves and checks to see if we're at the destination
-      actMove();
-      done = navSys.isAtDestination();
-      hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
-    }
-    return done;
-  }
 
   /**
    * Called to move multiple times to a destination, assumes the destination is already set

@@ -15,7 +15,10 @@ import battlecode.common.*;
  */
 public class SensorSystem {
 
-  public SensorController sensor;
+  protected SensorController sensorControl;
+  protected RobotController robotControl;
+
+  //class variables
   private int lastMineScan;
   private Mine[] mines;
   private int lastBotScan;
@@ -25,13 +28,16 @@ public class SensorSystem {
   private Robot[] neutralBots;
   private Team myTeam;
 
+
+
   /**
    * Creates a new SensorSystem, needs a sensorcontroller to function, in charge of
-   * sensor based functions
-   * @param sensor
+   * sensorControl based functions
+   * @param sensorControl
    */
   public SensorSystem(SensorController sensor, Team myTeam) {
-    this.sensor = sensor;
+    this.sensorControl = sensor;
+    this.robotControl = sensorControl.getRC();
     this.myTeam = myTeam;
     lastMineScan = -1;
     lastBotScan = -1;
@@ -42,7 +48,84 @@ public class SensorSystem {
    * @return the SensorController
    */
   public SensorController getSensor() {
-    return sensor;
+    return sensorControl;
+  }
+
+  /**
+   * checks to see if we can sense a map location
+   * @param loc the MapLocation to sense
+   * @return if it can be sensed
+   */
+  public boolean canSenseLocation(MapLocation loc) {
+    return sensorControl.canSenseSquare(loc);
+  }
+
+  /**
+   * checks to see if we can sense a game object
+   * @param obj the object to sense
+   * @return if it can be sensed
+   */
+  public boolean canSenseObject(GameObject obj) {
+    return sensorControl.canSenseObject(obj);
+  }
+
+  public GameObject senseObjectAtLocation(MapLocation loc, RobotLevel level) {
+    try {
+      return sensorControl.senseObjectAtLocation(loc, level);
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+    }
+    System.out.println("WARNING: Fell through SensorSystem.senseObjectAtLocation");
+    return null;
+  }
+
+  /**
+   * Finds the clostest unoccupied (at the calling robot's level) square adjacent to the
+   * target location (doesn't check to see if you are at the target location)
+   * @param target the location to find the adjacent square to
+   * @return the free MapLocation, null if none was found
+   */
+  public MapLocation findClosestUnoccupiedAdjacentSquareToLocation(MapLocation target) {
+    Direction dir = robotControl.getLocation().directionTo(target).opposite();
+    try {
+      //tries the closest square
+      Direction toTry = dir;
+      if (sensorControl.canSenseSquare(target.add(toTry))
+              && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
+        return target.add(toTry);
+      }
+      //try the alternating left and right rotations from the clostest direction
+      for(int i=1; i<=3; i++) {
+        toTry = dir;
+        for (int j=1; j<=i; j++) {
+          toTry = toTry.rotateLeft();
+        }
+        if (sensorControl.canSenseSquare(target.add(toTry))
+              && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
+          return target.add(toTry);
+        }
+        toTry = dir;
+        for (int j=1; j<=i; j++) {
+          toTry = toTry.rotateRight();
+        }
+        if (sensorControl.canSenseSquare(target.add(toTry))
+              && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
+          return target.add(toTry);
+        }
+      }
+      //try the furthest square
+      toTry = dir.opposite();
+      if (sensorControl.canSenseSquare(target.add(toTry))
+              && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
+        return target.add(toTry);
+      }
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+    }
+    //if we didn't find a square, return null;
+    return null;
   }
 
   /**
@@ -68,9 +151,9 @@ public class SensorSystem {
   public MapLocation getNearestOpponentLocation() {
     Robot enemy = getNearestOpponent();
     if (enemy != null) {
-      if (sensor.canSenseObject(enemy)) {
+      if (sensorControl.canSenseObject(enemy)) {
         try {
-          return sensor.senseLocationOf(enemy);
+          return sensorControl.senseLocationOf(enemy);
         } catch (Exception e) {
           System.out.println("caught exception:");
           e.printStackTrace();
@@ -83,7 +166,7 @@ public class SensorSystem {
   /**
    * Checks to see if the Mine info is current, if not does a scan for mines
    *
-   * Note: since the mines aren't going anywhere, it might be good to not allow a sensor
+   * Note: since the mines aren't going anywhere, it might be good to not allow a sensorControl
    * system to 'forget' a mine. It would just test new ones against already known mines
    * and only add in ones that it's never seen. I'm not sure how benficial this would be
    *
@@ -93,13 +176,13 @@ public class SensorSystem {
     if(lastMineScan < Clock.getRoundNum()) {
       lastMineScan = Clock.getRoundNum();
       
-      mines = sensor.senseNearbyGameObjects(Mine.class);
+      mines = sensorControl.senseNearbyGameObjects(Mine.class);
     }
     return mines;
   }
 
   /**
-   * Checks to see if the Robot sensor info is current, if not does a scan for bots
+   * Checks to see if the Robot sensorControl info is current, if not does a scan for bots
    * After getting bot info it splits the bots into two different array par team
    *
    * @return an array of sensed bots
@@ -107,7 +190,7 @@ public class SensorSystem {
   public Robot[] getBots() {
     if (lastBotScan < Clock.getRoundNum()) {
       lastBotScan = Clock.getRoundNum();
-      bots = sensor.senseNearbyGameObjects(Robot.class);
+      bots = sensorControl.senseNearbyGameObjects(Robot.class);
 
       int aCount = 0;
       int bCount = 0;
@@ -179,28 +262,28 @@ public class SensorSystem {
     //if facing orthogonally
     if (dir == Direction.EAST || dir == Direction.NORTH || dir == Direction.WEST ||
             dir == Direction.SOUTH) {
-      if (sensor.type() == ComponentType.SIGHT)
+      if (sensorControl.type() == ComponentType.SIGHT)
         return PlayerConstants.SIGHT_ORTH_RANGE;
-      else if (sensor.type() == ComponentType.RADAR)
+      else if (sensorControl.type() == ComponentType.RADAR)
         return PlayerConstants.RADAR_ORTH_RANGE;
-      else if (sensor.type() == ComponentType.TELESCOPE)
+      else if (sensorControl.type() == ComponentType.TELESCOPE)
         return PlayerConstants.TELESCOPE_ORTH_RANGE;
-      else if (sensor.type() == ComponentType.SATELLITE)
+      else if (sensorControl.type() == ComponentType.SATELLITE)
         return PlayerConstants.SATELLITE_ORTH_RANGE;
-      else if (sensor.type() == ComponentType.BUILDING_SENSOR)
+      else if (sensorControl.type() == ComponentType.BUILDING_SENSOR)
         return PlayerConstants.BUILDING_SENSOR_ORTH_RANGE;
     }
     //facing diagonally
     else {
-      if (sensor.type() == ComponentType.SIGHT)
+      if (sensorControl.type() == ComponentType.SIGHT)
         return PlayerConstants.SIGHT_DIAG_RANGE;
-      else if (sensor.type() == ComponentType.RADAR)
+      else if (sensorControl.type() == ComponentType.RADAR)
         return PlayerConstants.RADAR_DIAG_RANGE;
-      else if (sensor.type() == ComponentType.TELESCOPE)
+      else if (sensorControl.type() == ComponentType.TELESCOPE)
         return PlayerConstants.TELESCOPE_DIAG_RANGE;
-      else if (sensor.type() == ComponentType.SATELLITE)
+      else if (sensorControl.type() == ComponentType.SATELLITE)
         return PlayerConstants.SATELLITE_DIAG_RANGE;
-      else if (sensor.type() == ComponentType.BUILDING_SENSOR)
+      else if (sensorControl.type() == ComponentType.BUILDING_SENSOR)
         return PlayerConstants.BUILDING_SENSOR_DIAG_RANGE;
     }
     return 0;
@@ -211,15 +294,15 @@ public class SensorSystem {
    * @return the number of portions of the screen the robot needs to look at to see it all
    */
   public int getBreadth() {
-    if (sensor.type() == ComponentType.SIGHT)
+    if (sensorControl.type() == ComponentType.SIGHT)
       return PlayerConstants.SIGHT_TURNS;
-    else if (sensor.type() == ComponentType.RADAR)
+    else if (sensorControl.type() == ComponentType.RADAR)
       return PlayerConstants.RADAR_TURNS;
-    else if (sensor.type() == ComponentType.TELESCOPE)
+    else if (sensorControl.type() == ComponentType.TELESCOPE)
       return PlayerConstants.TELESCOPE_TURNS;
-    else if (sensor.type() == ComponentType.SATELLITE)
+    else if (sensorControl.type() == ComponentType.SATELLITE)
       return PlayerConstants.SATELLITE_TURNS;
-    else if (sensor.type() == ComponentType.BUILDING_SENSOR)
+    else if (sensorControl.type() == ComponentType.BUILDING_SENSOR)
       return PlayerConstants.BUILDING_SENSOR_TURNS;
     else
       System.out.println("Error: called getBreadth() without a sensor");

@@ -10,7 +10,8 @@ package team122;
 public enum GameEventLevel {
 
   //the most important GameEventLevel should have the highest priority value
-  CRITICAL (GameEventLevelPriority.CRITICAL),
+  //check the priority levels in GameEventLevelPriority.java
+  COMBAT (GameEventLevelPriority.COMBAT),
   MISSION (GameEventLevelPriority.MISSION),
   NORMAL (GameEventLevelPriority.NORMAL),
   NONE (GameEventLevelPriority.NONE);

@@ -6,8 +6,9 @@ import battlecode.common.*;
  * going for a walk in the park, getting shot at by enemey robots, etc...
  *
  * Game events should interface to the robot through this class or a child. Events that should
- * interrupt a robot's routine events are called critical events, whereas the rest are just
- * events. Critical events will stop a robot in mid step and make it reconsider it's path, whereas
+ * interrupt a robot's routine events are called combat events, events that should interrupt its
+ * mission are called mission events, the rest of the events are just called normal
+ * events. Combat and mission events will stop a robot in mid step and make it reconsider it's path, whereas
  * regular events will only be processed (or checked) once in a while.
  * 
  *
@@ -24,12 +25,14 @@ public class GameEvents {
   protected boolean lowHealth, hasMessages, negativeFluxRegen;
   //Misison
   protected boolean hasDirective;
-  //critcal GameEvents
-  protected boolean lostHealth;
+  //combat GameEvents
+  protected boolean lostHealth, recentlyLostHealth;
 
   //class variables
   private double formerHP;
   private int numTurnsNeg;
+  private int numTurnsSinceLosingHealth = 100;
+  private int numTurnsToLoseHealthThreshhold = 5;
   private double formerFlux;
 
   /**
@@ -49,6 +52,7 @@ public class GameEvents {
    */
   public void resetGameEvents() {
     lostHealth = false;
+    recentlyLostHealth = false;
     lowHealth = false;
     hasDirective = false;
     negativeFluxRegen = false;
@@ -62,9 +66,31 @@ public class GameEvents {
    */
   public boolean calcGameEvents() {
     calcLostHealth();
+    //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
     calcLowHealth();
     calcHasDirective();
     return lostHealth || lowHealth || hasDirective || hasMessages || negativeFluxRegen;
+  }
+
+  /**
+   * calculates if the bot has recently lost health
+   */
+  protected void calcRecentlyLostHealth() {
+    //if we lost health this round, we've recently lost health and reset the turn counter
+    if(lostHealth) {
+      recentlyLostHealth = true;
+      numTurnsSinceLosingHealth = 0;
+    }
+    //otherwise check to see if we're within the threshold
+    else {
+      numTurnsSinceLosingHealth++;
+      if (numTurnsSinceLosingHealth <= numTurnsToLoseHealthThreshhold) {
+        recentlyLostHealth = true;
+      }
+      else {
+        recentlyLostHealth = false;
+      }
+    }
   }
 
   protected void calcHasDirective() {
@@ -84,6 +110,8 @@ public class GameEvents {
       lostHealth = false;
     }
   }
+
+
 
   /**
    * calculates if there is a negativeflux regen and if this is above the threshold for
@@ -128,6 +156,15 @@ public class GameEvents {
   }
 
   /**
+   * Returns the game event recentlyLostHeath, which means the bot would have had the lost
+   * health game event in the last 5 (numTurnsToLoseHealthThreshhold) turns
+   * @return if the bot has recently lost health
+   */
+  public boolean recentlyLostHealth() {
+    return recentlyLostHealth;
+  }
+
+  /**
    * checks to see if the robot is low health
    * @return if the robot has less than 10% of max HP
    */
@@ -166,18 +203,18 @@ public class GameEvents {
    */
   public boolean checkGameEvents(int priority) {
     switch(priority) {
-      case GameEventLevelPriority.CRITICAL:
+      case GameEventLevelPriority.COMBAT:
         //highest priority level, can't have one higher
         return false;
       case GameEventLevelPriority.MISSION:
         //check the CRICITAL game events
-        return lostHealth;
+        return lostHealth || recentlyLostHealth;
       case GameEventLevelPriority.NORMAL:
-        //check the CRITICAL and MISSION game events
-        return lostHealth || hasDirective;
+        //check the COMBAT and MISSION game events
+        return lostHealth || recentlyLostHealth || hasDirective;
       case GameEventLevelPriority.NONE:
         //check all game events
-        return lostHealth || lowHealth || hasDirective || negativeFluxRegen;
+        return lostHealth || recentlyLostHealth || hasDirective || lowHealth || negativeFluxRegen;
     }
     System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
     return false;

@@ -168,23 +168,6 @@ public class OldSensorRobotSystem extends RobotSystem {
     return false;
   }
 
-  /**
-   * Called to move multiple times to a destination
-   * @param dest place to move to
-   * @return if the destination was reached safely
-   */
-  @Override
-  protected boolean seqMove(MapLocation dest) {
-    navSys.setDestination(dest);
-
-    boolean safeToMove = true;
-    boolean done = false;
-    while(safeToMove && !done) {
-      //TODO: check to make sure the bot isn't under attack here
-      done = actMove();
-    }
-    return done;
-  }
 
   /**
    * Called to move multiple times to a destination, assumes the destination is already set

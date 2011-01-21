@@ -65,14 +65,14 @@ public class SensorGameEvents extends GameEvents {
   public boolean checkGameEvents(int priority) {
     boolean event = false;
     switch(priority) {
-      case GameEventLevelPriority.CRITICAL:
+      case GameEventLevelPriority.COMBAT:
         //highest priority level, can't have one higher
         return super.checkGameEvents(priority) || false;
       case GameEventLevelPriority.MISSION:
         //check the CRICITAL game events
         return super.checkGameEvents(priority) || seeEnemy;
       case GameEventLevelPriority.NORMAL:
-        //check the CRITICAL and MISSION game events
+        //check the COMBAT and MISSION game events
         return super.checkGameEvents(priority) || seeEnemy;
       case GameEventLevelPriority.NONE:
         //check all game events
