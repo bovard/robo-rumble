@@ -54,7 +54,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     
     //Note: we'll still get income from the mines.
     while(shouldBuild) {
-      if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > RobotBuildOrder.RECYCLER_COST + PlayerConstants.MINIMUM_FLUX)
+      if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX)
         selBuildScouts();
     }
     while(stayActive) {
@@ -95,12 +95,12 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     }
     if(decider >= .5) {
       //wait until we have enough resources
-      while(robotControl.getTeamResources() < MINIMUM_ENERGON + RobotBuildOrder.BUILDER_SCOUT_COST 
-              + RobotBuildOrder.RECYCLER_COST + (Clock.getRoundNum()-150)/10 ) {
+      while(robotControl.getTeamResources() < MINIMUM_ENERGON + BuildOrder.BUILDER_SCOUT_1.cost
+              + BuildOrder.RECYCLER.cost + (Clock.getRoundNum()-150)/10 ) {
         yield();
       }
       //build
-      if(seqBuild(RobotBuildOrder.BUILDER_SCOUT)) {
+      if(seqBuild(BuildOrder.BUILDER_SCOUT_1)) {
         return true;
       }
       else {
@@ -118,37 +118,30 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
    * @return if teh build was sucessfull
    */
   protected boolean buildRandomSoldierScout() {
-    Object[] buildOrder = RobotBuildOrder.FIGHTER_SCOUT;
-    int buildCost = RobotBuildOrder.FIGHTER_SCOUT_COST;
+    BuildOrder toBuild = BuildOrder.FIGHTER_SCOUT_1;
 
     switch(rand.nextInt(5)+1) {
       case 1:
-        //buildOrder = RobotBuildOrder.FIGHTER_SCOUT;
-        //buildCost = RobotBuildOrder.FIGHTER_SCOUT_COST;
         break;
       case 2:
-        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_2;
-        buildCost = RobotBuildOrder.FIGHTER_SCOUT_2_COST;
+        toBuild = BuildOrder.FIGHTER_SCOUT_2;
         break;
       case 3:
-        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_3;
-        buildCost = RobotBuildOrder.FIGHTER_SCOUT_3_COST;
+        toBuild = BuildOrder.FIGHTER_SCOUT_3;
         break;
       case 4:
-        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_4;
-        buildCost = RobotBuildOrder.FIGHTER_SCOUT_4_COST;
+        toBuild = BuildOrder.FIGHTER_SCOUT_4;
         break;
       case 5:
-        buildOrder = RobotBuildOrder.FIGHTER_SCOUT_5;
-        buildCost = RobotBuildOrder.FIGHTER_SCOUT_5_COST;
+        toBuild = BuildOrder.FIGHTER_SCOUT_5;
         break;
     }
     //wait until we have enough resources
-    while(robotControl.getTeamResources() < MINIMUM_ENERGON + buildCost ) {
+    while(robotControl.getTeamResources() < MINIMUM_ENERGON + toBuild.cost ) {
       yield();
     }
     //build
-    if(seqBuild(buildOrder)) {
+    if(seqBuild(toBuild)) {
       return true;
     }
     else {
@@ -161,15 +154,15 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
    * @param buildOrder an array of Object, the first being the chasis the rest being components
    * @return if the build was successful
    */
-  protected boolean seqBuild(Object[] buildOrder) {
+  protected boolean seqBuild(BuildOrder toBuild) {
     actTurn(Direction.WEST);
     //keep rotating until we find a free square and have enough resources
-    while(!moveControl.canMove(robotControl.getDirection()) ||
-            robotControl.getTeamResources() < MINIMUM_ENERGON + ((Chassis)buildOrder[0]).cost) {
+    while(!moveControl.canMove(robotControl.getDirection())
+            || robotControl.getTeamResources() < MINIMUM_ENERGON + toBuild.chassis.cost) {
       actTurn(robotControl.getDirection().rotateRight());
     }
     //call to the buildSys to initiate the build sequence
-    return buildSys.seqBuild(buildOrder,robotControl.getLocation().add(robotControl.getDirection()));
+    return buildSys.seqBuild(toBuild,robotControl.getLocation().add(robotControl.getDirection()));
 
   }
 

@@ -61,7 +61,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
         //While there is nothing there, broadcast a building directive and sleep for a while
         do {
           guardTower = sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
-          broadcastSys.sendBuildDirective(RobotBuildOrder.BUILDING_ID, birthPlace.add(robotControl.getDirection()));
+          broadcastSys.sendBuildDirective(BuildOrder.GUARD_TOWER_1.id, birthPlace.add(robotControl.getDirection()));
           for (int i=0; i<5; i++) {
             yield();
           }
@@ -88,11 +88,11 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
 
       guardTower = sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
 
-      while(robotControl.getTeamResources() < RobotBuildOrder.TURRET_4_RECYCLER_PART_COST) {
+      while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_1.cost) {
         yield();
       }
 
-      return buildSys.seqBuildComponents(RobotBuildOrder.TURRET_4_RECYCLER_PART, birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
+      return buildSys.seqBuild(BuildOrder.GUARD_TOWER_1, birthPlace.add(robotControl.getDirection()));
     } catch (Exception e) {
       System.out.println("caught exception:");
       e.printStackTrace();

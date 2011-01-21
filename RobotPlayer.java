@@ -8,6 +8,9 @@ import battlecode.common.*;
  *
  * Note: to build a submission file navigate to the base install file of BC and type
  * "ant jar -Dteam=team122"
+ *
+ * Note: for Linux users you'll need to turn off the sound for the client to work correctly
+ * in the BattleCode main directory open bc.conf and set bc.client.sound-on=false
  * @author bovard
  */
 public class RobotPlayer implements Runnable {

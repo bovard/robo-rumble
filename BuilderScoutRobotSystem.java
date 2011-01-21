@@ -100,12 +100,13 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
         actMoveBackward();
       }
       robotControl.setIndicatorString(1, "seqBuildDirective - waiting for funds");
-      while(robotControl.getTeamResources() < RobotBuildOrder.getCost(buildDirective.ints[4]) 
-              + PlayerConstants.MINIMUM_FLUX + RobotBuildOrder.RECYCLER_COST) {
+      BuildOrder toBuild = BuildOrderID.getBuildOrderFromID(buildDirective.ints[4]);
+      while(robotControl.getTeamResources() < toBuild.cost
+              + PlayerConstants.MINIMUM_FLUX + BuildOrder.RECYCLER.cost) {
         yield();
       }
       if(robotControl.getLocation().isAdjacentTo(location)) {
-        return buildSys.seqBuild(RobotBuildOrder.getBuildOrder(buildDirective.ints[4]), location);
+        return buildSys.seqBuild(toBuild, location);
       }
       System.out.println("didn't end up at location");
     }
@@ -165,7 +166,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
     if (seqApproachLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())
             && robotControl.getLocation().isAdjacentTo(uncoveredMineLoc)) {
       //wait till we have enough money
-      while(robotControl.getTeamResources() < MINIMUM_ENERGON + RobotBuildOrder.RECYCLER_COST) {
+      while(robotControl.getTeamResources() < MINIMUM_ENERGON + BuildOrder.RECYCLER.cost) {
         robotControl.setIndicatorString(1, "selBuildRecycler -waiting for funds");
         yield();
       }
@@ -180,7 +181,7 @@ public class BuilderScoutRobotSystem extends SensorRobotSystem {
       }
 
       //build the recycler
-      if (buildSys.seqBuild(RobotBuildOrder.RECYCLER, uncoveredMineLoc)) {
+      if (buildSys.seqBuild(BuildOrder.RECYCLER, uncoveredMineLoc)) {
         //once it's been built we should reset the uncovered mine location to null
         actTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
         uncoveredMineLoc = null;
