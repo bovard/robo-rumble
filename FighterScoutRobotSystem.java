@@ -205,7 +205,7 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
   protected boolean actMove() {
     if(navSys.getDestination()==null)
       return false;
-    boolean done = navSys.nextMove();
+    boolean done = navSys.setNextMove();
     if(sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy()) {
       weaponSys.fire();
     }

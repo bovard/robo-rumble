@@ -117,7 +117,7 @@ public class OldSensorRobotSystem extends MobileRobotSystem {
 
     boolean done = false;
     while(!done){
-      done = navSys.nextMove();
+      done = navSys.setNextMove();
     }
 
     return done;
@@ -208,7 +208,7 @@ public class OldSensorRobotSystem extends MobileRobotSystem {
   protected boolean actMove() {
     if(navSys.getDestination()==null)
       return false;
-    boolean done = navSys.nextMove();
+    boolean done = navSys.setNextMove();
     yield();
     //check for map boundary conditions
     updateMapExtrema();

@@ -57,7 +57,7 @@ public class MobileRobotSystem extends RobotSystem {
   protected boolean actMove() {
     if(navSys.getDestination()==null)
       return false;
-    boolean done = navSys.nextMove();
+    boolean done = navSys.setNextMove();
     yield();
     return done;
   }
