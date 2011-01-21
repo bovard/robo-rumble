@@ -7,8 +7,8 @@ import battlecode.common.*;
  * They will roam the board looking for mines to build recyclers on.
  * @author bovard
  */
-public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
-  protected BuilderController buildControl;
+public class BuilderScoutRobotSystem extends BuilderSensorRobotSystem {
+
   protected BuilderSystem buildSys;
   protected MapLocation uncoveredMineLoc;
   protected Message buildDirective;
@@ -17,21 +17,17 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
    * Constructor for the BuilderScout, assumes a Constructor component on the bot
    * @param robotControl
    */
-  public BuilderScoutRobotSystem(RobotController robotControl) {
+  public BuilderScoutRobotSystem(RobotController robotControl, SensorSystem sensorSys, BuilderSystem buildSys) {
 
-    super(robotControl);
+    super(robotControl, sensorSys, buildSys);
     robotControl.setIndicatorString(0,"BuilderScoutConstructor");
 
     //on scouts, build systems should be in component[2], added another if clause to catch
     //our starting bot, who has it in components[1]
-    if(robotControl.components()[1].type() == ComponentType.CONSTRUCTOR)
-      buildControl = (BuilderController)robotControl.components()[1];
-    else
-      buildControl = (BuilderController)robotControl.components()[2];
-    buildSys = new BuilderSystem(robotControl, buildControl);
     comSys.setFilter(new int[] {1, 1, 0});
 
   }
+
 
   /**
    * The main loop, called to run a BuilderScout (or child)
@@ -46,7 +42,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
       yield();
       yield();
       try {
-        while(sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND) == null
+        while(sensorSys.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND) == null
                 || !(robotControl.getDirection() == Direction.NORTH || robotControl.getDirection() == Direction.EAST ||
                 robotControl.getDirection() == Direction.SOUTH || robotControl.getDirection() == Direction.WEST)) {
           while(navSys.isActive()) {
@@ -78,7 +74,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
    */
   protected boolean selScout() {
     robotControl.setIndicatorString(1, "selScout");
-    if(sensorGameEvents.hasDirective) {
+    if(gameEvents.hasDirective()) {
       seqBuildDirective();
     }
     else if(seqScoutBuild()) {
@@ -106,7 +102,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
         yield();
       }
       if(robotControl.getLocation().isAdjacentTo(location)) {
-        return buildSys.seqBuild(toBuild, location);
+        return seqBuild(toBuild, location);
       }
       System.out.println("didn't end up at location");
     }
@@ -147,7 +143,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
     //while we haven't found an uncovered mine and we aren't at our destination
     while(!done && !actMove()) {
       done = seqSenseMine();
-      if(sensorGameEvents.checkGameEvents(currentGameEventLevel.priority)) {
+      if(gameEvents.checkGameEvents(currentGameEventLevel.priority)) {
         return false;
       }
     }
@@ -182,7 +178,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
       }
 
       //build the recycler
-      if (buildSys.seqBuild(BuildOrder.RECYCLER, uncoveredMineLoc)) {
+      if (seqBuild(BuildOrder.RECYCLER, uncoveredMineLoc)) {
         //once it's been built we should reset the uncovered mine location to null
         actTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
         uncoveredMineLoc = null;
@@ -198,7 +194,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
    * @return If an uncovered mine was found within sensor range
    */
   protected boolean seqSenseMine() {
-    if (sensorGameEvents.seeMine) {
+    if (((SensorGameEvents)gameEvents).canSeeMine()) {
       boolean foundNewMine = false;
       Mine[] mines = sensorSys.getMines();
 
@@ -215,7 +211,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
         while (i < mines.length && !foundNewMine) {
           try {
             //check to see if these is anything built on the mine
-            if(sensorControl.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
+            if(sensorSys.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
               //if this is a new uncovered mine
               if (mines[i].getLocation()!=uncoveredMineLoc) {
                 uncoveredMineLoc = mines[i].getLocation();
@@ -258,7 +254,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
     robotControl.setIndicatorString(1, "seqApproachLocation");
     navSys.setDestination(location);
     boolean keepGoing = true;
-    while(!sensorControl.canSenseSquare(location) && keepGoing) {
+    while(!sensorSys.canSenseLocation(location) && keepGoing) {
       //TODO: add code here check to see if enemies are seen or under attack
       keepGoing = keepGoing && !seqSenseMine();
       actMove();
@@ -277,9 +273,9 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
           if (done) {
             break;
           }
-          if(sensorControl.canSenseSquare(location.add(x,y)) && !(x==0 && y==0)) {
+          if(sensorSys.canSenseLocation(location.add(x,y)) && !(x==0 && y==0)) {
             try {
-              if(sensorControl.senseObjectAtLocation(location.add(x,y), level)==null &&
+              if(sensorSys.senseObjectAtLocation(location.add(x,y), level)==null &&
                       robotControl.senseTerrainTile(location.add(x,y)).isTraversableAtHeight(robotControl.getRobot().getRobotLevel())) {
                 navSys.setDestination(location.add(x,y));
                 done = true;
@@ -326,9 +322,9 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
       keepGoing = !seqSenseMine();
       //stop if you see the mine is now covered
       if(uncoveredMineLoc !=null ) {
-        if(sensorControl.canSenseSquare(uncoveredMineLoc)) {
+        if(sensorSys.canSenseLocation(uncoveredMineLoc)) {
           try {
-            keepGoing = keepGoing && (sensorControl.senseObjectAtLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())==null);
+            keepGoing = keepGoing && (sensorSys.senseObjectAtLocation(uncoveredMineLoc, robotControl.getRobot().getRobotLevel())==null);
           } catch (Exception e) {
             System.out.println("caught exception:");
             e.printStackTrace();

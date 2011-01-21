@@ -35,6 +35,7 @@ public class SensorRobotSystem extends RobotSystem {
    * Chooses the next destination to go to based on birthplace and previous destinations
    * currently chooses a random location within NEXT_DEST_RANGE squares horizontally and vertically
    * of the robots last destination
+   * @return the new destination
    */
   protected MapLocation chooseNextDestination() {
     robotControl.setIndicatorString(1, "chooseNextDest");

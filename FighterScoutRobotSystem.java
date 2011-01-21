@@ -7,7 +7,7 @@ import battlecode.common.*;
  * this controls our scout fighters, they have the build lightmotor, sensor, weapons
  * @author bovard
  */
-public class FighterScoutRobotSystem extends OldSensorRobotSystem {
+public class FighterScoutRobotSystem extends SensorRobotSystem {
   protected WeaponSystem weaponSys;
 
 
@@ -15,13 +15,13 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
    * Makes a FighterScoutRobot, currently only looks for 1 weapon (slot 2)
    * @param robotControl The RobotController
    */
-  public FighterScoutRobotSystem(RobotController robotControl) {
-    super(robotControl);
+  public FighterScoutRobotSystem(RobotController robotControl, SensorSystem sensorSys) {
+    super(robotControl, sensorSys);
     robotControl.setIndicatorString(0,"FighterScoutConstructor");
     WeaponController weaponControl = (WeaponController)robotControl.components()[2];
     WeaponController[] weapons = new WeaponController[1];
     weapons[0] = weaponControl;
-    weaponSys = new WeaponSystem(weapons, sensorSys, sensorGameEvents);
+    weaponSys = new WeaponSystem(weapons, sensorSys, (SensorGameEvents)gameEvents);
 
   }
 
@@ -29,24 +29,13 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
    * Makes a FighterScoutRobot, given the weapons in a WeaponsController array
    * @param robotControl The RobotController
    */
-  public FighterScoutRobotSystem(RobotController robotControl, WeaponController[] weapons) {
-    super(robotControl);
+  public FighterScoutRobotSystem(RobotController robotControl, SensorSystem sensorSys, WeaponController[] weapons) {
+    super(robotControl, sensorSys);
     robotControl.setIndicatorString(0,"FighterScoutConstructor");
-    weaponSys = new WeaponSystem(weapons, sensorSys, sensorGameEvents);
+    weaponSys = new WeaponSystem(weapons, sensorSys, (SensorGameEvents)gameEvents);
 
   }
 
-  /**
-   * the yield method overridden for soldiers, doesn't check for the seeMine game event
-   * to save bytecode
-   */
-  @Override
-  protected void yield() {
-    sensorGameEvents.resetGameEvents();
-    robotControl.yield();
-    sensorGameEvents.calcSoldierGameEvents();
-    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
-  }
 
   /**
    * the main loop for a FigtherScout
@@ -67,7 +56,8 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
   protected boolean se1FightNScout() {
     //TODO: when a fighter sees an enemy or is shot he should engage with the enemy
     robotControl.setIndicatorString(1, "selFightNScout");
-    if(seqScoutEnemy()) {
+    if(seqScout()) {
+      //TODO: This is broken!
       return seqEngageEnemy();
     }
     return false;
@@ -81,10 +71,10 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
   protected boolean seqEngageEnemy() {
     robotControl.setIndicatorString(1, "seqEngageEnemy");
     //if we can see the enemy or we can rotate to see them
-    if(sensorGameEvents.canSeeEnemy() || seqRotateToEnemy()) {
+    if(((SensorGameEvents)gameEvents).canSeeEnemy() || seqRotateToEnemy()) {
       //while we can see the enemy, fire at them or move toward them
       try {
-        while(sensorGameEvents.canSeeEnemy()) {
+        while(((SensorGameEvents)gameEvents).canSeeEnemy()) {
           MapLocation toFire = weaponSys.fire();
           if(toFire != null) {
             robotControl.setIndicatorString(1, "seqEngageEnemy - turnAndFire!");
@@ -149,7 +139,7 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
     switch(sensorSys.getBreadth()) {
       case PlayerConstants.TELESCOPE_TURNS:
         for (int i=0; i<PlayerConstants.TELESCOPE_TURNS; i++) {
-          if(!sensorGameEvents.seeEnemy) {
+          if(!((SensorGameEvents)gameEvents).canSeeEnemy()) {
             actTurn(robotControl.getDirection().rotateRight());
           }
         }
@@ -165,14 +155,14 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
       case PlayerConstants.SIGHT_TURNS:
         robotControl.setIndicatorString(1, "seqRotateToEnemy - sightTurns");
         int j = 1;
-        while( sensorGameEvents.lostHealth) {
+        while( gameEvents.recentlyLostHealth) {
           actTurn(robotControl.getDirection().rotateRight().rotateRight());
-          if(sensorGameEvents.canSeeEnemy()) {
+          if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
             return true;
           }
           for (int k = 0; k < j; k++) {
             actMoveForward();
-            if(sensorGameEvents.canSeeEnemy()) {
+            if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
               return true;
             }
             while(navSys.isActive()) {
@@ -184,7 +174,7 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
         break;
       case PlayerConstants.RADAR_TURNS:
         for (int i=0; i<PlayerConstants.RADAR_TURNS; i++) {
-          if(!sensorGameEvents.seeEnemy) {
+          if(!((SensorGameEvents)gameEvents).canSeeEnemy()) {
             actTurn(robotControl.getDirection().opposite());
           }
         }
@@ -193,7 +183,7 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
         //in this case the sensor can see in all directions so the bot doesn't need to rotate
         break;
     }
-    return sensorGameEvents.seeEnemy;
+    return ((SensorGameEvents)gameEvents).canSeeEnemy();
   }
 
    /**
@@ -209,7 +199,7 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
     if (!done) {
       navSys.setNextMove();
     }
-    if(sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy()) {
+    if(((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy()) {
       weaponSys.fire();
     }
     yield();

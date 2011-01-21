@@ -13,11 +13,11 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
   protected BroadcastSystem broadcastSys;
   protected GameObject guardTower;
 
-  public ComRecyclerRobotSystem(RobotController robotControl) {
-    super(robotControl);
+  public ComRecyclerRobotSystem(RobotController robotControl, SensorSystem sensorSys,
+          BuilderSystem buildSys, BroadcastSystem broadcastSys) {
+    super(robotControl, sensorSys, buildSys);
     robotControl.setIndicatorString(0, "ComRecycler");
-    broadcastControl = (BroadcastController)robotControl.components()[3];
-    broadcastSys = new BroadcastSystem(robotControl, broadcastControl);
+    this.broadcastSys = broadcastSys;
   }
 
   @Override
@@ -34,7 +34,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
   protected boolean seqBuildGaurd() {
     robotControl.setIndicatorString(1, "selBuildGuard");
     //if we have a guardtower and we can sense it nearby OR if we can build a guard tower
-    if((guardTower != null && sensorControl.canSenseObject(guardTower)) || seqBuildGaurdTower()) {
+    if((guardTower != null && sensorSys.canSenseObject(guardTower)) || seqBuildGaurdTower()) {
       //monitor that guard tower
       return seqMonitorGuardTower();
     }
@@ -51,7 +51,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
     try {
       //while the square is occupied or there is a mine in the square
       while(!navSys.canMove(robotControl.getDirection())
-              || sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.MINE) != null) {
+              || sensorSys.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.MINE) != null) {
         //rotate
         actTurn(robotControl.getDirection().rotateRight());
       }
@@ -60,7 +60,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
       while (!done) {
         //While there is nothing there, broadcast a building directive and sleep for a while
         do {
-          guardTower = sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
+          guardTower = sensorSys.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
           broadcastSys.sendBuildDirective(BuildOrder.GUARD_TOWER_1.id, birthPlace.add(robotControl.getDirection()));
           for (int i=0; i<5; i++) {
             yield();
@@ -77,7 +77,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
         //if we've gone through turnsToWait turns... it check to see if it's the same thing
         if (i==turnsToWait) {
           //check to see if the same thing is still there
-          int id = sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND).getID();
+          int id = sensorSys.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND).getID();
           if (id == guardTower.getID()) {
             //if it is, chances are it's the building base we've been looking for
             done = true;
@@ -86,13 +86,13 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
 
       }
 
-      guardTower = sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
+      guardTower = sensorSys.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
 
       while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_1.cost) {
         yield();
       }
 
-      return buildSys.seqBuild(BuildOrder.GUARD_TOWER_1, birthPlace.add(robotControl.getDirection()));
+      return seqBuild(BuildOrder.GUARD_TOWER_1, birthPlace.add(robotControl.getDirection()));
     } catch (Exception e) {
       System.out.println("caught exception:");
       e.printStackTrace();
@@ -106,7 +106,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
    */
   protected boolean seqMonitorGuardTower() {
     robotControl.setIndicatorString(1, "seqMonitorGuardTower");
-    while(sensorControl.canSenseObject(guardTower)) {
+    while(sensorSys.canSenseObject(guardTower)) {
       for (int i =0; i < 10; i++) {
         yield();
       }

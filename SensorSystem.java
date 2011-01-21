@@ -35,10 +35,10 @@ public class SensorSystem {
    * sensorControl based functions
    * @param sensorControl
    */
-  public SensorSystem(SensorController sensor, Team myTeam) {
+  public SensorSystem(RobotController robotControl, SensorController sensor) {
     this.sensorControl = sensor;
-    this.robotControl = sensorControl.getRC();
-    this.myTeam = myTeam;
+    this.robotControl = robotControl;
+    this.myTeam = robotControl.getTeam();
     lastMineScan = -1;
     lastBotScan = -1;
   }

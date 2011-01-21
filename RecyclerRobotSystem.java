@@ -10,10 +10,8 @@ import java.util.Random;
  *
  * @author bovard
  */
-public class RecyclerRobotSystem extends BuildingRobotSystem {
-  protected BuilderController buildControl;
-  protected BuilderSystem buildSys;
-  private Random rand;
+public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
+
   protected boolean shouldBuild = false;
   protected boolean stayActive = false;
 
@@ -22,25 +20,22 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
    * Creates a new Recycler, which can build scout units
    * @param robotControl
    */
-  public RecyclerRobotSystem(RobotController robotControl) {
-    super(robotControl);
+  public RecyclerRobotSystem(RobotController robotControl, SensorSystem sensorSys, BuilderSystem buildSys) {
+    super(robotControl, sensorSys, buildSys);
 
     robotControl.setIndicatorString(0, "Recycler");
-    buildControl = (BuilderController)robotControl.components()[2];
-    buildSys = new BuilderSystem(robotControl, buildControl);
-    rand = new Random();
 
     //check to see if this Recycler is the most SouthWestern in a group of four mines it should produce
     //if it is set shouldBuild to true so it knows it should start building troops
     try {
-      if(sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) != null
-              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.NORTH_EAST), RobotLevel.MINE) != null
-              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.EAST), RobotLevel.MINE) != null) {
+      if(sensorSys.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) != null
+              && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.NORTH_EAST), RobotLevel.MINE) != null
+              && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.EAST), RobotLevel.MINE) != null) {
         shouldBuild=true;
       }
       //otherwise if the mine is the most southwestern it should stay active
-      else if (sensorControl.senseObjectAtLocation(birthPlace.add(Direction.SOUTH), RobotLevel.MINE) == null
-              && sensorControl.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null) {
+      else if (sensorSys.senseObjectAtLocation(birthPlace.add(Direction.SOUTH), RobotLevel.MINE) == null
+              && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null) {
         stayActive = true;
       }
     }catch (Exception e) {
@@ -64,12 +59,14 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
       }
       //wait for funds to build an antenna and our buildcontroller is free
       while(robotControl.getTeamResources() < ComponentType.ANTENNA.cost + PlayerConstants.MINIMUM_FLUX
-              || buildControl.isActive()) {
+              || buildSys.isActive()) {
         yield();
       }
       //once we've built an antenna, make a new ComRecyclerRobotSystem and start it
-      if (buildSys.actBuildComponent(ComponentType.ANTENNA, birthPlace, RobotLevel.ON_GROUND)) {
-        new ComRecyclerRobotSystem(robotControl).go();
+      if (actBuildComponent(ComponentType.ANTENNA, birthPlace, RobotLevel.ON_GROUND)) {
+        BroadcastController bcc = (BroadcastController)robotControl.components()[robotControl.components().length-1];
+        new ComRecyclerRobotSystem(robotControl, sensorSys, buildSys,
+                new BroadcastSystem(robotControl, bcc)).go();
       }
     }
     //If they aren't building they should turn off to save their upkeep
@@ -162,7 +159,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
       actTurn(robotControl.getDirection().rotateRight());
     }
     //call to the buildSys to initiate the build sequence
-    return buildSys.seqBuild(toBuild,robotControl.getLocation().add(robotControl.getDirection()));
+    return seqBuild(toBuild,robotControl.getLocation().add(robotControl.getDirection()));
 
   }
 

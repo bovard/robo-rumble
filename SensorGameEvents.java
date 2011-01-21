@@ -11,11 +11,11 @@ public class SensorGameEvents extends GameEvents {
 
   //game events
   //normal game events
-  boolean seeMine, seeDebris;
+  protected boolean seeMine, seeDebris;
   //mission gameEvents
 
   //critical game events
-  boolean seeEnemy;
+  protected boolean seeEnemy;
 
   /**
    * Creates a SensorGameEvents class to manage GameEvents based from Sensor

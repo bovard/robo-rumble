@@ -22,87 +22,71 @@ public class BuilderSystem {
    this.buildControl = buildControl;
   }
 
+
   /**
-   * Takes a RobotBuildOrder and builds a robot to match the specification
-   * @param buildOrder an array of Object, the first being the chasis the rest being components
-   * @param location the location to build the robot
-   * @return if the build was successful
+   * Checks to see if the build controller is active
+   * @return if the controller is active
    */
-  protected boolean seqBuild(BuildOrder toBuild, MapLocation location) {
-    robotControl.setIndicatorString(1, "selBuild");
+  public boolean isActive() {
+    return buildControl.isActive();
+  }
 
+  /**
+   * checks to see the type of the build controller
+   * @return the ComponentType of the buildcontroller
+   */
+  public ComponentType type() {
+    return buildControl.type();
+  }
+
+  /**
+   * Checks to see if the Chassis can be built at that location
+   * @param chassis the chassis to build
+   * @param loc the MapLocation to build it at
+   * @return if the chassis can be built (not taking into account money or active status)
+   */
+  public boolean canBuild(Chassis chassis, MapLocation loc) {
+    return buildControl.canBuild(chassis, loc);
+  }
+
+  /**
+   * sets the build controller to build a Chassis at MapLocation next time yield is called
+   * @param chassis The Chassis to build
+   * @param loc The MapLocation to build it
+   * @return if the set was sucessful
+   */
+  public boolean setBuildChassis(Chassis chassis, MapLocation loc) {
     try {
-      //build the chassis
-      while(buildControl.isActive()) {
-        robotControl.yield();
-      }
-      boolean success = true;
-      if(buildControl.type() == toBuild.chassisBuilder) {
-        success = actBuildChasis(toBuild.chassis,location);
-      }
-
-      //build the components, falling out if one fails
-      int i = 0;
-      while (i < toBuild.getComponents(buildControl.type()).length && success) {
-        //wait until there is enough resources
-        while(robotControl.getTeamResources() < toBuild.getComponents(buildControl.type())[i].cost
-                + PlayerConstants.MINIMUM_FLUX && buildControl.isActive()) {
-          robotControl.yield();
-        }
-        //build component
-        success = actBuildComponent(toBuild.getComponents(buildControl.type())[i],location,toBuild.chassis.level);
-        i++;
-      }
-      return success;
+      buildControl.build(chassis, loc);
+      return true;
     } catch (Exception e) {
       System.out.println("caught exception:");
       e.printStackTrace();
-      return false;
-    }
-  }
-
-
-  /**
-   * Builds a chassis at the specified location
-   * @param toBuild the Chassis to build
-   * @param location the MapLocation to build it on
-   * @return if the build was successful
-   */
-  protected boolean actBuildChasis(Chassis toBuild, MapLocation location) {
-    if (robotControl.getTeamResources() >= toBuild.cost + PlayerConstants.MINIMUM_FLUX
-            && buildControl.canBuild(toBuild, location)) {
-     try {
-       buildControl.build(toBuild, location);
-       robotControl.yield();
-       return true;
-     }
-     catch (Exception e) {
-      System.out.println("caught exception:");
-      e.printStackTrace();
-     }
     }
     return false;
   }
 
   /**
-   * Builds a component at location and level (there better be a chassis there!)
+   * sets the build controller to build a Component at MapLocation and RobotLevel next
+   * time yield is called
    * @param toBuild the ComponentType to build
-   * @param location the MapLocation to build it
-   * @param level the RobotLevel of the Chasis
+   * @param loc The MapLocation to build it
+   * @param level The RobotLevel to build it
    * @return if the build was successful
    */
-  protected boolean actBuildComponent(ComponentType toBuild, MapLocation location, RobotLevel level) {
-    if (robotControl.getTeamResources() >= toBuild.cost) {
-     try {
-       buildControl.build(toBuild, location, level);
-       robotControl.yield();
-       return true;
-     }
-     catch (Exception e) {
+  public boolean setBuildComponent(ComponentType toBuild, MapLocation loc, RobotLevel level) {
+    try {
+      buildControl.build(toBuild, loc, level);
+      return true;
+    } catch (Exception e) {
       System.out.println("caught exception:");
       e.printStackTrace();
-     }
     }
     return false;
   }
+
+
+
+
+
 }

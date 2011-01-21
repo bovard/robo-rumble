@@ -55,19 +55,21 @@ public class RobotPlayer implements Runnable {
         //our BUILDER_SCOUT
         if (components.length == 3 && components[1].type()==ComponentType.SIGHT &&
                 components[2].type()==ComponentType.CONSTRUCTOR) {
-          BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC);
+          BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]),
+                  new BuilderSystem(myRC, (BuilderController)components[2]));
           system.go();
         }
         //provided BuilderScout (the one that we start off the game with)
         if (components.length == 3 && components[2].type()==ComponentType.SIGHT &&
                 components[1].type()==ComponentType.CONSTRUCTOR) {
-          BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC);
+          BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[2]),
+                  new BuilderSystem(myRC, (BuilderController)components[1]));
           system.go();
         }
         //FIGHTER_SCOUT
         if (components.length == 4 && components[1].type()==ComponentType.RADAR &&
                 components[2].type()==ComponentType.BLASTER && components[3].type()==ComponentType.SHIELD) {
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC);
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]));
           system.go();
         }
         //FIGHTER_SCOUT 2
@@ -77,7 +79,7 @@ public class RobotPlayer implements Runnable {
           WeaponController[] weapons = new WeaponController[2];
           weapons[0]=(WeaponController)components[2];
           weapons[1]=(WeaponController)components[3];
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, weapons);
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]), weapons);
           system.go();
         }
         //FIGHTER_SCOUT 3
@@ -86,7 +88,7 @@ public class RobotPlayer implements Runnable {
           WeaponController[] weapons = new WeaponController[2];
           weapons[0]=(WeaponController)components[2];
           weapons[1]=(WeaponController)components[3];
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, weapons);
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]), weapons);
           system.go();
         }
         //FIGHTER_SCOUT 4
@@ -97,14 +99,14 @@ public class RobotPlayer implements Runnable {
           weapons[0]=(WeaponController)components[2];
           weapons[1]=(WeaponController)components[3];
           weapons[2]=(WeaponController)components[4];
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, weapons);
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]), weapons);
           system.go();
         }
         //FIGHTER_SCOUT_5
         if (components.length == 5 && components[1].type()==ComponentType.SIGHT &&
                 components[2].type()==ComponentType.BLASTER && components[3].type()==ComponentType.BLASTER
                 && components[4].type()==ComponentType.SHIELD) {
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC);
+          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]));
           system.go();
         }
       }
@@ -112,7 +114,8 @@ public class RobotPlayer implements Runnable {
         //RECYCLER
         if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
                 components[2].type()==ComponentType.RECYCLER) {
-          RecyclerRobotSystem system = new RecyclerRobotSystem(myRC);
+          RecyclerRobotSystem system = new RecyclerRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]),
+                  new BuilderSystem(myRC, (BuilderController)components[2]));
           system.go();
         }
         //TURRET (1,2,3, & 4) (don't know why it'd be more than 5, but better safe than sorry!)
