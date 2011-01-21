@@ -51,6 +51,16 @@ public class SensorSystem {
     return sensorControl;
   }
 
+  public MapLocation senseLocationOfObject(GameObject go) {
+    try {
+      return sensorControl.senseLocationOf(go);
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   /**
    * checks to see if we can sense a map location
    * @param loc the MapLocation to sense
