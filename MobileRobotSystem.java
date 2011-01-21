@@ -7,7 +7,7 @@ import battlecode.common.*;
  */
 public class MobileRobotSystem extends RobotSystem {
 
-  protected NavigationSystem navSys;
+  protected BlindNavigationSystem navSys;
 
   /**
    * creates a new MobileRobotSystem, takes the moveControl and adds a navSystem
@@ -15,7 +15,7 @@ public class MobileRobotSystem extends RobotSystem {
    */
   public MobileRobotSystem(RobotController robotControl) {
     super(robotControl);
-    navSys = new NavigationSystem(moveControl);
+    navSys = new BlindNavigationSystem(moveControl);
   }
 
   /**

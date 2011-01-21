@@ -27,8 +27,6 @@ public class RobotSystem {
   protected GameEvents gameEvents;
   protected CommunicationsSystem comSys;
 
-  protected final int MINIMUM_ENERGON = 5;
-
 
   /**
    * Creates a new RobotSystem base class, assumes that there is a movement controller

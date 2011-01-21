@@ -42,7 +42,7 @@ public class BuilderSystem {
       }
 
       //build the components, falling out if one fails
-      int i = 1;
+      int i = 0;
       while (i < toBuild.getComponents(buildControl.type()).length && success) {
         //wait until there is enough resources
         while(robotControl.getTeamResources() < toBuild.getComponents(buildControl.type())[i].cost
@@ -70,7 +70,7 @@ public class BuilderSystem {
    */
   protected boolean actBuildChasis(Chassis toBuild, MapLocation location) {
     if (robotControl.getTeamResources() >= toBuild.cost + PlayerConstants.MINIMUM_FLUX
-            && buildControl.canBuild(robotControl.getLocation().directionTo(location), toBuild.level)) {
+            && buildControl.canBuild(toBuild, location)) {
      try {
        buildControl.build(toBuild, location);
        robotControl.yield();

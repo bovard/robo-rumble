@@ -93,12 +93,12 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     else if (Clock.getRoundNum() > 1500){
       decider -= .3;
     }
+    //wait for resources
+    while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + BuildOrder.BUILDER_SCOUT_1.cost
+            + BuildOrder.RECYCLER.cost + (Clock.getRoundNum()-150)/10 + BuildOrder.GUARD_TOWER_1.cost) {
+      yield();
+    }
     if(decider >= .5) {
-      //wait until we have enough resources
-      while(robotControl.getTeamResources() < MINIMUM_ENERGON + BuildOrder.BUILDER_SCOUT_1.cost
-              + BuildOrder.RECYCLER.cost + (Clock.getRoundNum()-150)/10 ) {
-        yield();
-      }
       //build
       if(seqBuild(BuildOrder.BUILDER_SCOUT_1)) {
         return true;
@@ -137,7 +137,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
         break;
     }
     //wait until we have enough resources
-    while(robotControl.getTeamResources() < MINIMUM_ENERGON + toBuild.cost ) {
+    while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.cost ) {
       yield();
     }
     //build
@@ -158,7 +158,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
     actTurn(Direction.WEST);
     //keep rotating until we find a free square and have enough resources
     while(!moveControl.canMove(robotControl.getDirection())
-            || robotControl.getTeamResources() < MINIMUM_ENERGON + toBuild.chassis.cost) {
+            || robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.chassis.cost) {
       actTurn(robotControl.getDirection().rotateRight());
     }
     //call to the buildSys to initiate the build sequence
