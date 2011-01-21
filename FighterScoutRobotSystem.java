@@ -109,8 +109,8 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
                   }
                   //otherwise move forward if you can
                   else {
-                    if(moveControl.canMove(robotControl.getDirection()) && !moveControl.isActive()) {
-                      moveControl.moveForward();
+                    if(navSys.canMove(robotControl.getDirection()) && !navSys.isActive()) {
+                      navSys.setMoveForward();
                       yield();
                     }
                     //if you can't move forward just sit there like a slub
@@ -175,7 +175,7 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
             if(sensorGameEvents.canSeeEnemy()) {
               return true;
             }
-            while(moveControl.isActive()) {
+            while(navSys.isActive()) {
               yield();
             }
           }
@@ -205,15 +205,16 @@ public class FighterScoutRobotSystem extends OldSensorRobotSystem {
   protected boolean actMove() {
     if(navSys.getDestination()==null)
       return false;
-    boolean done = navSys.setNextMove();
+    boolean done = navSys.isAtDestination();
+    if (!done) {
+      navSys.setNextMove();
+    }
     if(sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy()) {
       weaponSys.fire();
     }
     yield();
     //check for map boundary conditions
     updateMapExtrema();
-    //update your position for the GUI
-    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
     done = !checkDestinationValidity() || done;
     return done;
   }

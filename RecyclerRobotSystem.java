@@ -157,7 +157,7 @@ public class RecyclerRobotSystem extends BuildingRobotSystem {
   protected boolean seqBuild(BuildOrder toBuild) {
     actTurn(Direction.WEST);
     //keep rotating until we find a free square and have enough resources
-    while(!moveControl.canMove(robotControl.getDirection())
+    while(!navSys.canMove(robotControl.getDirection())
             || robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.chassis.cost) {
       actTurn(robotControl.getDirection().rotateRight());
     }

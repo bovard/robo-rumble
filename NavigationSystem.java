@@ -8,29 +8,32 @@ import java.util.Random;
  * The NavigationSystem needs to be given a MovementController to issue commands to, it
  * will check to see if the MovementController is idle before issuing any commands
  *
- * Note: we may need to give the NavSys access to the sensory gear
- * So all the sensors will only look for a given type of object, which means we're going
- * to have to do multiple sweeps if we want to get everything? or we can just tell it to do
- * a sweep for type Object, then try casting them out to find everything?
+ * Note: this class shouldn't be doing any checking to see if it actually can set the
+ * movementcontroller, but it still does. it will print a warning if it can't
  *
  * Note: this class should only be used when trying to navigate somewhere. Fleeing, combat
- * movement, etc... are not supported here (yet?)
+ * movement
  *
+ * @see SensorNavigationSystem
+ * @see JumpNavigationSystem
  * @author bovard
  */
 public class NavigationSystem {
 
-  protected Random rand = new Random();
+  
   protected MovementController moveControl;
   protected RobotController robotControl;
+  
+  //class variables
+  protected Random rand = new Random();
   protected int mode;
   protected MapLocation destination;
   protected boolean has_destination = false;
 
   //used in bug movement algorithm
-  protected boolean tracking = false;
-  protected Direction lastTargetDirection;
-  protected boolean trackingRight;
+  private boolean tracking = false;
+  private Direction lastTargetDirection;
+  private boolean trackingRight;
 
   
   /**
@@ -39,11 +42,14 @@ public class NavigationSystem {
    * any sensors
    * @param control the movementController
    */
-  public NavigationSystem(MovementController control) {
-    moveControl = control;
-    robotControl = moveControl.getRC();
+  public NavigationSystem(RobotController robotControl, MovementController control) {
+    this.robotControl = robotControl;
+    this.moveControl = control;
+    
     mode = NavigationMode.BUG;
   }
+
+
 
   /**
    * Creates a navSystem with a destination already in mind
@@ -56,6 +62,84 @@ public class NavigationSystem {
     has_destination = true;
     robotControl.setIndicatorString(2, "Dest: "+dest.toString());
     mode = NavigationMode.BUG;
+  }
+
+  /**
+   * note: this doesn't do much be the overridden version (units with blink) will
+   * @return if all movement means are active
+   */
+  public boolean isActive() {
+    return moveControl.isActive();
+  }
+
+  /**
+   * checks to see if the robot can move in the specified direction
+   * @param direction direction to move in
+   * @return if the bot can move in that direction
+   */
+  public boolean canMove(Direction direction) {
+    return moveControl.canMove(direction);
+  }
+
+  /**
+   * sets the moveController to turn
+   * Note: the checks here are just as a failsafe, we'll remove them once we're sure that
+   * we are using this correctly
+   * @param toTurn the direction to turn in 
+   * @return if the moveController was set to turn
+   */
+  public boolean setTurn(Direction toTurn) {
+    if(!moveControl.isActive() && toTurn != robotControl.getDirection()) {
+      try {
+        moveControl.setDirection(toTurn);
+        return true;
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+      }
+    }
+    System.out.println("WARNING: Bad call to NavSys.setTurn");
+    return false;
+  }
+
+  /**
+   * Sets to moveControl to move forward
+   * Note: the checks here are just as a failsafe, we'll remove them once we're sure that
+   * we are using this correctly
+   * @return if the move control was set to move forward
+   */
+  public boolean setMoveForward() {
+    if(!moveControl.isActive() && moveControl.canMove(robotControl.getDirection())) {
+      try {
+        moveControl.moveForward();
+        return true;
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+      }
+    }
+    System.out.println("WARNING: Bad call to NavSys.setMoveForward");
+    return false;
+  }
+
+  /**
+   * Sets to moveControl to move backward
+   * Note: the checks here are just as a failsafe, we'll remove them once we're sure that
+   * we are using this correctly
+   * @return if the move control was set to move backward
+   */
+  public boolean setMoveBackward() {
+    if(!moveControl.isActive() && moveControl.canMove(robotControl.getDirection().opposite())) {
+      try {
+        moveControl.moveBackward();
+        return true;
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+      }
+    }
+    System.out.println("WARNING: Bad call to NavSys.setMoveBackward");
+    return false;
   }
 
   /**
@@ -108,8 +192,10 @@ public class NavigationSystem {
         case NavigationMode.FLOCK:
           return flock();
       }
+      System.out.println("Warning: fell through NavigationSystem.setNextMove (bad NavMode)");
     }
     //if the moveController is active or we don't have a destination return false
+    System.out.println("WARNING: Bad call to NavSys.setNextMove");
     return false;
   }
 
@@ -129,6 +215,7 @@ public class NavigationSystem {
         //System.out.println("DESTINATION REACHED!!");
         has_destination = false;
         robotControl.setIndicatorString(2, "No Dest");
+        System.out.println("WARNING: Bad call to NavSys.setNextMove ->bug (no dest)");
         return false;
       }
       //if we're currently tracking
@@ -224,8 +311,8 @@ public class NavigationSystem {
     } catch (Exception e) {
       System.out.println("caught exception:");
       e.printStackTrace();
-      return false;
     }
+    System.out.println("WARNING: Bad call to NavSys.setNextMove -> bug (unknown)");
     return false;
   }
 

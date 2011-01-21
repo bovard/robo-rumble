@@ -7,7 +7,7 @@ import java.util.Random;
  * A scout robot system is assumed to be mobile and have a sensor in component slot 1
  * @author bovard
  */
-public class OldSensorRobotSystem extends MobileRobotSystem {
+public class OldSensorRobotSystem extends RobotSystem {
   //we don't know the bounds of the map to start with, we'll fill these in as we find them
   protected int minX=-1, maxX=Integer.MAX_VALUE, minY=-1, maxY=Integer.MAX_VALUE;
   
@@ -61,6 +61,7 @@ public class OldSensorRobotSystem extends MobileRobotSystem {
    * sends to bot to find an enemy unit, when one is sensed, returns true
    * returns false if scouting is stopped for any other reason (ex taking fire from
    * an unseen enemy)
+   * PS: this method is fucked
    * @return if an enemy is sensed
    */
   protected boolean seqScoutEnemy() {
@@ -68,12 +69,12 @@ public class OldSensorRobotSystem extends MobileRobotSystem {
     navSys.setDestination(chooseNextDestination());
     robotControl.setIndicatorString(1, "seqScoutEnemy - newDest");
     //check to see if we already sense an enemy (we've been shot or see one)
-    boolean done = sensorGameEvents.checkCriticalGameEvents();
+    boolean done = sensorGameEvents.checkGameEvents(currentGameEventLevel.priority);
     //while we haven't found an enemy
     while(!done && !actMove()) {
-      done = sensorGameEvents.checkCriticalGameEvents();
+      done = sensorGameEvents.checkGameEvents(currentGameEventLevel.priority);
     }
-    return sensorGameEvents.checkCriticalGameEvents();
+    return sensorGameEvents.checkGameEvents(currentGameEventLevel.priority);
   }
   
   /**
@@ -115,9 +116,10 @@ public class OldSensorRobotSystem extends MobileRobotSystem {
     robotControl.setIndicatorString(1, "actFlee!!");
     navSys.setDestination(birthPlace);
 
-    boolean done = false;
+    boolean done = navSys.isAtDestination();
     while(!done){
-      done = navSys.setNextMove();
+      navSys.setNextMove();
+      done = navSys.isAtDestination();
     }
 
     return done;
@@ -208,7 +210,10 @@ public class OldSensorRobotSystem extends MobileRobotSystem {
   protected boolean actMove() {
     if(navSys.getDestination()==null)
       return false;
-    boolean done = navSys.setNextMove();
+    boolean done = navSys.isAtDestination();
+    if(!done) {
+      navSys.setNextMove();
+    }
     yield();
     //check for map boundary conditions
     updateMapExtrema();

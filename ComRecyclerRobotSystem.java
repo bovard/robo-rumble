@@ -50,7 +50,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
     //turn to an open space
     try {
       //while the square is occupied or there is a mine in the square
-      while(!moveControl.canMove(robotControl.getDirection())
+      while(!navSys.canMove(robotControl.getDirection())
               || sensorControl.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.MINE) != null) {
         //rotate
         actTurn(robotControl.getDirection().rotateRight());
@@ -70,7 +70,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
         //something is there, wait for up to turnsToWait turns, see that it doesn't leave
         int i = 0;
         int turnsToWait = 10;
-        while( i < turnsToWait && !moveControl.canMove(robotControl.getDirection())) {
+        while( i < turnsToWait && !navSys.canMove(robotControl.getDirection())) {
           i++;
           yield();
         }

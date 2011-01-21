@@ -49,11 +49,11 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
         while(sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND) == null
                 || !(robotControl.getDirection() == Direction.NORTH || robotControl.getDirection() == Direction.EAST ||
                 robotControl.getDirection() == Direction.SOUTH || robotControl.getDirection() == Direction.WEST)) {
-          while(moveControl.isActive()) {
+          while(navSys.isActive()) {
             yield();
           }
           actTurn(robotControl.getDirection().rotateRight());
-          while(moveControl.isActive()) {
+          while(navSys.isActive()) {
             yield();
           }
         }
@@ -147,7 +147,7 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
     //while we haven't found an uncovered mine and we aren't at our destination
     while(!done && !actMove()) {
       done = seqSenseMine();
-      if(sensorGameEvents.checkCriticalGameEvents()) {
+      if(sensorGameEvents.checkGameEvents(currentGameEventLevel.priority)) {
         return false;
       }
     }
@@ -170,9 +170,10 @@ public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
         robotControl.setIndicatorString(1, "selBuildRecycler -waiting for funds");
         yield();
       }
-      if (!moveControl.isActive()) {
+      if (!navSys.isActive()) {
         try {
-          moveControl.setDirection(robotControl.getLocation().directionTo(uncoveredMineLoc));
+          navSys.setTurn(robotControl.getLocation().directionTo(uncoveredMineLoc));
+          yield();
         } catch (Exception e) {
           System.out.println("caught exception:");
           e.printStackTrace();

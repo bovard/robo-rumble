@@ -10,7 +10,9 @@ public class SensorGameEvents extends GameEvents {
   SensorSystem sensorSys;
 
   //game events
+  //normal game events
   boolean seeMine, seeDebris;
+  //mission gameEvents
 
   //critical game events
   boolean seeEnemy;
@@ -60,19 +62,26 @@ public class SensorGameEvents extends GameEvents {
    * @return if any game events have occured
    */
   @Override
-  public boolean checkGameEvents() {
-    return super.checkGameEvents() || seeMine || seeDebris || seeEnemy;
+  public boolean checkGameEvents(int priority) {
+    boolean event = false;
+    switch(priority) {
+      case GameEventLevelPriority.CRITICAL:
+        //highest priority level, can't have one higher
+        return super.checkGameEvents(priority) || false;
+      case GameEventLevelPriority.MISSION:
+        //check the CRICITAL game events
+        return super.checkGameEvents(priority) || seeEnemy;
+      case GameEventLevelPriority.NORMAL:
+        //check the CRITICAL and MISSION game events
+        return super.checkGameEvents(priority) || seeEnemy;
+      case GameEventLevelPriority.NONE:
+        //check all game events
+        return super.checkGameEvents(priority) || seeEnemy || seeMine || seeDebris;
+    }
+    System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
+    return false;
   }
 
-  /**
-   * checks to see if any critical game events have occured this turn
-   * critical game events include: seeing and enemy, taking fire
-   * @return if any critical game events have occured
-   */
-  @Override
-  public boolean checkCriticalGameEvents() {
-    return super.checkCriticalGameEvents() || seeEnemy;
-  }
 
   /**
    * calculates if a mine can be seen for the current turn

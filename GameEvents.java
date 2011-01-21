@@ -19,10 +19,13 @@ public class GameEvents {
   protected CommunicationsSystem comSys;
 
   //list of GameEvents, we'll add more as we get more complex behavoir
+  //Note: check out GameEventLevels to see the levels
+  //Normal
   protected boolean lowHealth, hasMessages, negativeFluxRegen;
-
+  //Misison
+  protected boolean hasDirective;
   //critcal GameEvents
-  protected boolean lostHealth, hasDirective;
+  protected boolean lostHealth;
 
   //class variables
   private double formerHP;
@@ -157,18 +160,27 @@ public class GameEvents {
   }
 
   /**
-   * checks to see if any GameEvents have occurred
-   * @return true if a gameevent has occurred
+   * checks to see if any GameEvents have occurred of priority > priority
+   * @param priority the priority of game events to check
+   * @return true if a gameevent has occurred with priority > the imputted priority
    */
-  public boolean checkGameEvents() {
-    return lostHealth || lowHealth || hasDirective || negativeFluxRegen;
+  public boolean checkGameEvents(int priority) {
+    switch(priority) {
+      case GameEventLevelPriority.CRITICAL:
+        //highest priority level, can't have one higher
+        return false;
+      case GameEventLevelPriority.MISSION:
+        //check the CRICITAL game events
+        return lostHealth;
+      case GameEventLevelPriority.NORMAL:
+        //check the CRITICAL and MISSION game events
+        return lostHealth || hasDirective;
+      case GameEventLevelPriority.NONE:
+        //check all game events
+        return lostHealth || lowHealth || hasDirective || negativeFluxRegen;
+    }
+    System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
+    return false;
   }
 
-  /**
-   * checks to see if any critical game events have occurred (game events that should
-   * interrupt any behavoir except combat oriented ones).
-   */
-  public boolean checkCriticalGameEvents() {
-    return lostHealth || hasDirective;
-  }
 }
