@@ -4,18 +4,16 @@ import battlecode.common.*;
 
 /**
  * A navigation system for robots with a jump component
- * extends NavigationSystem
+ * extends SensorNavigationSystem
  * //TODO: Implement this class
  * @author bovard
  */
-public class JumpNavigationSystem extends NavigationSystem {
+public class JumpNavigationSystem extends SensorNavigationSystem {
   protected JumpController jumpControl;
-  protected SensorSystem sensorSys;
 
   public JumpNavigationSystem(MovementController moveControl, SensorSystem sensorSys, JumpController jumpControl) {
-    super(moveControl);
+    super(moveControl, sensorSys);
     this.jumpControl = jumpControl;
-    this.sensorSys = sensorSys;
   }
 
 

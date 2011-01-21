@@ -7,7 +7,7 @@ import battlecode.common.*;
  * They will roam the board looking for mines to build recyclers on.
  * @author bovard
  */
-public class BuilderScoutRobotSystem extends SensorRobotSystem {
+public class BuilderScoutRobotSystem extends OldSensorRobotSystem {
   protected BuilderController buildControl;
   protected BuilderSystem buildSys;
   protected MapLocation uncoveredMineLoc;

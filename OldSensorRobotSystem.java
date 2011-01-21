@@ -7,7 +7,7 @@ import java.util.Random;
  * A scout robot system is assumed to be mobile and have a sensor in component slot 1
  * @author bovard
  */
-public class SensorRobotSystem extends MobileRobotSystem {
+public class OldSensorRobotSystem extends MobileRobotSystem {
   //we don't know the bounds of the map to start with, we'll fill these in as we find them
   protected int minX=-1, maxX=Integer.MAX_VALUE, minY=-1, maxY=Integer.MAX_VALUE;
   
@@ -20,11 +20,11 @@ public class SensorRobotSystem extends MobileRobotSystem {
   protected static final int NEW_DEST_RANGE = 20;
 
   /**
-   * Creates a new SensorRobotSystem, requires that the robot have a movementcontroller
+   * Creates a new OldSensorRobotSystem, requires that the robot have a movementcontroller
    * and a sensor of some sort
    * @param robotControl
    */
-  public SensorRobotSystem(RobotController robotControl) {
+  public OldSensorRobotSystem(RobotController robotControl) {
     super(robotControl);
 
     //for our scouts we want to make sure we build the sensor as the first thing after
