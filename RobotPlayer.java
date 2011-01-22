@@ -132,7 +132,7 @@ public class RobotPlayer implements Runnable {
         //RECYCLER
         if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
                 components[2].type()==ComponentType.RECYCLER) {
-          RecyclerRobotSystem system = new RecyclerRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]),
+          RSRecycler system = new RSRecycler(myRC, new SensorSystem(myRC, (SensorController)components[1]),
                   new BuilderSystem(myRC, (BuilderController)components[2]));
           system.go();
         }

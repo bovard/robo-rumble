@@ -1,29 +1,16 @@
-
 package team122;
 import battlecode.common.*;
-import java.util.Random;
 
 /**
- * This is the System for a basic Recycler. It'll be needing to pump out two types of robots initially
- * BuilderScouts and FighterScouts (see RobotBuildOrder on how to build each, order matters)
  *
- * @deprecated from alpha v2.0
  * @author bovard
  */
-public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
+public class RSRecycler extends BuilderSensorRobotSystem {
+  protected boolean shouldBuild = false, stayActive = false;
 
-  protected boolean shouldBuild = false;
-  protected boolean stayActive = false;
-
-
-  /**
-   * Creates a new Recycler, which can build scout units
-   * @param robotControl
-   */
-  public RecyclerRobotSystem(RobotController robotControl, SensorSystem sensorSys, BuilderSystem buildSys) {
+  public RSRecycler(RobotController robotControl, SensorSystem sensorSys, BuilderSystem buildSys) {
     super(robotControl, sensorSys, buildSys);
 
-    robotControl.setIndicatorString(0, "Recycler");
 
     //check to see if this Recycler is the most SouthWestern in a group of four mines it should produce
     //if it is set shouldBuild to true so it knows it should start building troops
@@ -32,6 +19,7 @@ public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
               && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.NORTH_EAST), RobotLevel.MINE) != null
               && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.EAST), RobotLevel.MINE) != null) {
         shouldBuild=true;
+        stayActive=true;
       }
       //otherwise if the mine is the most southwestern it should stay active
       else if (sensorSys.senseObjectAtLocation(birthPlace.add(Direction.SOUTH), RobotLevel.MINE) == null
@@ -44,9 +32,10 @@ public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
     }
   }
 
+
   @Override
   public void go() {
-    
+
     //Note: we'll still get income from the mines.
     while(shouldBuild) {
       if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX)
@@ -65,7 +54,7 @@ public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
       //once we've built an antenna, make a new ComRecyclerRobotSystem and start it
       if (actBuildComponent(ComponentType.ANTENNA, birthPlace, RobotLevel.ON_GROUND)) {
         BroadcastController bcc = (BroadcastController)robotControl.components()[robotControl.components().length-1];
-        new ComRecyclerRobotSystem(robotControl, sensorSys, buildSys,
+        new RSComCycler(robotControl, sensorSys, buildSys,
                 new BroadcastSystem(robotControl, bcc)).go();
       }
     }
@@ -73,6 +62,7 @@ public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
     robotControl.setIndicatorString(1, "Not Producing, turning off!");
     robotControl.turnOff();
   }
+
 
   /**
    * Builds FighterScouts and BuilderScouts
@@ -155,11 +145,22 @@ public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
    * @return if the build was successful
    */
   protected boolean seqBuild(BuildOrder toBuild) {
-    actTurn(Direction.WEST);
+    if(!robotControl.getDirection().equals(Direction.WEST))
+    {
+      while(navSys.isActive()) {
+        yield();
+      }
+      actTurn(Direction.WEST);
+    }
     //keep rotating until we find a free square and have enough resources
     while(!navSys.canMove(robotControl.getDirection())
             || robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.chassis.cost) {
-      actTurn(robotControl.getDirection().rotateRight());
+      if(navSys.isActive()) {
+        yield();
+      }
+      else {
+        actTurn(robotControl.getDirection().rotateRight());
+      }
     }
     //call to the buildSys to initiate the build sequence
     return seqBuild(toBuild,robotControl.getLocation().add(robotControl.getDirection()));

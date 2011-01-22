@@ -3,18 +3,15 @@ package team122;
 import battlecode.common.*;
 
 /**
- * Implements a ComRecyclerRobotSystem, these are recyclers with some for of communication
- * (placed in the components[3]). They will attempt to build and maintain a turret 4 at an
- * adjacent location.
- * @deprecated from alpha v2.0
+ *
  * @author bovard
  */
-public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
+public class RSComCycler extends BuilderSensorRobotSystem {
   protected BroadcastController broadcastControl;
   protected BroadcastSystem broadcastSys;
   protected GameObject guardTower;
 
-  public ComRecyclerRobotSystem(RobotController robotControl, SensorSystem sensorSys,
+  public RSComCycler(RobotController robotControl, SensorSystem sensorSys,
           BuilderSystem buildSys, BroadcastSystem broadcastSys) {
     super(robotControl, sensorSys, buildSys);
     robotControl.setIndicatorString(0, "ComRecycler");
@@ -67,7 +64,7 @@ public class ComRecyclerRobotSystem extends RecyclerRobotSystem {
             yield();
           }
         } while(guardTower == null);
-        
+
         //something is there, wait for up to turnsToWait turns, see that it doesn't leave
         int i = 0;
         int turnsToWait = 10;
