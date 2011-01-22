@@ -27,6 +27,7 @@ public class AttackTurretRobotSystem extends FighterSensorRobotSystem {
   @Override
   public void go() {
     while(true) {
+      currentGameEventLevel = GameEventLevel.COMBAT;
       seqEngageEnemy();
       seqCheckNewWeapons();
     }
@@ -45,9 +46,10 @@ public class AttackTurretRobotSystem extends FighterSensorRobotSystem {
       //while we can see the enemy, setFireAtRandom at them or move toward them
       try {
         while(((SensorGameEvents)gameEvents).canSeeEnemy()) {
-          MapLocation toFire = weaponSys.setFireAtRandom();
+          MapLocation toFire = sensorSys.getNearestOpponentLocation();
           if(toFire != null) {
             robotControl.setIndicatorString(1, "seqEngageEnemy - Fire!");
+            weaponSys.setFireAtRandom();
             actTurn(robotControl.getLocation().directionTo(toFire));
           }
           else {

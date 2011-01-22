@@ -37,6 +37,7 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
         Message buildDirective = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
         BuildOrder toBuild = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(buildDirective));
         seqBuildAtLocation(toBuild, comSys.getMapLocationFromBuildDirective(buildDirective));
+        yield();
       }
       //if we still know where some uncovered mines are, go to them and build something there
       else if(!uncoveredMines.isEmpty()) {
