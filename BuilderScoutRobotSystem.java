@@ -5,6 +5,7 @@ import battlecode.common.*;
 /**
  * BuilderScouts are robots that have at least a sensor and a constructor component
  * They will roam the board looking for mines to build recyclers on.
+ * @deprecated from Alpha v2.0
  * @author bovard
  */
 public class BuilderScoutRobotSystem extends BuilderSensorRobotSystem {
@@ -22,8 +23,6 @@ public class BuilderScoutRobotSystem extends BuilderSensorRobotSystem {
     super(robotControl, sensorSys, buildSys);
     robotControl.setIndicatorString(0,"BuilderScoutConstructor");
 
-    //on scouts, build systems should be in component[2], added another if clause to catch
-    //our starting bot, who has it in components[1]
     comSys.setFilter(new int[] {1, 1, 0});
 
   }
@@ -91,7 +90,7 @@ public class BuilderScoutRobotSystem extends BuilderSensorRobotSystem {
     robotControl.setIndicatorString(1, "seqBuildDirective");
     buildDirective = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
     MapLocation location = new MapLocation(buildDirective.ints[5],buildDirective.ints[6]);
-    if(super.seqApproachLocation(location, RobotLevel.ON_GROUND)) {
+    if(super.seqApproachLocation(location, robotControl.getRobot().getRobotLevel())) {
       if(robotControl.getLocation() == location) {
         actMoveBackward();
       }

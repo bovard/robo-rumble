@@ -55,14 +55,14 @@ public class RobotPlayer implements Runnable {
         //our BUILDER_SCOUT
         if (components.length == 3 && components[1].type()==ComponentType.SIGHT &&
                 components[2].type()==ComponentType.CONSTRUCTOR) {
-          BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]),
+          RSBuilderScout system = new RSBuilderScout(myRC, new SensorSystem(myRC, (SensorController)components[1]),
                   new BuilderSystem(myRC, (BuilderController)components[2]));
           system.go();
         }
         //provided BuilderScout (the one that we start off the game with)
         if (components.length == 3 && components[2].type()==ComponentType.SIGHT &&
                 components[1].type()==ComponentType.CONSTRUCTOR) {
-          BuilderScoutRobotSystem system = new BuilderScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[2]),
+          RSBuilderScout system = new RSBuilderScout(myRC, new SensorSystem(myRC, (SensorController)components[2]),
                   new BuilderSystem(myRC, (BuilderController)components[1]));
           system.go();
         }

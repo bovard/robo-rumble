@@ -6,6 +6,7 @@ import battlecode.common.*;
  * Implements a ComRecyclerRobotSystem, these are recyclers with some for of communication
  * (placed in the components[3]). They will attempt to build and maintain a turret 4 at an
  * adjacent location.
+ * @deprecated from alpha v2.0
  * @author bovard
  */
 public class ComRecyclerRobotSystem extends RecyclerRobotSystem {

@@ -7,7 +7,7 @@ import java.util.Random;
  * This is the System for a basic Recycler. It'll be needing to pump out two types of robots initially
  * BuilderScouts and FighterScouts (see RobotBuildOrder on how to build each, order matters)
  *
- *
+ * @deprecated from alpha v2.0
  * @author bovard
  */
 public class RecyclerRobotSystem extends BuilderSensorRobotSystem {

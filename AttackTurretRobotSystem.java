@@ -4,6 +4,7 @@ import battlecode.common.*;
 
 /**
  * AttackTurrets are buildings with lots (or at least 1) of weapons and a sensor
+ * @deprecated From Alpha 2.0
  * @author bovard
  */
 public class AttackTurretRobotSystem extends FighterSensorRobotSystem {

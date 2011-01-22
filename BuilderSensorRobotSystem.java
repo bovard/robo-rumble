@@ -3,7 +3,7 @@ package team122;
 import battlecode.common.*;
 
 /**
- *
+ * A base class for all robots will a constructor, sensor and move controller.
  * @author bovard
  */
 public class BuilderSensorRobotSystem extends SensorRobotSystem {
@@ -14,7 +14,7 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
     super(robotControl, sensorSys);
 
     this.buildSys = buildSys;
-
+    gameEvents = new BuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
 
@@ -25,6 +25,7 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
    * @return if the action was performed succesfully
    */
   protected boolean seqBuildAtLocation(BuildOrder toBuild, MapLocation location) {
+    robotControl.setIndicatorString(1, "seqBuildAtLocation");
     if(seqApproachLocation(location, robotControl.getRobot().getRobotLevel())) {
       while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.cost
               && !gameEvents.checkGameEvents(currentGameEventLevel.priority)) {
@@ -48,7 +49,7 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
   * @return if the build was successful
   */
   protected boolean seqBuild(BuildOrder toBuild, MapLocation location) {
-    robotControl.setIndicatorString(1, "selBuild");
+    robotControl.setIndicatorString(1, "seqBuild");
 
     //build the chassis
     //wait for funds, and to not be active

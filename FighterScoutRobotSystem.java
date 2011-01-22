@@ -5,6 +5,7 @@ import battlecode.common.*;
 
 /**
  * this controls our scout fighters, they have the build lightmotor, sensor, weapons
+ * @deprecated from alpha 2.0
  * @author bovard
  */
 public class FighterScoutRobotSystem extends SensorRobotSystem {
