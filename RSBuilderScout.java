@@ -23,6 +23,32 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
    */
   @Override
   public void go() {
+    // hack that ensures that we'll point at our mines before waking up our first bot
+    // (so we can find the other two mines right off the bat)
+    if (Clock.getRoundNum() < 20)
+    {
+      yield();
+      yield();
+      try {
+        while(sensorSys.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND) == null
+                || !(robotControl.getDirection() == Direction.NORTH || robotControl.getDirection() == Direction.EAST ||
+                robotControl.getDirection() == Direction.SOUTH || robotControl.getDirection() == Direction.WEST)) {
+          while(navSys.isActive()) {
+            yield();
+          }
+          actTurn(robotControl.getDirection().rotateRight());
+          while(navSys.isActive()) {
+            yield();
+          }
+        }
+        //System.out.println("Direction is "+robotControl.getDirection());
+        //System.out.println("Sensed: "+sensorControl.senseObjectAtLocation(robotControl.getLocation().add(robotControl.getDirection()), RobotLevel.ON_GROUND));
+      } catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+      }
+    }
+
     while(true) {
 
       //if we have a combat game event, run away!

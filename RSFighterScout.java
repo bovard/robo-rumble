@@ -15,7 +15,21 @@ public class RSFighterScout extends FighterSensorRobotSystem {
   @Override
   public void go() {
     while(true) {
-      seqPatrolAndEngage();
+      //if we're in combat
+      if(gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
+        if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
+          currentGameEventLevel = GameEventLevel.COMBAT;
+          seqEngageEnemy(sensorSys.getNearestOpponent());
+        }
+        else {
+          currentGameEventLevel = GameEventLevel.COMBAT;
+          seqRotateToEnemy();
+        }
+      }
+      else {
+        currentGameEventLevel = GameEventLevel.NORMAL;
+        seqScout();
+      }
     }
   }
 }

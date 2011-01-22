@@ -112,13 +112,9 @@ public class SensorRobotSystem extends RobotSystem {
   protected boolean seqApproachLocation(MapLocation location, RobotLevel level) {
     robotControl.setIndicatorString(1, "seqApproachLocation");
 
-    //if we are already adjacent to the location, return true;
-    if(robotControl.getLocation().isAdjacentTo(location)) {
-      return true;
-    }
-
+    //note: when comparing two locations for equality, you have to use the .equals!
     //if we are at the location we want to approach, turn until we can back out
-    if(robotControl.getLocation()==location) {
+    if(robotControl.getLocation().equals(location)) {
       while(!navSys.canMove(robotControl.getDirection().opposite())) {
         while(navSys.isActive()) {
           yield();
@@ -129,6 +125,11 @@ public class SensorRobotSystem extends RobotSystem {
         yield();
       }
       return actMoveBackward();
+    }
+
+    //if we are already adjacent to the location, return true;
+    if(robotControl.getLocation().isAdjacentTo(location)) {
+      return true;
     }
 
     robotControl.setIndicatorString(1, "seqApproachLocation");

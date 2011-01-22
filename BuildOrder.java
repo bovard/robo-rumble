@@ -62,7 +62,7 @@ public enum BuildOrder {
     Chassis.LIGHT.cost + ComponentType.SIGHT.cost + ComponentType.BLASTER.cost + ComponentType.BLASTER.cost + ComponentType.SHIELD.cost,
     BuildOrderID.FIGHTER_SCOUT_5
   ),
-  FIGHTER_SCOUT_6 (
+  FIGHTER_SCOUT_6 ( //aka "HAMMER TIME!"
     Chassis.LIGHT,
     ComponentType.RECYCLER,
     new ComponentType[] {},

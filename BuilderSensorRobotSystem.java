@@ -29,7 +29,7 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
    */
   protected boolean seqBuildAtLocation(BuildOrder toBuild, MapLocation location) {
     robotControl.setIndicatorString(1, "seqBuildAtLocation");
-    
+
     if(seqApproachLocation(location, robotControl.getRobot().getRobotLevel())) {
       robotControl.setIndicatorString(1, "seqBuildAtLocation - waiting for funds");
       while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.cost
