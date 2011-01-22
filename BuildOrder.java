@@ -62,6 +62,16 @@ public enum BuildOrder {
     Chassis.LIGHT.cost + ComponentType.SIGHT.cost + ComponentType.BLASTER.cost + ComponentType.BLASTER.cost + ComponentType.SHIELD.cost,
     BuildOrderID.FIGHTER_SCOUT_5
   ),
+  FIGHTER_SCOUT_6 (
+    Chassis.LIGHT,
+    ComponentType.RECYCLER,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.SIGHT, ComponentType.HAMMER, ComponentType.HAMMER, ComponentType.SHIELD},
+    new ComponentType[] {},
+    new ComponentType[] {},
+    Chassis.LIGHT.cost + ComponentType.SIGHT.cost + ComponentType.HAMMER.cost + ComponentType.HAMMER.cost + ComponentType.SHIELD.cost,
+    BuildOrderID.FIGHTER_SCOUT_6
+  ),
   BUILDER_SCOUT_1 (
     Chassis.LIGHT,
     ComponentType.RECYCLER,

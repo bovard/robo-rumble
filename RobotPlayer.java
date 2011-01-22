@@ -69,7 +69,8 @@ public class RobotPlayer implements Runnable {
         //FIGHTER_SCOUT
         if (components.length == 4 && components[1].type()==ComponentType.RADAR &&
                 components[2].type()==ComponentType.BLASTER && components[3].type()==ComponentType.SHIELD) {
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]));
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          RSFighterScout system = new RSFighterScout(myRC, sensorSys, new WeaponSystem(new WeaponController[] {(WeaponController)components[2]}, sensorSys));
           system.go();
         }
         //FIGHTER_SCOUT 2
@@ -79,7 +80,8 @@ public class RobotPlayer implements Runnable {
           WeaponController[] weapons = new WeaponController[2];
           weapons[0]=(WeaponController)components[2];
           weapons[1]=(WeaponController)components[3];
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]), weapons);
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          RSFighterScout system = new RSFighterScout(myRC, sensorSys, new WeaponSystem(weapons, sensorSys));
           system.go();
         }
         //FIGHTER_SCOUT 3
@@ -88,7 +90,8 @@ public class RobotPlayer implements Runnable {
           WeaponController[] weapons = new WeaponController[2];
           weapons[0]=(WeaponController)components[2];
           weapons[1]=(WeaponController)components[3];
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]), weapons);
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          RSFighterScout system = new RSFighterScout(myRC, sensorSys, new WeaponSystem(weapons, sensorSys));
           system.go();
         }
         //FIGHTER_SCOUT 4
@@ -99,17 +102,32 @@ public class RobotPlayer implements Runnable {
           weapons[0]=(WeaponController)components[2];
           weapons[1]=(WeaponController)components[3];
           weapons[2]=(WeaponController)components[4];
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]), weapons);
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          RSFighterScout system = new RSFighterScout(myRC, sensorSys, new WeaponSystem(weapons, sensorSys));
           system.go();
         }
         //FIGHTER_SCOUT_5
         if (components.length == 5 && components[1].type()==ComponentType.SIGHT &&
                 components[2].type()==ComponentType.BLASTER && components[3].type()==ComponentType.BLASTER
                 && components[4].type()==ComponentType.SHIELD) {
-          FighterScoutRobotSystem system = new FighterScoutRobotSystem(myRC, new SensorSystem(myRC, (SensorController)components[1]));
+          WeaponController[] weapons = new WeaponController[2];
+          weapons[0]=(WeaponController)components[2];
+          weapons[1]=(WeaponController)components[3];
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          RSFighterScout system = new RSFighterScout(myRC, sensorSys, new WeaponSystem(weapons, sensorSys));
           system.go();
         }
-      }
+        }//FIGHTER_SCOUT_6
+        if (components.length == 5 && components[1].type()==ComponentType.SIGHT &&
+                components[2].type()==ComponentType.HAMMER && components[3].type()==ComponentType.HAMMER
+                && components[4].type()==ComponentType.SHIELD) {
+          WeaponController[] weapons = new WeaponController[2];
+          weapons[0]=(WeaponController)components[2];
+          weapons[1]=(WeaponController)components[3];
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          RSFighterScout system = new RSFighterScout(myRC, sensorSys, new WeaponSystem(weapons, sensorSys));
+          system.go();
+        }
       if (myRC.getChassis()==Chassis.BUILDING) {
         //RECYCLER
         if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&

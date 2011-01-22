@@ -117,7 +117,7 @@ public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
   protected boolean buildRandomSoldierScout() {
     BuildOrder toBuild = BuildOrder.FIGHTER_SCOUT_1;
 
-    switch(rand.nextInt(5)+1) {
+    switch(rand.nextInt(6)+1) {
       case 1:
         break;
       case 2:
@@ -131,6 +131,9 @@ public class RecyclerRobotSystem extends BuilderSensorRobotSystem {
         break;
       case 5:
         toBuild = BuildOrder.FIGHTER_SCOUT_5;
+        break;
+      case 6:
+        toBuild = BuildOrder.FIGHTER_SCOUT_6;
         break;
     }
     //wait until we have enough resources

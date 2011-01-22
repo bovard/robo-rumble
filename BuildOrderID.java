@@ -10,6 +10,7 @@ public class BuildOrderID {
   public static final int FIGHTER_SCOUT_3 = 3;
   public static final int FIGHTER_SCOUT_4 = 4;
   public static final int FIGHTER_SCOUT_5 = 5;
+  public static final int FIGHTER_SCOUT_6 = 6;
   public static final int BUILDER_SCOUT_1 = 10;
   public static final int BUILDER_SCOUT_2 = 11;
   public static final int BUILDER_SCOUT_3 = 12;
@@ -30,6 +31,8 @@ public class BuildOrderID {
         return BuildOrder.FIGHTER_SCOUT_4;
       case BuildOrderID.FIGHTER_SCOUT_5:
         return BuildOrder.FIGHTER_SCOUT_5;
+      case BuildOrderID.FIGHTER_SCOUT_6:
+        return BuildOrder.FIGHTER_SCOUT_6;
       case BuildOrderID.BUILDER_SCOUT_1:
         return BuildOrder.BUILDER_SCOUT_1;
       case BuildOrderID.BUILDER_SCOUT_2:

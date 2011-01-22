@@ -118,7 +118,8 @@ public class WeaponSystem {
         //if we can see an enemy robot
         if (sensorSys.getBots(sensorSys.getSensor().getRC().getTeam().opponent()).length > 0) {
 
-          targets = sensorSys.getBots(weapons[0].getRC().getTeam().opponent());
+
+          targets = sensorSys.getBots(sensorSys.getSensor().getRC().getTeam().opponent());
           locations = new MapLocation[targets.length];
 
           //pulls their location

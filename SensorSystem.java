@@ -210,6 +210,50 @@ public class SensorSystem {
   }
 
   /**
+   * Re-Scans an area for Robots
+   */
+  public void reScanForBots() {
+    lastBotScan = Clock.getRoundNum();
+    bots = sensorControl.senseNearbyGameObjects(Robot.class);
+
+    int aCount = 0;
+    int bCount = 0;
+    for (int i=0;i<bots.length;i++) {
+      if(bots[i].getTeam()==Team.A)
+        aCount++;
+      else if (bots[i].getTeam()==Team.B)
+        bCount++;
+    }
+
+    //prepping to divide the bots into three arrays by team
+    aBots = new Robot[aCount];
+    bBots = new Robot[bCount];
+    neutralBots = new Robot[bots.length-aCount-bCount];
+
+
+    aCount=0;
+    bCount=0;
+    int neutralCount=0;
+    for (int i=0;i<bots.length;i++) {
+      //if the bot comes from team A
+      if(bots[i].getTeam()==Team.A) {
+        aBots[aCount]=bots[i];
+        aCount++;
+      }
+      //if the bot comes from team B
+      else if (bots[i].getTeam()==Team.B) {
+        bBots[bCount]=bots[i];
+        bCount++;
+      }
+      //if the bots comes from team neutral
+      else {
+        neutralBots[neutralCount]=bots[i];
+        neutralCount++;
+      }
+    }
+  }
+
+  /**
    * Checks to see if the Robot sensorControl info is current, if not does a scan for bots
    * After getting bot info it splits the bots into two different array par team
    *
@@ -217,45 +261,7 @@ public class SensorSystem {
    */
   public Robot[] getBots() {
     if (lastBotScan < Clock.getRoundNum()) {
-      lastBotScan = Clock.getRoundNum();
-      bots = sensorControl.senseNearbyGameObjects(Robot.class);
-
-      int aCount = 0;
-      int bCount = 0;
-      for (int i=0;i<bots.length;i++) {
-        if(bots[i].getTeam()==Team.A)
-          aCount++;
-        else if (bots[i].getTeam()==Team.B)
-          bCount++;
-      }
-
-      //prepping to divide the bots into three arrays by team
-      aBots = new Robot[aCount];
-      bBots = new Robot[bCount];
-      neutralBots = new Robot[bots.length-aCount-bCount];
-
-      
-      aCount=0;
-      bCount=0;
-      int neutralCount=0;
-      for (int i=0;i<bots.length;i++) {
-        //if the bot comes from team A
-        if(bots[i].getTeam()==Team.A) {
-          aBots[aCount]=bots[i];
-          aCount++;
-        }
-        //if the bot comes from team B
-        else if (bots[i].getTeam()==Team.B) {
-          bBots[bCount]=bots[i];
-          bCount++;
-        }
-        //if the bots comes from team neutral
-        else {
-          neutralBots[neutralCount]=bots[i];
-          neutralCount++;
-        }
-      }
-
+      reScanForBots();
     }
 
     return bots;
@@ -270,7 +276,7 @@ public class SensorSystem {
    */
   public Robot[] getBots(Team team) {
     if (lastBotScan < Clock.getRoundNum()) {
-      getBots();
+      reScanForBots();
     }
     if (team == Team.A)
       return aBots;
