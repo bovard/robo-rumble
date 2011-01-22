@@ -62,14 +62,12 @@ public class GameEvents {
   /**
    * calculates the game events, returning true if any game events return true; this is the first
    * thing called after a robot yields
-   * @return if any game events happened
    */
-  public boolean calcGameEvents() {
+  public void calcGameEvents() {
     calcLostHealth();
     //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
     calcLowHealth();
     calcHasDirective();
-    return lostHealth || lowHealth || hasDirective || hasMessages || negativeFluxRegen;
   }
 
   /**

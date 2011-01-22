@@ -140,17 +140,31 @@ public class SensorSystem {
 
   /**
    * returns the nearest enemy robot
-   * //TODO: actually make this return the nearest enemy robot instead of the first in the queue
+   * Note: this may be pretty bytecode expensive, for each enemy robot in sight you need about
+   * 40 bytecodes
    * @return the nearest enemy robot
    */
   public Robot getNearestOpponent() {
     if (lastBotScan < Clock.getRoundNum()) {
       getBots();
     }
-    if (getBots(myTeam.opponent()).length > 0) {
-      return getBots(myTeam.opponent())[0];
+    int minDist = Integer.MAX_VALUE;
+    Robot bot = null;
+    MapLocation ourLoc = robotControl.getLocation();
+    for (int i=0; i < getBots(myTeam.opponent()).length;i++) {
+      try {
+        int dist = sensorControl.senseLocationOf(getBots(myTeam.opponent())[i]).distanceSquaredTo(ourLoc);
+        if(dist < minDist) {
+          minDist = dist;
+          bot = getBots(myTeam.opponent())[i];
+        }
+      }
+      catch (Exception e) {
+        System.out.println("caught exception:");
+        e.printStackTrace();
+      }
     }
-    return null;
+    return bot;
   }
 
   /**

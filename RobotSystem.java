@@ -51,6 +51,7 @@ public class RobotSystem {
    
   }
 
+
   /**
    * This function will be called after the system is created, it should house the loop
    * for any robot, this is the base class, we shouldn't fall back to this as it has no
@@ -62,22 +63,6 @@ public class RobotSystem {
       System.out.println("fell back to RobotSystem main go loop! (something's wrong)");
       yield();
     }
-  }
-
-
-  /**
-   * called to turn a robot, all robots can turn (even buildings)
-   * Note: will only return true if the robot can turn and dir != currentDirection
-   * @param dir direction to turn in
-   * @return if the turn was executed successfully
-   */
-  protected boolean actTurn(Direction dir) {
-    if(navSys.setTurn(dir)) {
-      yield();
-      return true;
-    }
-    System.out.println("WARNING: tried to turn but couldn't");
-    return false;
   }
 
   /**
@@ -113,13 +98,35 @@ public class RobotSystem {
     return done;
   }
 
+
+  /**
+   * called to turn a robot, all robots can turn (even buildings)
+   * Note: will only return true if the robot can turn and dir != currentDirection
+   * @param dir direction to turn in
+   * @return if the turn was executed successfully
+   */
+  protected boolean actTurn(Direction dir) {
+    if(navSys.setTurn(dir)) {
+      yield();
+      return true;
+    }
+    System.out.println("WARNING: tried to turn but couldn't");
+    return false;
+  }
+
+
+
   /**
    * Called to move once (and yield) Assumes the robot already has a destination
    * @return if robot is in its current destination
    */
   protected boolean actMove() {
-    if(navSys.setNextMove()) {
+    if(navSys.getDestination()==null) {
+      return false;
+    }
+    else if(navSys.setNextMove()) {
       yield();
+      robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
       return true;
     }
     System.out.println("WARNING: tried to move but couldn't");

@@ -72,10 +72,10 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     robotControl.setIndicatorString(1, "seqEngageEnemy");
     //if we can see the enemy or we can rotate to see them
     if(((SensorGameEvents)gameEvents).canSeeEnemy() || seqRotateToEnemy()) {
-      //while we can see the enemy, fire at them or move toward them
+      //while we can see the enemy, setFireAtRandom at them or move toward them
       try {
         while(((SensorGameEvents)gameEvents).canSeeEnemy()) {
-          MapLocation toFire = weaponSys.fire();
+          MapLocation toFire = weaponSys.setFireAtRandom();
           if(toFire != null) {
             robotControl.setIndicatorString(1, "seqEngageEnemy - turnAndFire!");
             actTurn(robotControl.getLocation().directionTo(toFire));
@@ -200,7 +200,7 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
       navSys.setNextMove();
     }
     if(((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy()) {
-      weaponSys.fire();
+      weaponSys.setFireAtRandom();
     }
     yield();
     //check for map boundary conditions

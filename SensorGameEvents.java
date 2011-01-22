@@ -37,24 +37,12 @@ public class SensorGameEvents extends GameEvents {
 
   /**
    * calculates if any game events have occurred this turn
-   * @return if any game events have occured
    */
   @Override
-  public boolean calcGameEvents() {
+  public void calcGameEvents() {
     calcSeeMine();
     calcSeeDebris();
     calcSeeEnemy();
-    return super.calcGameEvents() || seeMine || seeDebris || seeEnemy;
-  }
-
-  /**
-   * calculates only soldier-relevant game events (ie. excludes scans for mine info)
-   * @return if any soldier-relevant game events have happened
-   */
-  public boolean calcSoldierGameEvents() {
-    calcSeeDebris();
-    calcSeeEnemy();
-    return super.calcGameEvents() || seeDebris || seeEnemy;
   }
 
   /**
@@ -63,7 +51,6 @@ public class SensorGameEvents extends GameEvents {
    */
   @Override
   public boolean checkGameEvents(int priority) {
-    boolean event = false;
     switch(priority) {
       case GameEventLevelPriority.COMBAT:
         //highest priority level, can't have one higher

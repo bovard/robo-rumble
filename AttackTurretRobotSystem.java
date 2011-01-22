@@ -54,10 +54,10 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
     //if we can see the enemy or we can rotate to see them
     if(sensorGameEvents.canSeeEnemy()) {
       robotControl.setIndicatorString(1, "seqEngageEnemy - enemy in sight");
-      //while we can see the enemy, fire at them or move toward them
+      //while we can see the enemy, setFireAtRandom at them or move toward them
       try {
         while(sensorGameEvents.canSeeEnemy()) {
-          MapLocation toFire = weaponSys.fire();
+          MapLocation toFire = weaponSys.setFireAtRandom();
           if(toFire != null) {
             robotControl.setIndicatorString(1, "seqEngageEnemy - Fire!");
             actTurn(robotControl.getLocation().directionTo(toFire));
@@ -116,15 +116,15 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
     robotControl.setIndicatorString(1, "seqRotate");
     switch(sensorSys.getBreadth()) {
       case PlayerConstants.TELESCOPE_TURNS:
-        weaponSys.fire();
+        weaponSys.setFireAtRandom();
         actTurn(robotControl.getDirection().rotateRight());
         break;
       case PlayerConstants.SIGHT_TURNS:
-        weaponSys.fire();
+        weaponSys.setFireAtRandom();
         actTurn(robotControl.getDirection().rotateRight().rotateRight());
         break;
       case PlayerConstants.RADAR_TURNS:
-        weaponSys.fire();
+        weaponSys.setFireAtRandom();
         actTurn(robotControl.getDirection().opposite());
         break;
       case PlayerConstants.SATELLITE_TURNS:

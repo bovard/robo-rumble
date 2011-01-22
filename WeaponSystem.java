@@ -21,6 +21,7 @@ public class WeaponSystem {
   private SensorSystem sensorSys;
   private int mode;
   private SensorGameEvents sensorGameEvents;
+  private int minRange=Integer.MAX_VALUE, maxRange=-1;
 
   /**
    * Creates a new WeaponSystem, capable of handling multiple weapons
@@ -35,7 +36,25 @@ public class WeaponSystem {
     this.sensorSys = sensor;
     this.sensorGameEvents = sensorGameEvents;
     mode = WeaponMode.OPEN_FIRE;
+    for (int i = 0 ; i < weapons.length ; i++) {
+      updateRange(weapons[i]);
+    }
   }
+
+  /**
+   * Changes the minRange or maxRange if need be
+   * @param weaponControl the weapon to measure against
+   */
+  private void updateRange(WeaponController weaponControl) {
+    int range = calcRange(weaponControl);
+    if (range > maxRange) {
+      maxRange = range;
+    }
+    if (range < minRange) {
+      minRange = range;
+    }
+  }
+
 
   /**
    * Adds a weapon to the weapon system
@@ -46,6 +65,7 @@ public class WeaponSystem {
     updated[weapons.length]=weapon;
     for (int i=0; i<weapons.length;i++) {
       updated[i]=weapons[i];
+      updateRange(updated[i]);
     }
     weapons = updated;
   }
@@ -84,10 +104,11 @@ public class WeaponSystem {
 
 
   /**
-   * cycles through each weapon, if they aren't busy finds a target for it
+   * cycles through each weapon, if they aren't busy finds a target for it (targets enemies
+   * when they are in site, debris if they are out of site)
    * @return the MapLocation where (at least one) weapon is firing
    */
-  public MapLocation fire() {
+  public MapLocation setFireAtRandom() {
     MapLocation toFire = null;
     RobotLevel level = null;
     if (mode!=WeaponMode.HOLD_FIRE && (sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy())) {
@@ -169,6 +190,78 @@ public class WeaponSystem {
       }
     }
     return toFire;
+  }
+
+  /**
+   * Tells the robot to fire all avaliable weapons at MapLocatin loc
+   * @param loc the MapLocation to fire at
+   * @return if any weapons were set
+   */
+  public boolean setFireAtLocation(MapLocation loc, RobotLevel level) {
+    boolean set = false;
+    if(!allActive()) {
+      for (int i = 0; i < weapons.length; i++) {
+        if(!weapons[i].isActive() && weapons[i].withinRange(loc)) {
+          try {
+            weapons[i].attackSquare(loc, level);
+            set = true;
+          } catch (Exception e) {
+            System.out.println("caught exception:");
+            e.printStackTrace();
+          }
+        }
+      }
+      return set;
+    }
+    else {
+      System.out.println("WARNING: Called setFireAtLoc when all weapons were busy");
+      return false;
+    }
+  }
+
+
+  /**
+   * Returns the range of the offensive weapon in the weapon system with the shortest range
+   * @param dir the direction that we're firing in
+   * @return the # of squares we can setFireAtRandom
+   */
+  public int getMinRange() {
+    return minRange;
+  }
+  
+  /**
+   * Returns the weaponSystem's max offensive range in given direction
+   * @param dir the direction the robot is pointed in
+   * @return the maximum # of squares the robot can shoot in
+   */
+  public int getMaxRange() {
+    return maxRange;
+  }
+
+
+  /**
+   * Get's the ranges associated with different weapons
+   * @param weapon the WeaponController
+   * @return the range
+   */
+  protected int calcRange(WeaponController weapon) {
+    if (weapon.type() == ComponentType.SMG) {
+      return 36;
+    }
+    else if(weapon.type() == ComponentType.BLASTER) {
+      return 16;
+    }
+    else if (weapon.type() == ComponentType.BEAM) {
+      return 36;
+    }
+    else if (weapon.type() == ComponentType.RAILGUN) {
+      return 25;
+    }
+    else if (weapon.type() == ComponentType.HAMMER) {
+      return 4;
+    }
+    System.out.println("WARNING: Fell through weaponSystem.getRange()");
+    return 0;
   }
   
 }

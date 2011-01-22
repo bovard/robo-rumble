@@ -67,6 +67,8 @@ public class SensorRobotSystem extends RobotSystem {
    * @return true if the bot reaches the dest, false if it's interrupted
    */
   protected boolean seqScout() {
+    currentGameEventLevel = GameEventLevel.NORMAL;
+    robotControl.setIndicatorString(1, "seqScout");
     navSys.setDestination(chooseNextDestination());
     return seqMove();
   }
@@ -76,8 +78,8 @@ public class SensorRobotSystem extends RobotSystem {
    * @return if it has fleed sucessfully
    */
   protected boolean seqFlee() {
-    robotControl.setIndicatorString(1, "actFlee!!");
-    navSys.setDestination(birthPlace);
+    currentGameEventLevel = GameEventLevel.COMBAT;
+    robotControl.setIndicatorString(1, "seqFlee!!");
 
     while(gameEvents.checkGameEvents(GameEventLevel.COMBAT.priority)) {
       //wait for a motor to be active
@@ -162,6 +164,9 @@ public class SensorRobotSystem extends RobotSystem {
  /**
   * Called to move once (and yield) Assumes the robot already has a destination
   * Overriden to allow for map bounds checks
+  *
+  * //TODO: integrate this into RobotSystem.actMove() with a super.actMove() call in here
+  *
   * @return if robot is in its current destination
   */
   @Override
@@ -169,7 +174,7 @@ public class SensorRobotSystem extends RobotSystem {
     if(navSys.getDestination()==null) {
       return false;
     }
-    else if(!navSys.isAtDestination() && !gameEvents.checkGameEvents(currentGameEventLevel.priority)) {
+    else if(!navSys.isAtDestination()) {
       if (navSys.setNextMove()) {
         yield();
         //check for map boundary conditions
