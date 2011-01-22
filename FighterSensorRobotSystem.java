@@ -191,7 +191,9 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
    */
   @Override
   protected boolean actMove() {
-    weaponSys.setFireAtRandom();
+    if(((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy()) {
+      weaponSys.setFireAtRandom();
+    }
     return super.actMove();
   }
 
