@@ -39,12 +39,58 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
     currentGameEventLevel = GameEventLevel.NORMAL;
     seqScout();
     if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
+      currentGameEventLevel = GameEventLevel.COMBAT;
       seqEngageEnemy(sensorSys.getNearestOpponent());
     }
     return true;
   }
 
+  /**
+   * Roates and engages any enemies it sees
+   * @return true
+   */
+  protected boolean seqRotateAndEngage() {
+    robotControl.setIndicatorString(1, "seqRotateAndEngage");
+    currentGameEventLevel = GameEventLevel.NORMAL;
+    seqRotate();
+    if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
+      currentGameEventLevel = GameEventLevel.COMBAT;
+      seqStaticEngageEnemy(sensorSys.getNearestOpponent());
+    }
+    return true;
+  }
 
+  /**
+   * Turns the robot and continues to look for the enemy
+   * @return if the action was completed scuessfully (an enemy was't seen)
+   */
+  protected boolean seqRotate() {
+    robotControl.setIndicatorString(1, "seqRotate");
+    while(!gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority))
+    {
+      setCheckNewWeapons();
+      switch(sensorSys.getBreadth()) {
+        case PlayerConstants.TELESCOPE_TURNS:
+          weaponSys.setFireAtRandom();
+          actTurn(robotControl.getDirection().rotateRight());
+          break;
+        case PlayerConstants.SIGHT_TURNS:
+          weaponSys.setFireAtRandom();
+          actTurn(robotControl.getDirection().rotateRight().rotateRight());
+          break;
+        case PlayerConstants.RADAR_TURNS:
+          weaponSys.setFireAtRandom();
+          actTurn(robotControl.getDirection().opposite());
+          break;
+        case PlayerConstants.SATELLITE_TURNS:
+          weaponSys.setFireAtRandom();
+          yield();
+          //in this case the sensor can see in all directions so the bot doesn't need to rotate
+          break;
+      }
+    }
+    return !gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+  }
 
 
 
@@ -99,6 +145,43 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
   }
 
   /**
+   * While the enemy bot is in range, engage it (but don't move besides turning)
+   * @param bot The enemy bot to engage
+   * @return if we can still see the enemy bot
+   */
+  protected boolean seqStaticEngageEnemy(Robot bot) {
+    robotControl.setIndicatorString(1, "seqStaticEngageEnemy");
+
+    while(sensorSys.canSenseObject(bot)) {
+      MapLocation enemyLoc = sensorSys.senseLocationOfObject(bot);
+      MapLocation ourLoc = robotControl.getLocation();
+      Direction toEnemy = ourLoc.directionTo(enemyLoc);
+      //Set a movement action
+      if(!navSys.isActive()) {
+        //if not facing the enemy, turn to face them
+        if( toEnemy != robotControl.getDirection()) {
+            navSys.setTurn(toEnemy);
+        }
+      }
+
+      //Now set our weapons to fire
+      //try to fire at the robot
+      if(!weaponSys.allActive()) {
+        weaponSys.setFireAtLocation(enemyLoc, bot.getRobotLevel());
+      }
+      //if you can't fire all weapons at the enemy, just try to fire at any enemy robot
+      if(!weaponSys.allActive()) {
+        weaponSys.setFireAtRandom();
+      }
+
+      //finally yield
+      yield();
+    }
+
+    return !sensorSys.canSenseObject(bot);
+  }
+
+  /**
    * Overrides SensorRobotSystem.actMove() to allow for weapon capabilities
    * @return if it was performed correctly
    */
@@ -108,5 +191,29 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
     return super.actMove();
   }
 
+  /**
+   * Checks for new weapons and adds them to WeaponSys if it finds any
+   * @return if completed successfully
+   */
+  protected boolean setCheckNewWeapons() {
+    //grab any new components
+    ComponentController[] components = robotControl.newComponents();
+    //if there are some
+    if (components.length>0) {
+      //if they are the right type (Weapon of some sort)
+      for (int i = 0; i<components.length;i++) {
+        if (components[i].type() == ComponentType.SMG
+                || components[i].type() == ComponentType.BLASTER
+                || components[i].type() == ComponentType.RAILGUN
+                || components[i].type() == ComponentType.MEDIC
+                || components[i].type() == ComponentType.BEAM
+                || components[i].type() == ComponentType.HAMMER ) {
+          //add them to the weaponSystem
+          weaponSys.addWeapon((WeaponController)components[i]);
+        }
+      }
+    }
+    return true;
+  }
 
 }

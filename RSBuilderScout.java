@@ -33,7 +33,6 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
       //if we received a directive, build it!
       else if(((SensorGameEvents)gameEvents).hasDirective()) {
         currentGameEventLevel = GameEventLevel.MISSION;
-        System.out.println("Directive Received!");
         Message buildDirective = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
         BuildOrder toBuild = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(buildDirective));
         seqBuildAtLocation(toBuild, comSys.getMapLocationFromBuildDirective(buildDirective));
@@ -46,9 +45,10 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
         currentMine = uncoveredMines.get(0);
         if(seqBuildAtLocation(BuildOrder.RECYCLER, currentMine.getLocation())) {
           //remove it from the queue
-          if(!navSys.isActive()) {
-            navSys.setTurn(robotControl.getLocation().directionTo(currentMine.getLocation()));
+          while(navSys.isActive()) {
+            yield();
           }
+          navSys.setTurn(robotControl.getLocation().directionTo(currentMine.getLocation()));
           uncoveredMines.remove(currentMine);
           currentMine = null;
 

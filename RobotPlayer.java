@@ -128,7 +128,7 @@ public class RobotPlayer implements Runnable {
             weapons[i-4] = (WeaponController)components[i];
           }
           SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[2]);
-          AttackTurretRobotSystem system = new AttackTurretRobotSystem(myRC, sensorSys,
+          RSGuardTower system = new RSGuardTower(myRC, sensorSys,
                   new WeaponSystem(weapons, sensorSys));
           system.go();
         }
