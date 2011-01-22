@@ -21,7 +21,7 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
     WeaponController weaponControl = (WeaponController)robotControl.components()[2];
     WeaponController[] weapons = new WeaponController[1];
     weapons[0] = weaponControl;
-    weaponSys = new WeaponSystem(weapons, sensorSys, (SensorGameEvents)gameEvents);
+    weaponSys = new WeaponSystem(weapons, sensorSys);
 
   }
 
@@ -32,7 +32,7 @@ public class FighterScoutRobotSystem extends SensorRobotSystem {
   public FighterScoutRobotSystem(RobotController robotControl, SensorSystem sensorSys, WeaponController[] weapons) {
     super(robotControl, sensorSys);
     robotControl.setIndicatorString(0,"FighterScoutConstructor");
-    weaponSys = new WeaponSystem(weapons, sensorSys, (SensorGameEvents)gameEvents);
+    weaponSys = new WeaponSystem(weapons, sensorSys);
 
   }
 

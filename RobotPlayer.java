@@ -127,8 +127,9 @@ public class RobotPlayer implements Runnable {
           for (int i=4; i<components.length;i++) {
             weapons[i-4] = (WeaponController)components[i];
           }
-          
-          AttackTurretRobotSystem system = new AttackTurretRobotSystem(myRC, (SensorController)components[2], weapons);
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[2]);
+          AttackTurretRobotSystem system = new AttackTurretRobotSystem(myRC, sensorSys,
+                  new WeaponSystem(weapons, sensorSys));
           system.go();
         }
       }

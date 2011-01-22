@@ -20,7 +20,6 @@ public class WeaponSystem {
   private WeaponController[] weapons;
   private SensorSystem sensorSys;
   private int mode;
-  private SensorGameEvents sensorGameEvents;
   private int minRange=Integer.MAX_VALUE, maxRange=-1;
 
   /**
@@ -29,12 +28,11 @@ public class WeaponSystem {
    * TODO: change WeaponSystem to support working without a sensor (from just radio)
    *
    * @param weapons an array of the weapons currently held by the robot
-   * @param sensor the SensorSystem for the robot
+   * @param sensorSys the SensorSystem for the robot
    */
-  public WeaponSystem(WeaponController[] weapons, SensorSystem sensor, SensorGameEvents sensorGameEvents) {
+  public WeaponSystem(WeaponController[] weapons, SensorSystem sensorSys) {
     this.weapons = weapons;
-    this.sensorSys = sensor;
-    this.sensorGameEvents = sensorGameEvents;
+    this.sensorSys = sensorSys;
     mode = WeaponMode.OPEN_FIRE;
     for (int i = 0 ; i < weapons.length ; i++) {
       updateRange(weapons[i]);
@@ -111,13 +109,14 @@ public class WeaponSystem {
   public MapLocation setFireAtRandom() {
     MapLocation toFire = null;
     RobotLevel level = null;
-    if (mode!=WeaponMode.HOLD_FIRE && (sensorGameEvents.canSeeDebris() || sensorGameEvents.canSeeEnemy())) {
+    if (mode!=WeaponMode.HOLD_FIRE) {
       try {
         //gets enemy bots in sensor range
         Robot[] targets;
         MapLocation[] locations;
 
-        if (sensorGameEvents.canSeeEnemy()) {
+        //if we can see an enemy robot
+        if (sensorSys.getBots(sensorSys.getSensor().getRC().getTeam().opponent()).length > 0) {
 
           targets = sensorSys.getBots(weapons[0].getRC().getTeam().opponent());
           locations = new MapLocation[targets.length];
@@ -151,7 +150,7 @@ public class WeaponSystem {
         }
 
         //if you can't see the enemy, but can see debris
-        else if (sensorGameEvents.canSeeDebris()) {
+        else if (sensorSys.getBots(Team.NEUTRAL).length > 0) {
           //Fire at neutrals
           //gets enemy bots in sensor range
           targets = sensorSys.getBots(Team.NEUTRAL);

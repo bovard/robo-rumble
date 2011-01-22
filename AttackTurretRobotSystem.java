@@ -6,9 +6,7 @@ import battlecode.common.*;
  * AttackTurrets are buildings with lots (or at least 1) of weapons and a sensor
  * @author bovard
  */
-public class AttackTurretRobotSystem extends BuildingRobotSystem {
-  protected SensorGameEvents sensorGameEvents;
-  protected WeaponSystem weaponSys;
+public class AttackTurretRobotSystem extends FighterSensorRobotSystem {
 
 
   /**
@@ -18,10 +16,11 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
    * @param sensorControl the sensorController
    * @param weapons the WeaponController[]
    */
-  public AttackTurretRobotSystem(RobotController robotControl, SensorController sensorControl, WeaponController[] weapons) {
-    super(robotControl, sensorControl);
-    sensorGameEvents = new SensorGameEvents(robotControl, comSys, sensorSys);
-    this.weaponSys = new WeaponSystem(weapons, sensorSys, sensorGameEvents);
+  public AttackTurretRobotSystem(RobotController robotControl, SensorSystem sensorSys, WeaponSystem weaponSys) {
+    super(robotControl, sensorSys, weaponSys);
+    gameEvents = new FighterSensorGameEvents(robotControl, comSys, sensorSys);
+    
+    
   }
 
   @Override
@@ -32,18 +31,6 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
     }
   }
 
-  /**
-   * the yield method overridden for attackTurrets, doesn't check for the seeMine game event
-   * to save bytecode
-   */
-  @Override
-  protected void yield() {
-    sensorGameEvents.resetGameEvents();
-    robotControl.yield();
-    sensorGameEvents.calcSoldierGameEvents();
-    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
-  }
-
 
   /**
    * Finds the enemy and engages until the enemy is destroyed (or moves away)
@@ -52,11 +39,11 @@ public class AttackTurretRobotSystem extends BuildingRobotSystem {
   protected boolean seqEngageEnemy() {
     robotControl.setIndicatorString(1, "seqEngageEnemy");
     //if we can see the enemy or we can rotate to see them
-    if(sensorGameEvents.canSeeEnemy()) {
+    if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
       robotControl.setIndicatorString(1, "seqEngageEnemy - enemy in sight");
       //while we can see the enemy, setFireAtRandom at them or move toward them
       try {
-        while(sensorGameEvents.canSeeEnemy()) {
+        while(((SensorGameEvents)gameEvents).canSeeEnemy()) {
           MapLocation toFire = weaponSys.setFireAtRandom();
           if(toFire != null) {
             robotControl.setIndicatorString(1, "seqEngageEnemy - Fire!");
