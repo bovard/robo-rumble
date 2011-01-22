@@ -5,6 +5,7 @@ import battlecode.common.*;
 /**
  * RobotSystem for all buildings, pulls off their BuildingSensor component that all buildings
  * automatically get in component slot 1
+ * @deprecated after alpha 2.0
  * @author bovard
  */
 public class BuildingRobotSystem extends RobotSystem {

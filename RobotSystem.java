@@ -48,6 +48,9 @@ public class RobotSystem {
     birthPlace = robotControl.getLocation();
     comSys = new CommunicationsSystem(robotControl);
     gameEvents = new GameEvents(robotControl, comSys);
+
+    //check out PlayerConstants to see what each of these filters
+    comSys.setFilter(new int[] {1, 0, 0});
    
   }
 

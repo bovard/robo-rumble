@@ -31,8 +31,9 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
         seqFlee();
       }
       //if we received a directive, build it!
-      else if(((SensorGameEvents)gameEvents).hasDirective) {
+      else if(((SensorGameEvents)gameEvents).hasDirective()) {
         currentGameEventLevel = GameEventLevel.MISSION;
+        System.out.println("Directive Received!");
         Message buildDirective = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
         BuildOrder toBuild = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(buildDirective));
         seqBuildAtLocation(toBuild, comSys.getMapLocationFromBuildDirective(buildDirective));

@@ -126,10 +126,10 @@ public enum BuildOrder {
     Chassis.BUILDING,
     ComponentType.CONSTRUCTOR,
     new ComponentType[] {},
-    new ComponentType[] {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.PLATING, ComponentType.PLATING, ComponentType.PLATING},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.BLASTER, ComponentType.BLASTER, ComponentType.SMG},
     new ComponentType[] {},
     new ComponentType[] {},
-    Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SHIELD.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.PLATING.cost + ComponentType.PLATING.cost + ComponentType.PLATING.cost,
+    Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SHIELD.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.BLASTER.cost + ComponentType.BLASTER.cost + ComponentType.SMG.cost,
     BuildOrderID.GUARD_TOWER_1
   );
 

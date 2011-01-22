@@ -13,6 +13,9 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
     super(robotControl, sensorSys);
     this.weaponSys = weaponSys;
     this.gameEvents = new FighterSensorGameEvents(robotControl, comSys, sensorSys);
+    
+    //check out PlayerConstants to see what each of these filters
+    comSys.setFilter(new int[] {1, 0, 1});
   }
 
   /**

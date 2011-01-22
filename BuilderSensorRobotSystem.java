@@ -15,6 +15,9 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
 
     this.buildSys = buildSys;
     gameEvents = new BuilderSensorGameEvents(robotControl, comSys, sensorSys);
+
+    //check out PlayerConstants to see what each of these filters
+    comSys.setFilter(new int[] {1, 1, 0});
   }
 
 
