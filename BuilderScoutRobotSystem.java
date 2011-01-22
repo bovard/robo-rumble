@@ -142,7 +142,7 @@ public class BuilderScoutRobotSystem extends BuilderSensorRobotSystem {
     //while we haven't found an uncovered mine and we aren't at our destination
     while(!done && !actMove()) {
       done = seqSenseMine();
-      if(gameEvents.checkGameEvents(currentGameEventLevel.priority)) {
+      if(gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority)) {
         return false;
       }
     }

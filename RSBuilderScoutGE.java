@@ -37,11 +37,11 @@ public class RSBuilderScoutGE extends BuilderSensorGameEvents {
    * @return if a game event has occurred
    */
   @Override
-  public boolean checkGameEvents(int priority) {
+  public boolean checkGameEventsAbovePriority(int priority) {
     if(priority <= GameEventLevel.NORMAL.priority) {
-      return seeUncoveredMine || super.checkGameEvents(priority);
+      return seeUncoveredMine || super.checkGameEventsAbovePriority(priority);
     }
-    return super.checkGameEvents(priority);
+    return super.checkGameEventsAbovePriority(priority);
   }
 
 

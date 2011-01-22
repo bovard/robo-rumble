@@ -84,16 +84,22 @@ public class RobotSystem {
    * @return if the destination was reached safely
    */
   protected boolean seqMove() {
-    boolean hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
+    boolean hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
     boolean done = navSys.isAtDestination();
     while(!hasGameEvents && !done) {
       while(navSys.isActive() && !hasGameEvents) {
         yield();
-        hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
+        hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
       }
-      actMove();
-      hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
-      done = navSys.isAtDestination();
+      if (!hasGameEvents) {
+        if(actMove()) {
+          hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+          done = navSys.isAtDestination();
+        }
+        else {
+          return false;
+        }
+      }
     }
     return done;
   }

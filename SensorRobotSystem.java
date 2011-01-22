@@ -38,7 +38,7 @@ public class SensorRobotSystem extends RobotSystem {
    * @return the new destination
    */
   protected MapLocation chooseNextDestination() {
-    robotControl.setIndicatorString(1, "chooseNextDest");
+
     if (navSys.getDestination()==null) {
       navSys.setDestination(birthPlace);
     }
@@ -67,7 +67,6 @@ public class SensorRobotSystem extends RobotSystem {
    * @return true if the bot reaches the dest, false if it's interrupted
    */
   protected boolean seqScout() {
-    currentGameEventLevel = GameEventLevel.NORMAL;
     robotControl.setIndicatorString(1, "seqScout");
     navSys.setDestination(chooseNextDestination());
     return seqMove();
@@ -78,10 +77,10 @@ public class SensorRobotSystem extends RobotSystem {
    * @return if it has fleed sucessfully
    */
   protected boolean seqFlee() {
-    currentGameEventLevel = GameEventLevel.COMBAT;
+    
     robotControl.setIndicatorString(1, "seqFlee!!");
 
-    while(gameEvents.checkGameEvents(GameEventLevel.COMBAT.priority)) {
+    while(gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
       //wait for a motor to be active
       while(navSys.isActive()) {
         yield();
@@ -94,13 +93,13 @@ public class SensorRobotSystem extends RobotSystem {
       //otherwise turn
       else {
         while(!navSys.canMove(robotControl.getDirection().opposite())
-                && gameEvents.checkGameEvents(GameEventLevel.COMBAT.priority)) {
+                && gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
           navSys.setTurn(robotControl.getDirection().rotateRight());
           yield();
         }
       }
     }
-    return !gameEvents.checkGameEvents(GameEventLevel.COMBAT.priority);
+    return !gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority);
   }
 
   /**
@@ -111,6 +110,14 @@ public class SensorRobotSystem extends RobotSystem {
    * @return if the approach was successful
    */
   protected boolean seqApproachLocation(MapLocation location, RobotLevel level) {
+    robotControl.setIndicatorString(1, "seqApproachLocation");
+
+    //if we are already adjacent to the location, return true;
+    if(robotControl.getLocation().isAdjacentTo(location)) {
+      return true;
+    }
+
+    //if we are at the location we want to approach, turn until we can back out
     if(robotControl.getLocation()==location) {
       while(!navSys.canMove(robotControl.getDirection().opposite())) {
         while(navSys.isActive()) {
@@ -123,12 +130,16 @@ public class SensorRobotSystem extends RobotSystem {
       }
       return actMoveBackward();
     }
+
     robotControl.setIndicatorString(1, "seqApproachLocation");
     navSys.setDestination(location);
-    boolean hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
+    boolean hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
     while(!sensorSys.canSenseLocation(location) && !hasGameEvents) {
+      while(navSys.isActive()) {
+        yield();
+      }
       actMove();
-      hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
+      hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
     }
     //if we encounter a game event, pull out
     if(hasGameEvents) {
@@ -143,9 +154,12 @@ public class SensorRobotSystem extends RobotSystem {
     while(!hasGameEvents && freeSquare == null && loop < maxLoops) {
       freeSquare = sensorSys.findClosestUnoccupiedAdjacentSquareToLocation(location);
       if(freeSquare == null) {
+        while(navSys.isActive()) {
+          yield();
+        }
         actMove();
       }
-      hasGameEvents = gameEvents.checkGameEvents(currentGameEventLevel.priority);
+      hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
       loop++;
     }
     //if we max out the loops or find a gameEvent, pull out
@@ -232,6 +246,8 @@ public class SensorRobotSystem extends RobotSystem {
       //if we're looking at a tile off map, update the min/max x/y as needed
       if(robotControl.senseTerrainTile(canSee)==TerrainTile.OFF_MAP) {
         //figure what edge we're looking over
+        //System.out.println("trying to updater! "+canSee);
+        //System.out.println("current "+minX+" "+maxX+" "+minY+" "+maxY);
 
         //Check the X edges
         //looking at the minX edge
@@ -242,7 +258,7 @@ public class SensorRobotSystem extends RobotSystem {
           }
         }
         //looking at the maxX edge
-        else if (maxX == Integer.MIN_VALUE && sensorSys.canSenseLocation(canSee.add(-1, 0)) && robotControl.senseTerrainTile(canSee.add(-1,0))!=TerrainTile.OFF_MAP) {
+        else if (maxX == Integer.MAX_VALUE && sensorSys.canSenseLocation(canSee.add(-1, 0)) && robotControl.senseTerrainTile(canSee.add(-1,0))!=TerrainTile.OFF_MAP) {
           if(canSee.x < maxX) {
             //System.out.println("UPDATING maxX: "+maxX+" to "+canSee.x);
             maxX = canSee.x;

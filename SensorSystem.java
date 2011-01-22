@@ -99,9 +99,10 @@ public class SensorSystem {
   public MapLocation findClosestUnoccupiedAdjacentSquareToLocation(MapLocation target) {
     Direction dir = robotControl.getLocation().directionTo(target).opposite();
     try {
-      //tries the closest square
+      //tries the closest square (check that it can be sensed, that it is land, and that it's free)
       Direction toTry = dir;
       if (sensorControl.canSenseSquare(target.add(toTry))
+              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
         return target.add(toTry);
       }
@@ -112,6 +113,7 @@ public class SensorSystem {
           toTry = toTry.rotateLeft();
         }
         if (sensorControl.canSenseSquare(target.add(toTry))
+              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
           return target.add(toTry);
         }
@@ -120,6 +122,7 @@ public class SensorSystem {
           toTry = toTry.rotateRight();
         }
         if (sensorControl.canSenseSquare(target.add(toTry))
+              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
           return target.add(toTry);
         }
@@ -127,6 +130,7 @@ public class SensorSystem {
       //try the furthest square
       toTry = dir.opposite();
       if (sensorControl.canSenseSquare(target.add(toTry))
+              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
         return target.add(toTry);
       }

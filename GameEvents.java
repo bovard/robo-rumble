@@ -32,7 +32,7 @@ public class GameEvents {
   private double formerHP;
   private int numTurnsNeg;
   private int numTurnsSinceLosingHealth = 100;
-  private int numTurnsToLoseHealthThreshhold = 5;
+  private int numTurnsToLoseHealthThreshhold = 10;
   private double formerFlux;
 
   /**
@@ -199,7 +199,7 @@ public class GameEvents {
    * @param priority the priority of game events to check
    * @return true if a gameevent has occurred with priority > the imputted priority
    */
-  public boolean checkGameEvents(int priority) {
+  public boolean checkGameEventsAbovePriority(int priority) {
     switch(priority) {
       case GameEventLevelPriority.COMBAT:
         //highest priority level, can't have one higher

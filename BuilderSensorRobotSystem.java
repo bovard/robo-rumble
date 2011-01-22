@@ -26,12 +26,15 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
    */
   protected boolean seqBuildAtLocation(BuildOrder toBuild, MapLocation location) {
     robotControl.setIndicatorString(1, "seqBuildAtLocation");
+    
     if(seqApproachLocation(location, robotControl.getRobot().getRobotLevel())) {
+      robotControl.setIndicatorString(1, "seqBuildAtLocation - waiting for funds");
       while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.cost
-              && !gameEvents.checkGameEvents(currentGameEventLevel.priority)) {
+              && !gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority)) {
         yield();
       }
-      if(!gameEvents.checkGameEvents(currentGameEventLevel.priority)) {
+      robotControl.setIndicatorString(1, "seqBuildAtLocation - Building");
+      if(!gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority)) {
         return seqBuild(toBuild, location);
       }
     }

@@ -24,17 +24,38 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
   @Override
   public void go() {
     while(true) {
-      //if we still know where some uncovered mines are:
-      if(!uncoveredMines.isEmpty()) {
+
+      //if we have a combat game event, run away!
+      if(gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
+        currentGameEventLevel = GameEventLevel.COMBAT;
+        seqFlee();
+      }
+      //if we received a directive, build it!
+      else if(((SensorGameEvents)gameEvents).hasDirective) {
+        currentGameEventLevel = GameEventLevel.MISSION;
+        Message buildDirective = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
+        BuildOrder toBuild = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(buildDirective));
+        seqBuildAtLocation(toBuild, comSys.getMapLocationFromBuildDirective(buildDirective));
+      }
+      //if we still know where some uncovered mines are, go to them and build something there
+      else if(!uncoveredMines.isEmpty()) {
+        currentGameEventLevel = GameEventLevel.MISSION;
         //if we build a recycler on it
         currentMine = uncoveredMines.get(0);
         if(seqBuildAtLocation(BuildOrder.RECYCLER, currentMine.getLocation())) {
           //remove it from the queue
+          if(!navSys.isActive()) {
+            navSys.setTurn(robotControl.getLocation().directionTo(currentMine.getLocation()));
+          }
           uncoveredMines.remove(currentMine);
           currentMine = null;
+
+          yield();
         }
       }
+      //otherwise look for mines
       else {
+        currentGameEventLevel = GameEventLevel.NORMAL;
         seqScout();
       }
     }

@@ -83,6 +83,27 @@ public class CommunicationsSystem {
   }
 
   /**
+   * Gets the maplocation out of a build directive message
+   * @see BroadcastSystem
+   * @param buildDirective the buildDirective message
+   * @return the MapLocation of the directive
+   */
+  public MapLocation getMapLocationFromBuildDirective(Message buildDirective) {
+    return new MapLocation(buildDirective.ints[5],buildDirective.ints[6]);
+  }
+
+  /**
+   * Gets the buildOrderID out of a build directive message
+   * @see BroadcastSystem
+   * @param buildDirective the buildDirective message
+   * @return the int buildOrderID
+   */
+  public int getBuildOrderIDFromBuildDirective(Message buildDirective) {
+    return buildDirective.ints[4];
+  }
+
+
+  /**
    * decrypts an incoming message
    * @param message the message to decrypt
    * @return the decrypted message
