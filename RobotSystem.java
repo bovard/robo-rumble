@@ -3,8 +3,8 @@
  *
  * RobotSytem
  * ->SensorRobotSystem
- * --->WeaponSensorRobotSystem
  * --->BuilderSensorRobotSystem
+ * ----->WeaponBuilderSensorRobotSystem
  *
  * Base Systems: Communication, Navigation, Weapon, Builder
  *
@@ -14,6 +14,7 @@
 
 package team122;
 import battlecode.common.*;
+import java.util.Random;
 
 /**
  * The base class for our robot AI, this should have a base for all robots, be they
@@ -23,6 +24,7 @@ import battlecode.common.*;
 public class RobotSystem {
 
   protected MapLocation birthPlace;
+  protected Random rand = new Random();
   
   /**
    * the robot will be inerrupted by any game events higher than it's current GameEventLevel
@@ -51,7 +53,8 @@ public class RobotSystem {
 
     //check out PlayerConstants to see what each of these filters
     comSys.setFilter(new int[] {1, 0, 0});
-   
+
+    rand.setSeed(Clock.getRoundNum());
   }
 
 

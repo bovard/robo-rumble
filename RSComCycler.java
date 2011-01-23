@@ -6,7 +6,7 @@ import battlecode.common.*;
  * A kickass recycler that can defend itself pretty well
  * @author bovard
  */
-public class RSComCycler extends FighterBuilderSensorRobotSystem {
+public class RSComCycler extends WeaponBuilderSensorRobotSystem {
   protected BroadcastController broadcastControl;
   protected BroadcastSystem broadcastSys;
   protected WeaponSystem weaponSys;

@@ -7,7 +7,7 @@ import battlecode.common.*;
  *
  * @author bovard
  */
-public class RSFighterScout extends FighterBuilderSensorRobotSystem {
+public class RSFighterScout extends WeaponBuilderSensorRobotSystem {
   public RSFighterScout(RobotController robotControl, SensorSystem sensorSys, WeaponSystem weaponSys) {
     super(robotControl, sensorSys, weaponSys);
   }

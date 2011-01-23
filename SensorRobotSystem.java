@@ -1,7 +1,6 @@
 
 package team122;
 import battlecode.common.*;
-import java.util.Random;
 
 /**
  * Base behavoir class for robots with movement and sensor controllers (but no weapon or building)
@@ -10,7 +9,6 @@ import java.util.Random;
 public class SensorRobotSystem extends RobotSystem {
 
   protected SensorSystem sensorSys;
-  protected Random rand = new Random();
 
   //edges of the map, unkown initially
   protected int minX=-1, maxX=Integer.MAX_VALUE, minY=-1, maxY=Integer.MAX_VALUE;

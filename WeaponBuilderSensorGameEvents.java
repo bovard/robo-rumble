@@ -6,9 +6,9 @@ import battlecode.common.*;
  * The GameEvents class for the FighterBuidlerSensorRobotClass
  * @author bovard
  */
-public class FighterBuilderSensorGameEvents extends BuilderSensorGameEvents {
+public class WeaponBuilderSensorGameEvents extends BuilderSensorGameEvents {
 
-  public FighterBuilderSensorGameEvents(RobotController robotControl, CommunicationsSystem comSys,
+  public WeaponBuilderSensorGameEvents(RobotController robotControl, CommunicationsSystem comSys,
           SensorSystem sensorSys) {
     super(robotControl, comSys, sensorSys);
   }

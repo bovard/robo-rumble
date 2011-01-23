@@ -11,21 +11,21 @@ import battlecode.common.*;
  * 
  * @author bovard
  */
-public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
+public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
   protected WeaponSystem weaponSys;
 
-  public FighterBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
+  public WeaponBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
           BuilderSystem buildSys, WeaponSystem weaponSys) {
     super(robotControl, sensorSys, buildSys);
     this.weaponSys = weaponSys;
-    gameEvents = new FighterBuilderSensorGameEvents(robotControl, comSys, sensorSys);
+    gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
-  public FighterBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
+  public WeaponBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
           WeaponSystem weaponSys) {
     super(robotControl, sensorSys, null);
     this.weaponSys = weaponSys;
-    gameEvents = new FighterBuilderSensorGameEvents(robotControl, comSys, sensorSys);
+    gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
   /**

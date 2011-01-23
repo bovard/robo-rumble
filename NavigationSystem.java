@@ -47,6 +47,8 @@ public class NavigationSystem {
     this.moveControl = control;
     
     mode = NavigationMode.BUG;
+    //added to make things a bit more random!
+    rand.setSeed(Clock.getRoundNum());
   }
 
 
