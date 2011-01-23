@@ -260,6 +260,9 @@ public class SensorRobotSystem extends RobotSystem {
       if(currentPos.add(Direction.SOUTH, NEW_DEST_RANGE).y < maxY) {
         return true;
       }
+      else {
+        return false;
+      }
     }
     else if (scoutDirection.equals(Direction.WEST)) {
       if(currentPos.add(Direction.WEST, NEW_DEST_RANGE).x > minX) {

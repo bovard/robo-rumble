@@ -110,12 +110,14 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
    * @return If an uncovered mine was found within sensor range
    */
   protected void trackUncoveredMines() {
+    MapLocation myLocation = robotControl.getLocation();
     if (((SensorGameEvents)gameEvents).canSeeMine()) {
       Mine[] mines = sensorSys.getMines();
 
       for (int i=0; i < mines.length; i++) {
-        //check to see if these is anything built on the mine
-        if(sensorSys.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
+        //check to see if these is anything on the mine (besides possibly me)
+        if(!mines[i].getLocation().equals(myLocation)
+                && sensorSys.senseObjectAtLocation(mines[i].getLocation(), RobotLevel.ON_GROUND)==null) {
           //if this is a newly uncovered mine
           if (!uncoveredMines.contains(mines[i])) {
             uncoveredMines.add(mines[i]);

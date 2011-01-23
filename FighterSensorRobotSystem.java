@@ -104,14 +104,23 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
     robotControl.setIndicatorString(1, "seqEngageEnemy");
     currentGameEventLevel = GameEventLevel.COMBAT;
 
-     do {
-      MapLocation enemyLoc = sensorSys.senseLocationOfObject(bot);
+    do {
+
+      boolean canSee = sensorSys.canSenseObject(bot);
       MapLocation ourLoc = robotControl.getLocation();
-      Direction toEnemy = ourLoc.directionTo(enemyLoc);
+      MapLocation enemyLoc = null;
+      Direction toEnemy = null;
+
+      if(canSee) {
+        enemyLoc = sensorSys.senseLocationOfObject(bot);
+        toEnemy = ourLoc.directionTo(enemyLoc);
+      }
+      
+      
       //Set a movement action
       if(!navSys.isActive()) {
         //if you can't sense them move forward
-        if (!sensorSys.canSenseObject(bot)) {
+        if (!canSee) {
           if(navSys.canMove(robotControl.getDirection())) {
             navSys.setMoveForward();
           }
@@ -127,7 +136,7 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
           }
         }
         //if we're too close back off a bit
-        else if (ourLoc.distanceSquaredTo(ourLoc) < weaponSys.getMinRange()) {
+        else if (ourLoc.distanceSquaredTo(enemyLoc) < weaponSys.getMinRange()) {
           if(navSys.canMove(robotControl.getDirection().opposite())) {
             navSys.setMoveBackward();
           }
@@ -135,7 +144,7 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
       }
       //Now set our weapons to fire
       //try to fire at the robot
-      if(!weaponSys.allActive()) {
+      if(!weaponSys.allActive() && canSee) {
         weaponSys.setFireAtLocation(enemyLoc, bot.getRobotLevel());
       }
       //if you can't fire all weapons at the enemy, just try to fire at any enemy robot
@@ -147,7 +156,7 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
 
       //finally yield
       yield();
-    } while(sensorSys.canSenseObject(bot));
+    } while(sensorSys.canSenseObject(bot) || navSys.isActive());
 
     return !sensorSys.canSenseObject(bot);
   }
@@ -246,13 +255,13 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
 
 
   /**
-   * Turns the robot and continues to look for the enemy
+   * Called if the robot comes under fire, it should turn around, looking for the enemy
    * @return if an enemy is seen
    */
-  protected boolean seqRotateToEnemy() {
+  protected boolean seqRotateToUnSeenEnemy() {
     robotControl.setIndicatorString(1, "seqRotateToEnemy");
     while(!((SensorGameEvents)gameEvents).canSeeEnemy() 
-            && gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
+            && gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
       while(navSys.isActive()) {
         yield();
       }
@@ -274,26 +283,26 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
          */
         case PlayerConstants.SIGHT_TURNS:
           robotControl.setIndicatorString(1, "seqRotateToEnemy - sightTurns");
-          int j = 1;
-          while( gameEvents.recentlyLostHealth) {
+
+          //move forward twice
+          for (int k = 0; k < 2; k++) {
             while(navSys.isActive()) {
               yield();
             }
-            actTurn(robotControl.getDirection().rotateRight().rotateRight());
+            if(navSys.canMove(robotControl.getDirection())) {
+              actMoveForward();
+            }
             if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
               return true;
             }
-            for (int k = 0; k < j; k++) {
-              while(navSys.isActive()) {
-                yield();
-              }
-              actMoveForward();
-              if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
-                return true;
-              }
-            }
-            j++;
           }
+
+          //turn right
+          while(navSys.isActive()) {
+            yield();
+          }
+          actTurn(robotControl.getDirection().rotateRight().rotateRight());
+
           break;
         case PlayerConstants.RADAR_TURNS:
           for (int i=0; i<PlayerConstants.RADAR_TURNS; i++) {

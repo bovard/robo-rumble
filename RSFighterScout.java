@@ -23,7 +23,7 @@ public class RSFighterScout extends FighterSensorRobotSystem {
         }
         else {
           currentGameEventLevel = GameEventLevel.COMBAT;
-          seqRotateToEnemy();
+          seqRotateToUnSeenEnemy();
         }
       }
       else {
