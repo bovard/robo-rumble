@@ -274,28 +274,15 @@ public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
     robotControl.setIndicatorString(1, "seqRotateToEnemy");
     while(!((SensorGameEvents)gameEvents).canSeeEnemy()
             && gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
-      while(navSys.isActive()) {
+      //if the nav system is busy hang out
+      if(navSys.isActive()) {
         yield();
       }
-      switch(sensorSys.getBreadth()) {
-        case PlayerConstants.TELESCOPE_TURNS:
-          for (int i=0; i<PlayerConstants.TELESCOPE_TURNS; i++) {
-            if(!((SensorGameEvents)gameEvents).canSeeEnemy()) {
-              actTurn(robotControl.getDirection().rotateRight());
-            }
-          }
-          break;
-        /**
-         * a robot with a sight sensor is the only type of sensor that can't see the enemy
-         * after turning 360 degrees, so we'll have to make it move a bit as well
-         * Currently it's moving in a spiral outwards. This should help it 'run away' if it
-         * isn't pointed in the right direction
-         * //TODO: tweak this to make it better...
-         * it works some of the time now but it's not ideal. Better than standing there though
-         */
-        case PlayerConstants.SIGHT_TURNS:
-          robotControl.setIndicatorString(1, "seqRotateToEnemy - sightTurns");
-
+      //otherwise try to find the enemy
+      else
+      {
+        //if we currrently have a SIGHT as our sensor, we need to move a bit to find the enemy
+        if(sensorSys.getBreadth()==PlayerConstants.SIGHT_TURNS) {
           //move forward twice
           for (int k = 0; k < 2; k++) {
             while(navSys.isActive()) {
@@ -308,25 +295,10 @@ public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
               return true;
             }
           }
+        }
 
-          //turn right
-          while(navSys.isActive()) {
-            yield();
-          }
-          actTurn(robotControl.getDirection().rotateRight().rotateRight());
-
-          break;
-        case PlayerConstants.RADAR_TURNS:
-          for (int i=0; i<PlayerConstants.RADAR_TURNS; i++) {
-            if(!((SensorGameEvents)gameEvents).canSeeEnemy()) {
-              actTurn(robotControl.getDirection().opposite());
-            }
-          }
-          break;
-        case PlayerConstants.SATELLITE_TURNS:
-          yield();
-          //in this case the sensor can see in all directions so the bot doesn't need to rotate
-          break;
+        //rotate
+        actRotateFieldOfVision();
       }
     }
     return ((SensorGameEvents)gameEvents).canSeeEnemy();

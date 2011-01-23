@@ -29,19 +29,25 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
    */
   protected boolean seqBuildAtLocation(BuildOrder toBuild, MapLocation location) {
     robotControl.setIndicatorString(1, "seqBuildAtLocation");
+    boolean success = false;
 
+    //try to approach the location
     if(seqApproachLocation(location, robotControl.getRobot().getRobotLevel())) {
+
+      //wait for funds, falling out if a higher priority event happens
       robotControl.setIndicatorString(1, "seqBuildAtLocation - waiting for funds");
       while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.cost
               && !gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority)) {
         yield();
       }
-      robotControl.setIndicatorString(1, "seqBuildAtLocation - Building");
+
+      //start building if there isn't a high priority game event
       if(!gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority)) {
-        return seqBuild(toBuild, location);
+        robotControl.setIndicatorString(1, "seqBuildAtLocation - Building");
+        success =  seqBuild(toBuild, location);
       }
     }
-    return false;
+    return success;
   }
 
 
@@ -56,13 +62,13 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
   */
   protected boolean seqBuild(BuildOrder toBuild, MapLocation location) {
     robotControl.setIndicatorString(1, "seqBuild");
+    boolean success = true;
 
     //build the chassis
     //wait for funds, and to not be active
     while(buildSys.isActive()) {
       robotControl.yield();
     }
-    boolean success = true;
     if(buildSys.type() == toBuild.chassisBuilder) {
       success = actBuildChasis(toBuild.chassis,location);
     }

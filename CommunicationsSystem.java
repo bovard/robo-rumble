@@ -33,8 +33,12 @@ public class CommunicationsSystem {
     //if we haven't already checked our mail (messages) this turn, check them
     if (lastMailCheck < Clock.getRoundNum()) {
       lastMailCheck = Clock.getRoundNum();
+
+      //grab all messages
       Message[] received = robotControl.getAllMessages();
       Message toCheck;
+
+      //cycle through all the messages
       for (int i=0; i<received.length; i++) {
         //grab a message and decrypt it
         toCheck = decrypt(received[i]);
@@ -105,6 +109,7 @@ public class CommunicationsSystem {
 
   /**
    * decrypts an incoming message
+   * @see BroadcastSystem
    * @param message the message to decrypt
    * @return the decrypted message
    */
@@ -117,6 +122,7 @@ public class CommunicationsSystem {
 
   /**
    * checks a message for validity
+   * @see BroadcastSystem
    * @param message the message to check
    * @return if the message is a valid message (aka hasn't been tampared with)
    */
