@@ -99,7 +99,6 @@ public class RSBuilderScoutGE extends BuilderSensorGameEvents {
       seeNewUncoveredMine = true;
       lastNumMines = robotSys.getNumberOfUncoveredMines();
       lastNumMines2TurnsAgo = robotSys.getNumberOfUncoveredMines();
-      System.out.println("it's true!");
     }
     else {
       seeNewUncoveredMine = false;

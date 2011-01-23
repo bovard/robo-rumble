@@ -161,7 +161,7 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
     robotControl.yield();
     gameEvents.calcGameEvents();
     trackUncoveredMines();
-    robotControl.setIndicatorString(0, "ScoutDirection: " + scoutDirection + " - Location: "+robotControl.getLocation().toString());
+    robotControl.setIndicatorString(0, "ScoutDirection: " + scoutDirection + " - Location: "+robotControl.getLocation().toString() + "- numMines: "+uncoveredMines.size());
   }
 
 

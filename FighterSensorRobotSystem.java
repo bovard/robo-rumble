@@ -104,14 +104,20 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
     robotControl.setIndicatorString(1, "seqEngageEnemy");
     currentGameEventLevel = GameEventLevel.COMBAT;
 
-    while(sensorSys.canSenseObject(bot)) {
+     do {
       MapLocation enemyLoc = sensorSys.senseLocationOfObject(bot);
       MapLocation ourLoc = robotControl.getLocation();
       Direction toEnemy = ourLoc.directionTo(enemyLoc);
       //Set a movement action
       if(!navSys.isActive()) {
+        //if you can't sense them move forward
+        if (!sensorSys.canSenseObject(bot)) {
+          if(navSys.canMove(robotControl.getDirection())) {
+            navSys.setMoveForward();
+          }
+        }
         //if not facing the enemy, turn to face them
-        if( toEnemy != robotControl.getDirection()) {
+        else if( toEnemy != robotControl.getDirection()) {
             navSys.setTurn(toEnemy);
         }
         //if we're too far away, close the distance
@@ -141,7 +147,7 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
 
       //finally yield
       yield();
-    }
+    } while(sensorSys.canSenseObject(bot));
 
     return !sensorSys.canSenseObject(bot);
   }
@@ -270,17 +276,20 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
           robotControl.setIndicatorString(1, "seqRotateToEnemy - sightTurns");
           int j = 1;
           while( gameEvents.recentlyLostHealth) {
+            while(navSys.isActive()) {
+              yield();
+            }
             actTurn(robotControl.getDirection().rotateRight().rotateRight());
             if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
               return true;
             }
             for (int k = 0; k < j; k++) {
+              while(navSys.isActive()) {
+                yield();
+              }
               actMoveForward();
               if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
                 return true;
-              }
-              while(navSys.isActive()) {
-                yield();
               }
             }
             j++;

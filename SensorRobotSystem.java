@@ -55,7 +55,7 @@ public class SensorRobotSystem extends RobotSystem {
     do {
       next = navSys.getDestination();
       //make the next destination in the direction of scoutDirection
-      next.add(scoutDirection, NEW_DEST_RANGE - NEW_DEST_VARIANCE);
+      next = next.add(scoutDirection, NEW_DEST_RANGE - NEW_DEST_VARIANCE);
 
       //add a slight variance
       x = ((rand.nextInt(2*NEW_DEST_VARIANCE+1) * Clock.getRoundNum()) % (2*NEW_DEST_VARIANCE))
@@ -110,6 +110,9 @@ public class SensorRobotSystem extends RobotSystem {
         }
       }
     }
+    changeScoutDirection();
+    navSys.setDestination(chooseNextDestination());
+
     return !gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority);
   }
 
@@ -302,7 +305,7 @@ public class SensorRobotSystem extends RobotSystem {
         return false;
       }
     }
-    System.out.println("WARNING: fell through checkScoutDirection");
+    System.out.println("WARNING: fell through checkScoutDirectionValidity with Scoutdirection="+scoutDirection);
     return false;
   }
 
@@ -320,7 +323,9 @@ public class SensorRobotSystem extends RobotSystem {
     boolean done = false;
     MapLocation currentPos = robotControl.getLocation();
     while(!done) {
-      switch(rand.nextInt(8)) {
+      int nextDir = rand.nextInt(13)*Clock.getRoundNum();
+      nextDir = nextDir%8;
+      switch(nextDir) {
         case 0: //Direction.NORTH
           if(scoutDirection != Direction.NORTH && currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY) {
             scoutDirection = Direction.NORTH;
