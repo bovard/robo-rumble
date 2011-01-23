@@ -18,12 +18,14 @@ public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
           BuilderSystem buildSys, WeaponSystem weaponSys) {
     super(robotControl, sensorSys, buildSys);
     this.weaponSys = weaponSys;
+    gameEvents = new FighterBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
   public FighterBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
           WeaponSystem weaponSys) {
     super(robotControl, sensorSys, null);
     this.weaponSys = weaponSys;
+    gameEvents = new FighterBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
   /**
@@ -202,7 +204,6 @@ public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
    */
   @Override
   protected boolean actMove() {
-
     if((((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy())
             && !weaponSys.allActive()) {
       sensorSys.reScanForBots();

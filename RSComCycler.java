@@ -24,13 +24,13 @@ public class RSComCycler extends FighterBuilderSensorRobotSystem {
   public void go() {
     while(true) {
       seqRotateAndEngage();
-      if (Clock.getRoundNum() > PlayerConstants.START_BUILDING_GUARD_TOWERS)
-      {
-        currentGameEventLevel = GameEventLevel.MISSION;
-        if(!seqMonitorGuardTower()) {
-          seqBuildGaurd();
-        }
-      }
+      //if (Clock.getRoundNum() > PlayerConstants.START_BUILDING_GUARD_TOWERS)
+      //{
+      //  currentGameEventLevel = GameEventLevel.MISSION;
+      //  if(!seqMonitorGuardTower()) {
+      //    seqBuildGaurd();
+      //  }
+      //}
     }
   }
 
