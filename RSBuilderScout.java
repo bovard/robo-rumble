@@ -48,17 +48,19 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
         e.printStackTrace();
       }
     }
-
+    //===========================================
+    // MAIN LOOP
+    //===========================================
     while(true) {
-
+      yield();
       //if we have a combat game event, run away!
-      if(gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
+      if(gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
         currentGameEventLevel = GameEventLevel.COMBAT;
         seqFlee();
       }
       //if we received a directive, build it!
       else if(((SensorGameEvents)gameEvents).hasDirective()) {
-        currentGameEventLevel = GameEventLevel.MISSION;
+        currentGameEventLevel = GameEventLevel.DIRECTIVE;
         Message buildDirective = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
         BuildOrder toBuild = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(buildDirective));
         seqBuildAtLocation(toBuild, comSys.getMapLocationFromBuildDirective(buildDirective));
@@ -66,9 +68,9 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
       }
       //if we still know where some uncovered mines are, go to them and build something there
       else if(!uncoveredMines.isEmpty()) {
-        currentGameEventLevel = GameEventLevel.MISSION;
+        currentGameEventLevel = GameEventLevel.NORMAL;
         //if we build a recycler on it
-        currentMine = uncoveredMines.get(0);
+        currentMine = getClosestMine();
         if(seqBuildAtLocation(BuildOrder.RECYCLER, currentMine.getLocation())) {
           //remove it from the queue
           while(navSys.isActive()) {
@@ -83,18 +85,23 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
       }
       //otherwise look for mines
       else {
-        currentGameEventLevel = GameEventLevel.NORMAL;
+        currentGameEventLevel = GameEventLevel.LOW;
         seqScout();
       }
     }
   }
 
   /**
-   * checks to see if there are uncovered mines left to find
-   * @return if there are any uncoverd mines in teh queue
+   * checks to see how many uncovered mines are left in the queue
+   * @return the number of mines left in the queue
    */
-  public boolean hasUncoveredMines() {
-    return !uncoveredMines.isEmpty();
+  public int getNumberOfUncoveredMines() {
+    if(uncoveredMines != null) {
+      return uncoveredMines.size();
+    }
+    else {
+      return 0;
+    }
   }
 
   /**
@@ -125,14 +132,23 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
   }
 
   /**
-   * Overridden actMove for the BuildScout, needed to add in uncoverdMineTracking
-   * @return if the move was successful
+   * Looks through all the uncoveredMines and returns the closest
+   * @return the closest Mine
    */
-  @Override
-  protected boolean actMove() {
-    trackUncoveredMines();
-    return super.actMove();
+  private Mine getClosestMine() {
+    Mine toReturn = null;
+    int distance = Integer.MAX_VALUE;
+    MapLocation currentLoc = robotControl.getLocation();
+    for (int i=0;i<uncoveredMines.size();i++) {
+      int currentDistance = currentLoc.distanceSquaredTo(uncoveredMines.get(i).getLocation());
+      if(currentDistance < distance) {
+        toReturn = uncoveredMines.get(i);
+        distance = currentDistance;
+      }
+    }
+    return toReturn;
   }
+
 
 
   /**
@@ -141,8 +157,11 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
    */
   @Override
   protected void yield() {
-    super.yield();
-    robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString() + " with "+uncoveredMines.size()+" mines left");
+    gameEvents.resetGameEvents();
+    robotControl.yield();
+    gameEvents.calcGameEvents();
+    trackUncoveredMines();
+    robotControl.setIndicatorString(0, "ScoutDirection: " + scoutDirection + " - Location: "+robotControl.getLocation().toString());
   }
 
 

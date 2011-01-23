@@ -10,11 +10,9 @@ public class SensorGameEvents extends GameEvents {
   SensorSystem sensorSys;
 
   //game events
-  //normal game events
+  //idle game events
   protected boolean seeMine, seeDebris;
-  //mission gameEvents
-
-  //critical game events
+  //combat game events
   protected boolean seeEnemy;
 
   /**
@@ -54,12 +52,18 @@ public class SensorGameEvents extends GameEvents {
     switch(priority) {
       case GameEventLevelPriority.COMBAT:
         //highest priority level, can't have one higher
-        return super.checkGameEventsAbovePriority(priority) || false;
+        return super.checkGameEventsAbovePriority(priority);
+      case GameEventLevelPriority.DIRECTIVE:
+        //check the COMBAT game events
+        return super.checkGameEventsAbovePriority(priority) || seeEnemy;
       case GameEventLevelPriority.MISSION:
-        //check the CRICITAL game events
+        //check the COMBAT and DIRECTIVE game events
         return super.checkGameEventsAbovePriority(priority) || seeEnemy;
       case GameEventLevelPriority.NORMAL:
-        //check the COMBAT and MISSION game events
+        //check the COMBAT, DIRECTIVE and MISSION game events
+        return super.checkGameEventsAbovePriority(priority) || seeEnemy;
+      case GameEventLevelPriority.LOW:
+        //check the COMBAT, DIRECTIVE, MISSION and NORMAL game events
         return super.checkGameEventsAbovePriority(priority) || seeEnemy;
       case GameEventLevelPriority.NONE:
         //check all game events

@@ -21,9 +21,9 @@ public class GameEvents {
 
   //list of GameEvents, we'll add more as we get more complex behavoir
   //Note: check out GameEventLevels to see the levels
-  //Normal
+  //Idle
   protected boolean lowHealth, hasMessages, negativeFluxRegen;
-  //Misison
+  //Directive
   protected boolean hasDirective;
   //combat GameEvents
   protected boolean lostHealth, recentlyLostHealth;
@@ -69,6 +69,38 @@ public class GameEvents {
     calcLowHealth();
     calcHasDirective();
   }
+
+  /**
+   * checks to see if any GameEvents have occurred of priority > priority
+   * @param priority the priority of game events to check
+   * @return true if a gameevent has occurred with priority > the imputted priority
+   */
+  public boolean checkGameEventsAbovePriority(int priority) {
+    switch(priority) {
+      case GameEventLevelPriority.COMBAT:
+        //highest priority level, can't have one higher
+        return false;
+      case GameEventLevelPriority.DIRECTIVE:
+        //interrupted only by COMBAT game events
+        return lostHealth || recentlyLostHealth;
+      case GameEventLevelPriority.MISSION:
+        //check the COMBAT and DIRECTIVE game events
+        return lostHealth || recentlyLostHealth || hasDirective;
+      case GameEventLevelPriority.NORMAL:
+        //check the COMBAT and DIRECTIVE and MISSION game events
+        return lostHealth || recentlyLostHealth || hasDirective;
+      case GameEventLevelPriority.LOW:
+        //check the COMBAT and DIRECTIVE and MISSION and NORMAL game events
+        return lostHealth || recentlyLostHealth || hasDirective;
+      case GameEventLevelPriority.NONE:
+        //check all game events
+        return lostHealth || recentlyLostHealth || hasDirective || lowHealth || negativeFluxRegen;
+    }
+    System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
+    return false;
+  }
+
+
 
   /**
    * calculates if the bot has recently lost health
@@ -194,28 +226,5 @@ public class GameEvents {
     return negativeFluxRegen;
   }
 
-  /**
-   * checks to see if any GameEvents have occurred of priority > priority
-   * @param priority the priority of game events to check
-   * @return true if a gameevent has occurred with priority > the imputted priority
-   */
-  public boolean checkGameEventsAbovePriority(int priority) {
-    switch(priority) {
-      case GameEventLevelPriority.COMBAT:
-        //highest priority level, can't have one higher
-        return false;
-      case GameEventLevelPriority.MISSION:
-        //check the CRICITAL game events
-        return lostHealth || recentlyLostHealth;
-      case GameEventLevelPriority.NORMAL:
-        //check the COMBAT and MISSION game events
-        return lostHealth || recentlyLostHealth || hasDirective;
-      case GameEventLevelPriority.NONE:
-        //check all game events
-        return lostHealth || recentlyLostHealth || hasDirective || lowHealth || negativeFluxRegen;
-    }
-    System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
-    return false;
-  }
 
 }

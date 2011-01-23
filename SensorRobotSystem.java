@@ -16,6 +16,9 @@ public class SensorRobotSystem extends RobotSystem {
   protected int minX=-1, maxX=Integer.MAX_VALUE, minY=-1, maxY=Integer.MAX_VALUE;
   //new destination constants, used in chooseNewDestination()
   protected static final int NEW_DEST_RANGE = 20;
+  protected static final int NEW_DEST_VARIANCE = 5;
+  //the direction to Scout in
+  protected Direction scoutDirection;
 
   /**
    * A SensorRobotSystem has everything a RobotSystem does, plus a SensorSystem
@@ -38,19 +41,27 @@ public class SensorRobotSystem extends RobotSystem {
    * @return the new destination
    */
   protected MapLocation chooseNextDestination() {
-
+    //if we don't have a destination, set it as the robots birthplace
     if (navSys.getDestination()==null) {
       navSys.setDestination(birthPlace);
+    }
+    //if the scout direction is not valid, choose another
+    if (!checkScoutDirectionValidity()) {
+      changeScoutDirection();
     }
     MapLocation next;
     int loops = 0;
     int x, y;
     do {
       next = navSys.getDestination();
-      x = ((rand.nextInt(2*NEW_DEST_RANGE+1) * Clock.getRoundNum()) % (2*NEW_DEST_RANGE))
-              - NEW_DEST_RANGE;
-      y = ((rand.nextInt(2*NEW_DEST_RANGE+1) * Clock.getRoundNum()) % (2*NEW_DEST_RANGE))
-              - NEW_DEST_RANGE;
+      //make the next destination in the direction of scoutDirection
+      next.add(scoutDirection, NEW_DEST_RANGE - NEW_DEST_VARIANCE);
+
+      //add a slight variance
+      x = ((rand.nextInt(2*NEW_DEST_VARIANCE+1) * Clock.getRoundNum()) % (2*NEW_DEST_VARIANCE))
+              - NEW_DEST_VARIANCE;
+      y = ((rand.nextInt(2*NEW_DEST_VARIANCE+1) * Clock.getRoundNum()) % (2*NEW_DEST_VARIANCE))
+              - NEW_DEST_VARIANCE;
       next = next.add(x, y);
       loops++;
     } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<5);
@@ -80,7 +91,7 @@ public class SensorRobotSystem extends RobotSystem {
     
     robotControl.setIndicatorString(1, "seqFlee!!");
 
-    while(gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
+    while(gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
       //wait for a motor to be active
       while(navSys.isActive()) {
         yield();
@@ -138,6 +149,10 @@ public class SensorRobotSystem extends RobotSystem {
     while(!sensorSys.canSenseLocation(location) && !hasGameEvents) {
       while(navSys.isActive()) {
         yield();
+        hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+        if(hasGameEvents) {
+          return false;
+        }
       }
       actMove();
       hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
@@ -157,6 +172,10 @@ public class SensorRobotSystem extends RobotSystem {
       if(freeSquare == null) {
         while(navSys.isActive()) {
           yield();
+          hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+          if(hasGameEvents) {
+            return false;
+          }
         }
         actMove();
       }
@@ -165,6 +184,10 @@ public class SensorRobotSystem extends RobotSystem {
     }
     //if we max out the loops or find a gameEvent, pull out
     if (loop == maxLoops || hasGameEvents) {
+      return false;
+    }
+
+    if(hasGameEvents) {
       return false;
     }
 
@@ -195,12 +218,163 @@ public class SensorRobotSystem extends RobotSystem {
         //check for map boundary conditions
         updateMapExtrema();
         //update your position for the GUI
-        robotControl.setIndicatorString(0, "ID: " + robotControl.getRobot().getID() + " - Location: "+robotControl.getLocation().toString());
-        return checkDestinationValidity();
+        robotControl.setIndicatorString(0, "ScoutDirection: " + scoutDirection + " - Location: "+robotControl.getLocation().toString());
+        return checkDestinationValidity() && checkScoutDirectionValidity();
       }
     }
     System.out.println("WARNING: Bad call to actMove");
     return false;
+  }
+
+
+
+  /**
+   * Checks the scout direction to see if it's valid
+   * @return the validity of scoutDirection
+   */
+  protected boolean checkScoutDirectionValidity() {
+    MapLocation currentPos = robotControl.getLocation();
+    if(scoutDirection == null) {
+      return false;
+    }
+    else if(scoutDirection.equals(Direction.NORTH)) { //Direction.NORTH
+      if(currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY) {
+        return true;
+      }
+      else  {
+        return false;
+      }
+    }
+    else if(scoutDirection.equals(Direction.EAST)) {
+      if(currentPos.add(Direction.EAST, NEW_DEST_RANGE).x < maxX) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else if (scoutDirection.equals(Direction.SOUTH)) {
+      if(currentPos.add(Direction.SOUTH, NEW_DEST_RANGE).y < maxY) {
+        return true;
+      }
+    }
+    else if (scoutDirection.equals(Direction.WEST)) {
+      if(currentPos.add(Direction.WEST, NEW_DEST_RANGE).x > minX) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else if (scoutDirection.equals(Direction.NORTH_EAST)) {
+      if(currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY
+              && currentPos.add(Direction.EAST, NEW_DEST_RANGE).x < maxX) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else if (scoutDirection.equals(Direction.SOUTH_EAST)) {
+      if(currentPos.add(Direction.SOUTH, NEW_DEST_RANGE).y < maxY
+              && currentPos.add(Direction.EAST, NEW_DEST_RANGE).x < maxX) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else if (scoutDirection.equals(Direction.SOUTH_WEST)) {
+      if(currentPos.add(Direction.SOUTH, NEW_DEST_RANGE).y < maxY
+              && currentPos.add(Direction.WEST, NEW_DEST_RANGE).x > minX) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else if (scoutDirection.equals(Direction.NORTH_WEST)) {
+      if(currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY
+              && currentPos.add(Direction.WEST, NEW_DEST_RANGE).x > minX) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    System.out.println("WARNING: fell through checkScoutDirection");
+    return false;
+  }
+
+
+  /**
+   * Chooses a new direction to scout in based on know map bounds and previous scouting direction
+   */
+  public void changeScoutDirection() {
+    /*
+     * North ( 0,-1)
+     * South ( 0, 1)
+     * East  ( 1, 0)
+     * West  (-1, 0)
+     */
+    boolean done = false;
+    MapLocation currentPos = robotControl.getLocation();
+    while(!done) {
+      switch(rand.nextInt(8)) {
+        case 0: //Direction.NORTH
+          if(scoutDirection != Direction.NORTH && currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY) {
+            scoutDirection = Direction.NORTH;
+            done = true;
+          }
+          break;
+        case 1: //Direction.EAST
+          if(scoutDirection != Direction.EAST && currentPos.add(Direction.EAST, NEW_DEST_RANGE).x < maxX) {
+            scoutDirection = Direction.EAST;
+            done = true;
+          }
+          break;
+        case 2: //Direction.SOUTH
+          if(scoutDirection != Direction.SOUTH && currentPos.add(Direction.SOUTH, NEW_DEST_RANGE).y < maxY) {
+            scoutDirection = Direction.SOUTH;
+            done = true;
+          }
+          break;
+        case 3: //Direction.WEST
+          if(scoutDirection != Direction.WEST && currentPos.add(Direction.WEST, NEW_DEST_RANGE).x > minX) {
+            scoutDirection = Direction.WEST;
+            done = true;
+          }
+          break;
+        case 4: //Direction.NORTH_EAST
+          if(scoutDirection != Direction.NORTH_EAST && currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY
+                  && currentPos.add(Direction.EAST, NEW_DEST_RANGE).x < maxX) {
+            scoutDirection = Direction.NORTH_EAST;
+            done = true;
+          }
+          break;
+        case 5: //Direction.SOUTH_EAST
+          if(scoutDirection != Direction.SOUTH_EAST && currentPos.add(Direction.SOUTH, NEW_DEST_RANGE).y < maxY
+                  && currentPos.add(Direction.EAST, NEW_DEST_RANGE).x < maxX) {
+            scoutDirection = Direction.SOUTH_EAST;
+            done = true;
+          }
+          break;
+        case 6: //Direction.SOUTH_WEST
+          if(scoutDirection != Direction.SOUTH_WEST && currentPos.add(Direction.SOUTH, NEW_DEST_RANGE).y < maxY
+                  && currentPos.add(Direction.WEST, NEW_DEST_RANGE).x > minX) {
+            scoutDirection = Direction.SOUTH_WEST;
+            done = true;
+          }
+          break;
+        case 7: //Direction.NORTH_WEST
+          if(scoutDirection != Direction.NORTH_WEST && currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY
+                  && currentPos.add(Direction.WEST, NEW_DEST_RANGE).x > minX) {
+            scoutDirection = Direction.NORTH_WEST;
+            done = true;
+          }
+          break;
+      }
+    }
   }
 
   /**
