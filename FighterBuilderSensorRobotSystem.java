@@ -3,32 +3,28 @@ package team122;
 import battlecode.common.*;
 
 /**
- * BaseClass for robots with move, sensor and weapon
+ * For robots that just have to have to have it all, weapon(s), builder, sensor and movement
+ * controllers
+ *
+ * Important: Now all fighters are inheriting from this class instead of FighterSensorRobotSystem
+ * we'll just set the buildSystem to null if we aren't using it (see the second constructor)
+ * 
  * @author bovard
  */
-public class FighterSensorRobotSystem extends SensorRobotSystem {
+public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
   protected WeaponSystem weaponSys;
 
-  public FighterSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys, WeaponSystem weaponSys) {
-    super(robotControl, sensorSys);
+  public FighterBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
+          BuilderSystem buildSys, WeaponSystem weaponSys) {
+    super(robotControl, sensorSys, buildSys);
     this.weaponSys = weaponSys;
-    this.gameEvents = new FighterSensorGameEvents(robotControl, comSys, sensorSys);
-    
-    //check out PlayerConstants to see what each of these filters
-    comSys.setFilter(new int[] {1, 0, 1});
   }
 
-  /**
-   * The main loop for the FighterSensorRobotSystem, it should never fall out
-   */
-  @Override
-  public void go() {
-    while(true) {
-      seqPatrolAndEngage();
-    }
+  public FighterBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
+          WeaponSystem weaponSys) {
+    super(robotControl, sensorSys, null);
+    this.weaponSys = weaponSys;
   }
-
-
 
   /**
    * Scouts the map and engages any enemies it sees
@@ -115,8 +111,8 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
         enemyLoc = sensorSys.senseLocationOfObject(bot);
         toEnemy = ourLoc.directionTo(enemyLoc);
       }
-      
-      
+
+
       //Set a movement action
       if(!navSys.isActive()) {
         //if you can't sense them move forward
@@ -206,9 +202,10 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
    */
   @Override
   protected boolean actMove() {
-    sensorSys.reScanForBots();
+
     if((((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy())
             && !weaponSys.allActive()) {
+      sensorSys.reScanForBots();
       weaponSys.setFireAtRandom();
     }
     return super.actMove();
@@ -220,9 +217,9 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
    */
   @Override
   protected boolean actTurn(Direction dir) {
-    sensorSys.reScanForBots();
     if((((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy())
             && !weaponSys.allActive()) {
+      sensorSys.reScanForBots();
       weaponSys.setFireAtRandom();
     }
     return super.actTurn(dir);
@@ -260,7 +257,7 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
    */
   protected boolean seqRotateToUnSeenEnemy() {
     robotControl.setIndicatorString(1, "seqRotateToEnemy");
-    while(!((SensorGameEvents)gameEvents).canSeeEnemy() 
+    while(!((SensorGameEvents)gameEvents).canSeeEnemy()
             && gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
       while(navSys.isActive()) {
         yield();
@@ -319,5 +316,6 @@ public class FighterSensorRobotSystem extends SensorRobotSystem {
     }
     return ((SensorGameEvents)gameEvents).canSeeEnemy();
   }
+
 
 }
