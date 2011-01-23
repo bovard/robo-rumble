@@ -79,6 +79,10 @@ public class RSRecycler extends BuilderSensorRobotSystem {
         //them make a new ComCyler and unleesh it upon the world!
         new RSComCycler(robotControl, newSensorSystem, buildSys, newBroadcastSystem, newWeaponSystem).go();
       }
+      else {
+        System.out.println("WARNING: Tried to build a ComCycler and Failed!");
+        robotControl.turnOff();
+      }
     }
 
     //If they aren't building they should turn off to save their upkeep

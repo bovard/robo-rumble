@@ -55,6 +55,12 @@ public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
       currentGameEventLevel = GameEventLevel.COMBAT;
       seqStaticEngageEnemy(sensorSys.getNearestOpponent());
     }
+    else {
+      while(navSys.isActive()) {
+        yield();
+      }
+      actRotateFieldOfVision();
+    }
     return true;
   }
 
@@ -66,32 +72,40 @@ public class FighterBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
     robotControl.setIndicatorString(1, "seqRotate");
     while(!gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority))
     {
-      setCheckNewWeapons();
-      switch(sensorSys.getBreadth()) {
-        case PlayerConstants.TELESCOPE_TURNS:
-          weaponSys.setFireAtRandom();
-          actTurn(robotControl.getDirection().rotateRight());
-          break;
-        case PlayerConstants.SIGHT_TURNS:
-          weaponSys.setFireAtRandom();
-          actTurn(robotControl.getDirection().rotateRight().rotateRight());
-          break;
-        case PlayerConstants.RADAR_TURNS:
-          weaponSys.setFireAtRandom();
-          actTurn(robotControl.getDirection().opposite());
-          break;
-        case PlayerConstants.SATELLITE_TURNS:
-          weaponSys.setFireAtRandom();
-          yield();
-          //in this case the sensor can see in all directions so the bot doesn't need to rotate
-          break;
-      }
+      actRotateFieldOfVision();
     }
     return !gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
   }
 
 
 
+  /**
+   * Rotates the robot to its next field of vision
+   * @return true
+   */
+  protected boolean actRotateFieldOfVision() {
+    setCheckNewWeapons();
+    switch(sensorSys.getBreadth()) {
+      case PlayerConstants.TELESCOPE_TURNS:
+        weaponSys.setFireAtRandom();
+        actTurn(robotControl.getDirection().rotateRight());
+        break;
+      case PlayerConstants.SIGHT_TURNS:
+        weaponSys.setFireAtRandom();
+        actTurn(robotControl.getDirection().rotateRight().rotateRight());
+        break;
+      case PlayerConstants.RADAR_TURNS:
+        weaponSys.setFireAtRandom();
+        actTurn(robotControl.getDirection().opposite());
+        break;
+      case PlayerConstants.SATELLITE_TURNS:
+        weaponSys.setFireAtRandom();
+        yield();
+        //in this case the sensor can see in all directions so the bot doesn't need to rotate
+        break;
+    }
+    return true;
+  }
 
   /**
    * While the enemy bot is in range, engage it

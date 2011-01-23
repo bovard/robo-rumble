@@ -19,6 +19,8 @@ public class SensorRobotSystem extends RobotSystem {
   protected static final int NEW_DEST_VARIANCE = 5;
   //the direction to Scout in
   protected Direction scoutDirection;
+  private int lastChangedDirection;
+  private static final int DIRECTION_LIFE = 300;
 
   /**
    * A SensorRobotSystem has everything a RobotSystem does, plus a SensorSystem
@@ -240,6 +242,10 @@ public class SensorRobotSystem extends RobotSystem {
     if(scoutDirection == null) {
       return false;
     }
+    //if the Direction is too old, it is invalid
+    else if (Clock.getRoundNum() > lastChangedDirection + DIRECTION_LIFE) {
+      return false;
+    }
     else if(scoutDirection.equals(Direction.NORTH)) { //Direction.NORTH
       if(currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY) {
         return true;
@@ -317,6 +323,7 @@ public class SensorRobotSystem extends RobotSystem {
    * Chooses a new direction to scout in based on know map bounds and previous scouting direction
    */
   public void changeScoutDirection() {
+    lastChangedDirection = Clock.getRoundNum();
     /*
      * North ( 0,-1)
      * South ( 0, 1)
