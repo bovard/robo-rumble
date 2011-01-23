@@ -11,7 +11,8 @@ package team122;
  */
 public final class PlayerConstants {
   //STRATEGY CONSTANTS
-  public static final int START_BUILDING_GUARD_TOWERS = 500;
+  public static final int START_COMCYCLERS = 500;
+  public static final int START_BUILDING_GUARD_TOWERS = 1000;
 
   //ECONOMY CONSTANTS
   public static final int MINIMUM_FLUX = 3;

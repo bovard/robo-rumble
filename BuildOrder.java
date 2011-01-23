@@ -112,6 +112,16 @@ public enum BuildOrder {
     Chassis.BUILDING.cost + ComponentType.RECYCLER.cost,
     BuildOrderID.RECYCLER
   ),
+  COMCYCLER (
+    Chassis.BUILDING,
+    ComponentType.CONSTRUCTOR,
+    new ComponentType[] {ComponentType.RECYCLER},
+    new ComponentType[] {ComponentType.SHIELD, ComponentType.SIGHT, ComponentType.BLASTER, ComponentType.ANTENNA},
+    new ComponentType[] {},
+    new ComponentType[] {},
+    Chassis.BUILDING.cost + ComponentType.CONSTRUCTOR.cost + ComponentType.SIGHT.cost + ComponentType.BLASTER.cost + ComponentType.SHIELD.cost + ComponentType.ANTENNA.cost,
+    BuildOrderID.COMCYCLER
+  ),
   FACTORY (
     Chassis.BUILDING,
     ComponentType.CONSTRUCTOR,

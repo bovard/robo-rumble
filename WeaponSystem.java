@@ -40,6 +40,18 @@ public class WeaponSystem {
   }
 
   /**
+   * The WeaponSystem constuctor for only starting with one weapon
+   * @param weapon the WeaponController
+   * @param sensorSys the SensorSystem
+   */
+  public WeaponSystem(WeaponController weapon, SensorSystem sensorSys) {
+    this.sensorSys = sensorSys;
+    this.weapons = new WeaponController[] {weapon};
+    mode = WeaponMode.OPEN_FIRE;
+    updateRange(weapon);
+  }
+
+  /**
    * Changes the minRange or maxRange if need be
    * @param weaponControl the weapon to measure against
    */

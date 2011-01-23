@@ -3,25 +3,34 @@ package team122;
 import battlecode.common.*;
 
 /**
- *
+ * A kickass recycler that can defend itself pretty well
  * @author bovard
  */
-public class RSComCycler extends BuilderSensorRobotSystem {
+public class RSComCycler extends FighterBuilderSensorRobotSystem {
   protected BroadcastController broadcastControl;
   protected BroadcastSystem broadcastSys;
+  protected WeaponSystem weaponSys;
   protected GameObject guardTower;
+  protected MapLocation guardTowerLoc;
 
   public RSComCycler(RobotController robotControl, SensorSystem sensorSys,
-          BuilderSystem buildSys, BroadcastSystem broadcastSys) {
-    super(robotControl, sensorSys, buildSys);
-    robotControl.setIndicatorString(0, "ComRecycler");
+          BuilderSystem buildSys, BroadcastSystem broadcastSys, WeaponSystem weaponSys) {
+    super(robotControl, sensorSys, buildSys, weaponSys);
+    robotControl.setIndicatorString(0, "ComCycler");
     this.broadcastSys = broadcastSys;
   }
 
   @Override
   public void go() {
     while(true) {
-      seqBuildGaurd();
+      seqRotateAndEngage();
+      if (Clock.getRoundNum() > PlayerConstants.START_BUILDING_GUARD_TOWERS)
+      {
+        currentGameEventLevel = GameEventLevel.MISSION;
+        if(!seqMonitorGuardTower()) {
+          seqBuildGaurd();
+        }
+      }
     }
   }
 
@@ -58,8 +67,9 @@ public class RSComCycler extends BuilderSensorRobotSystem {
       while (!done) {
         //While there is nothing there, broadcast a building directive and sleep for a while
         do {
-          guardTower = sensorSys.senseObjectAtLocation(birthPlace.add(robotControl.getDirection()), RobotLevel.ON_GROUND);
-          broadcastSys.sendBuildDirective(BuildOrder.GUARD_TOWER_1.id, birthPlace.add(robotControl.getDirection()));
+          guardTowerLoc = birthPlace.add(robotControl.getDirection());
+          guardTower = sensorSys.senseObjectAtLocation(guardTowerLoc, RobotLevel.ON_GROUND);
+          broadcastSys.sendBuildDirective(BuildOrder.GUARD_TOWER_1.id, guardTowerLoc);
           for (int i=0; i<5; i++) {
             yield();
           }
@@ -104,9 +114,16 @@ public class RSComCycler extends BuilderSensorRobotSystem {
    */
   protected boolean seqMonitorGuardTower() {
     robotControl.setIndicatorString(1, "seqMonitorGuardTower");
-    while(sensorSys.canSenseObject(guardTower)) {
-      for (int i =0; i < 10; i++) {
+    if(guardTower != null) {
+      while(navSys.isActive()) {
         yield();
+      }
+      actTurn(robotControl.getLocation().directionTo(guardTowerLoc));
+      if(sensorSys.canSenseObject(guardTower)) {
+        return true;
+      }
+      else {
+        return false;
       }
     }
     return false;

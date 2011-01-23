@@ -15,6 +15,7 @@ public class BuildOrderID {
   public static final int BUILDER_SCOUT_2 = 11;
   public static final int BUILDER_SCOUT_3 = 12;
   public static final int RECYCLER = 20;
+  public static final int COMCYCLER = 21;
   public static final int FACTORY = 30;
   public static final int ARMORY = 40;
   public static final int GUARD_TOWER_1 = 50;
@@ -41,6 +42,8 @@ public class BuildOrderID {
         return BuildOrder.BUILDER_SCOUT_3;
       case BuildOrderID.RECYCLER:
         return BuildOrder.RECYCLER;
+      case BuildOrderID.COMCYCLER:
+        return BuildOrder.COMCYCLER;
       case BuildOrderID.FACTORY:
         return BuildOrder.FACTORY;
       case BuildOrderID.ARMORY:

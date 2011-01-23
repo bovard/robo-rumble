@@ -41,23 +41,46 @@ public class RSRecycler extends BuilderSensorRobotSystem {
       if (shouldBuild && Clock.getRoundNum() > 150 && robotControl.getTeamResources() > BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX)
         selBuildScouts();
     }
+
+    if(Clock.getRoundNum() > 50)
+    {
+      //if we aren't pumping out scouts fulltime, build a couple before continuing
+      while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX) {
+        yield();
+      }
+      if(Clock.getRoundNum() < PlayerConstants.START_COMCYCLERS) {
+        seqBuildRandomFighterScout();
+      }
+      else {
+        seqBuild(BuildOrder.BUILDER_SCOUT_1);
+      }
+    }
+
+
     while(stayActive) {
       //wait until we want to start building gaurd towers then do it up!
-      while(Clock.getRoundNum() < PlayerConstants.START_BUILDING_GUARD_TOWERS) {
+      while(Clock.getRoundNum() < PlayerConstants.START_COMCYCLERS) {
         yield();
       }
       //wait for funds to build an antenna and our buildcontroller is free
-      while(robotControl.getTeamResources() < ComponentType.ANTENNA.cost + PlayerConstants.MINIMUM_FLUX
+      while(robotControl.getTeamResources() < BuildOrder.COMCYCLER.cost + PlayerConstants.MINIMUM_FLUX
               || buildSys.isActive()) {
         yield();
       }
       //once we've built an antenna, make a new ComRecyclerRobotSystem and start it
-      if (actBuildComponent(ComponentType.ANTENNA, birthPlace, RobotLevel.ON_GROUND)) {
-        BroadcastController bcc = (BroadcastController)robotControl.components()[robotControl.components().length-1];
-        new RSComCycler(robotControl, sensorSys, buildSys,
-                new BroadcastSystem(robotControl, bcc)).go();
+      if (seqBuild(BuildOrder.COMCYCLER, birthPlace)) {
+        ComponentController[] components = robotControl.components();
+        //get the antenna
+        BroadcastSystem newBroadcastSystem = new BroadcastSystem(robotControl, (BroadcastController)components[components.length-1]);
+        //sight
+        SensorSystem newSensorSystem = new SensorSystem(robotControl, (SensorController)components[components.length-3]);
+        //and blaster
+        WeaponSystem newWeaponSystem = new WeaponSystem((WeaponController)components[components.length-2], newSensorSystem);
+        //them make a new ComCyler and unleesh it upon the world!
+        new RSComCycler(robotControl, newSensorSystem, buildSys, newBroadcastSystem, newWeaponSystem).go();
       }
     }
+
     //If they aren't building they should turn off to save their upkeep
     robotControl.setIndicatorString(1, "Not Producing, turning off!");
     robotControl.turnOff();
@@ -95,16 +118,16 @@ public class RSRecycler extends BuilderSensorRobotSystem {
       }
     }
     else {
-      return buildRandomSoldierScout();
+      return seqBuildRandomFighterScout();
     }
   }
 
 
   /**
-   * Builds a random soldier scout
+   * Builds a random fighter scout
    * @return if teh build was sucessfull
    */
-  protected boolean buildRandomSoldierScout() {
+  protected boolean seqBuildRandomFighterScout() {
     BuildOrder toBuild = BuildOrder.FIGHTER_SCOUT_1;
 
     switch(rand.nextInt(6)+1) {
