@@ -16,6 +16,7 @@ import battlecode.common.*;
 public class RobotPlayer implements Runnable {
 
   private final RobotController myRC;
+  private final int strategy = PlayerConstants.LIGHT_RUSH;
 
   /**
    * constructor
@@ -27,13 +28,19 @@ public class RobotPlayer implements Runnable {
 
   /**
    * Called after the constructor, if we return from this method the robot explodes
+   * we can switch strategies by editing the strategy integer (find strategy options in PlayerConstants)
    */
   public void run() {
-    staging();
+    if(strategy == PlayerConstants.LIGHT_RUSH) {
+      lightRushStaging();
+    }
+    else if (strategy == PlayerConstants.HEAVY_RUSH) {
+      heavyRushStaging();
+    }
   }
 
   /**
-   * staging will house a robot until it has enough components to be a recognized system
+   * lightRushStaging will house a robot until it has enough components to be a recognized system
    * after that it will pass the robotControl to the system and call the go() method
    * This depends heavily on the order in which the components of the robot are built (the
    * order in which their built is the order that they'll return in when you call the
@@ -42,7 +49,7 @@ public class RobotPlayer implements Runnable {
    * Note: requires version 1.07 or later to work correctly
    * Note: not very efficient at the moment, we'll have to clean it up later
    */
-  public void staging() {
+  public void lightRushStaging() {
     ComponentController [] components;
     //one the code enters here it waits until it recognizes one of the builds, then loads
     //the appropriate system
@@ -154,5 +161,23 @@ public class RobotPlayer implements Runnable {
       //we didn't find our system, yield for a turn and try again next time
       myRC.yield();
     }
+  }
+
+  /**
+   * This is the staging area for robot systems taking part of the heavy rush strategy
+   */
+  public void heavyRushStaging() {
+   
+    ComponentController[] components = myRC.components();
+    //provided BuilderScout (the one that we start off the game with)
+    if (components.length == 3 && components[2].type()==ComponentType.SIGHT &&
+            components[1].type()==ComponentType.CONSTRUCTOR) {
+      RSBaseBuilder system = new RSBaseBuilder(myRC, new SensorSystem(myRC, (SensorController)components[2]),
+              new BuilderSystem(myRC, (BuilderController)components[1]));
+      system.go();
+    }
+
+    //turn off and wait to be activated
+    myRC.turnOff();
   }
 }

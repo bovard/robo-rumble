@@ -7,6 +7,10 @@ package team122;
  * @author bovard
  */
 public final class PlayerConstants {
+  //GLOBAL STRATEGY CONSTANTS
+  public static final int LIGHT_RUSH = 1;
+  public static final int HEAVY_RUSH = 2;
+
   //STRATEGY CONSTANTS
   public static final int START_COMCYCLERS = 500;
   public static final int START_BUILDING_GUARD_TOWERS = 1000;

@@ -21,9 +21,10 @@ public class RSRecycler extends BuilderSensorRobotSystem {
         shouldBuild=true;
         stayActive=true;
       }
-      //otherwise if the mine is the most southwestern it should stay active
-      else if (sensorSys.senseObjectAtLocation(birthPlace.add(Direction.SOUTH), RobotLevel.MINE) == null
-              && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.WEST), RobotLevel.MINE) == null) {
+      //otherwise if the mine is the most northeastern mine around stay active (become a ComCycler)
+      else if (sensorSys.senseObjectAtLocation(birthPlace.add(Direction.NORTH), RobotLevel.MINE) == null
+              && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.EAST), RobotLevel.MINE) == null
+              && sensorSys.senseObjectAtLocation(birthPlace.add(Direction.NORTH_EAST), RobotLevel.MINE) == null) {
         stayActive = true;
       }
     }catch (Exception e) {
@@ -45,7 +46,8 @@ public class RSRecycler extends BuilderSensorRobotSystem {
     if(Clock.getRoundNum() > 50)
     {
       //if we aren't pumping out scouts fulltime, build a couple before continuing
-      while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX) {
+      while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + 
+              BuildOrder.BUILDER_SCOUT_1.cost + PlayerConstants.MINIMUM_FLUX) {
         yield();
       }
       if(Clock.getRoundNum() < PlayerConstants.START_COMCYCLERS) {
