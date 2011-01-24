@@ -12,6 +12,10 @@ public class RSFighterScout extends WeaponBuilderSensorRobotSystem {
     super(robotControl, sensorSys, weaponSys);
   }
 
+  public RSFighterScout(RobotController robotControl, SensorSystem sensorSys, WeaponController weapon) {
+    super(robotControl, sensorSys, weapon);
+  }
+
   @Override
   public void go() {
     while(true) {

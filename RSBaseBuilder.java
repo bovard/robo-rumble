@@ -27,10 +27,12 @@ public class RSBaseBuilder extends BuilderSensorRobotSystem {
     yield();
     Direction currentDir = robotControl.getDirection();
     boolean mineAtFrontRight = sensorSys.senseObjectAtLocation(birthPlace.add(currentDir.rotateRight()), RobotLevel.MINE) != null;
+    boolean builtRight = false;
 
     //if the mine is to our right
     if(mineAtFrontRight && navSys.canMove(robotControl.getDirection().rotateRight().rotateRight())) {
       System.out.println("detected mine right");
+      builtRight = true;
       while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + PlayerConstants.MINIMUM_FLUX) {
         yield();
       }
@@ -59,7 +61,7 @@ public class RSBaseBuilder extends BuilderSensorRobotSystem {
     try {
       //turn on the recycler and factory
       robotControl.turnOn(birthPlace.add(currentDir), RobotLevel.ON_GROUND);
-      if(mineAtFrontRight && navSys.canMove(robotControl.getDirection().rotateRight().rotateRight())) {
+      if(builtRight) {
         robotControl.turnOn(birthPlace.add(currentDir.rotateRight().rotateRight()), RobotLevel.ON_GROUND);
       }
       else {

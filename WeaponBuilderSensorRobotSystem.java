@@ -28,6 +28,13 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
     gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
+  public WeaponBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
+          WeaponController weapon) {
+    super(robotControl, sensorSys, null);
+    this.weaponSys = new WeaponSystem(weapon, sensorSys);
+    gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
+  }
+
   /**
    * Scouts the map and engages any enemies it sees
    * @return true
@@ -122,6 +129,7 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
       MapLocation ourLoc = robotControl.getLocation();
       MapLocation enemyLoc = null;
       Direction toEnemy = null;
+      Direction ourDir = robotControl.getDirection();
 
       if(canSee) {
         enemyLoc = sensorSys.senseLocationOfObject(bot);
@@ -133,23 +141,23 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
       if(!navSys.isActive()) {
         //if you can't sense them move forward
         if (!canSee) {
-          if(navSys.canMove(robotControl.getDirection())) {
+          if(navSys.canMove(ourDir)) {
             navSys.setMoveForward();
           }
         }
         //if not facing the enemy, turn to face them
-        else if( toEnemy != robotControl.getDirection()) {
+        else if( !toEnemy.equals(ourDir)) {
             navSys.setTurn(toEnemy);
         }
         //if we're too far away, close the distance
         else if (ourLoc.distanceSquaredTo(enemyLoc) > weaponSys.getMinRange()) {
-          if(navSys.canMove(robotControl.getDirection())) {
+          if(navSys.canMove(ourDir)) {
             navSys.setMoveForward();
           }
         }
         //if we're too close back off a bit
         else if (ourLoc.distanceSquaredTo(enemyLoc) < weaponSys.getMinRange()) {
-          if(navSys.canMove(robotControl.getDirection().opposite())) {
+          if(navSys.canMove(ourDir.opposite())) {
             navSys.setMoveBackward();
           }
         }
@@ -164,6 +172,40 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
         //Need to rescan because if we killed anything it won't show up on the new scan
         sensorSys.reScanForBots();
         weaponSys.setFireAtRandom();
+      }
+
+      //if we haven't done a single thing, we'll need to try to move closer
+      if(!weaponSys.isActive() && !navSys.isActive()) {
+        if(navSys.canMove(ourDir.rotateLeft()) && navSys.canMove(ourDir.rotateRight())) {
+          if(rand.nextBoolean()) {
+            navSys.setTurn(ourDir.rotateLeft());
+            while(navSys.isActive()) {
+              yield();
+            }
+            navSys.setMoveForward();
+          }
+          else {
+            navSys.setTurn(ourDir.rotateRight());
+            while(navSys.isActive()) {
+              yield();
+            }
+            navSys.setMoveForward();
+          }
+        }
+        else if(navSys.canMove(ourDir.rotateLeft())) {
+          navSys.setTurn(ourDir.rotateLeft());
+          while(navSys.isActive()) {
+            yield();
+          }
+          navSys.setMoveForward();
+        }
+        else if(navSys.canMove(ourDir.rotateRight())) {
+          navSys.setTurn(ourDir.rotateRight());
+          while(navSys.isActive()) {
+            yield();
+          }
+          navSys.setMoveForward();
+        }
       }
 
       //finally yield

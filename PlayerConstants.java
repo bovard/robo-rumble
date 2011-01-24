@@ -11,7 +11,11 @@ public final class PlayerConstants {
   public static final int LIGHT_RUSH = 1;
   public static final int HEAVY_RUSH = 2;
 
-  //STRATEGY CONSTANTS
+  //HEAVY RUSH STRATEGY CONSTNATS
+  public static final int SCOUT_COOLDOWN = 50;
+  public static final int HEAVY_COOLDOWN = 150;
+
+  //LIGHT RUSH STRATEGY CONSTANTS
   public static final int START_COMCYCLERS = 500;
   public static final int START_BUILDING_GUARD_TOWERS = 1000;
 

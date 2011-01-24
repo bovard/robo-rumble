@@ -16,8 +16,8 @@ import battlecode.common.*;
 public class RobotPlayer implements Runnable {
 
   private final RobotController myRC;
-  private final int strategy = PlayerConstants.LIGHT_RUSH;
-  //private final int strategy = PlayerConstants.HEAVY_RUSH;
+  //private final int strategy = PlayerConstants.LIGHT_RUSH;
+  private final int strategy = PlayerConstants.HEAVY_RUSH;
 
   /**
    * constructor
@@ -182,28 +182,53 @@ public class RobotPlayer implements Runnable {
     //turn off and wait to be activated
     myRC.turnOff();
 
-    components = myRC.components();
+    while(true) {
+      components = myRC.components();
 
-    if(myRC.getChassis() == Chassis.FLYING) {
-      if (components.length == 3 && components[1].type()==ComponentType.SIGHT
-              && components[2].type()==ComponentType.CONSTRUCTOR) {
-        SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
-        BuilderSystem buildSys = new BuilderSystem(myRC, (BuilderController)components[2]);
-        RSBuilderScout system = new RSBuilderScout(myRC, sensorSys, buildSys);
-        system.go();
+      if(myRC.getChassis() == Chassis.FLYING) {
+        if (components.length == 3 && components[1].type()==ComponentType.SIGHT
+                && components[2].type()==ComponentType.CONSTRUCTOR) {
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          BuilderSystem buildSys = new BuilderSystem(myRC, (BuilderController)components[2]);
+          RSBuilderScout system = new RSBuilderScout(myRC, sensorSys, buildSys);
+          system.go();
+        }
       }
-    }
-    else if(myRC.getChassis() == Chassis.BUILDING) {
-      //FACTORY
-      if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
-                components[2].type()==ComponentType.ARMORY) {
-          RSArmory system = new RSArmory(myRC, new SensorSystem(myRC, (SensorController)components[1]),
+      else if(myRC.getChassis() == Chassis.HEAVY) {
+        if (components.length == 10 && components[2].type() == ComponentType.RAILGUN
+                && components[3].type() == ComponentType.RADAR) {
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[3]);
+          RSFighterScout system = new RSFighterScout(myRC, sensorSys, (WeaponController)components[2]);
+          system.go();
+        }
+      }
+      else if(myRC.getChassis() == Chassis.BUILDING) {
+        //ARMORY
+        if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
+                  components[2].type()==ComponentType.ARMORY) {
+          RSArmory system = new RSArmory(myRC,
+                  new SensorSystem(myRC, (SensorController)components[1]),
                   new BuilderSystem(myRC, (BuilderController)components[2]));
           system.go();
         }
+        //FACTORY
+        if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
+                  components[2].type()==ComponentType.FACTORY) {
+          RSFactory system = new RSFactory(myRC,
+                  new SensorSystem(myRC, (SensorController)components[1]),
+                  new BuilderSystem(myRC, (BuilderController)components[2]));
+          system.go();
+        }
+        //HeavyConstructionRecycler
+        if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
+                  components[2].type()==ComponentType.RECYCLER) {
+          RSConstructionRecycler system = new RSConstructionRecycler(myRC,
+                  new SensorSystem(myRC, (SensorController)components[1]),
+                  new BuilderSystem(myRC, (BuilderController)components[2]));
+          system.go();
+        }
+      }
+      myRC.yield();
     }
-
-    //turn off and wait to be activated
-    myRC.turnOff();
   }
 }
