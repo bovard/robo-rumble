@@ -91,16 +91,20 @@ public class NavigationSystem {
    * @return if the moveController was set to turn
    */
   public boolean setTurn(Direction toTurn) {
-    if(!moveControl.isActive() && toTurn != robotControl.getDirection()) {
-      try {
-        moveControl.setDirection(toTurn);
-        return true;
-      } catch (Exception e) {
-        System.out.println("caught exception:");
-        e.printStackTrace();
+    if(!moveControl.isActive()) {
+      if(toTurn != robotControl.getDirection()) {
+        try {
+          moveControl.setDirection(toTurn);
+          return true;
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
       }
+      System.out.println("WARNING: Bad call to NavSys.setTurn (tried to turn in the direction you were already facing)");
+      return false;
     }
-    System.out.println("WARNING: Bad call to NavSys.setTurn");
+    System.out.println("WARNING: Bad call to NavSys.setTurn (moveController was active)");
     return false;
   }
 
@@ -111,16 +115,20 @@ public class NavigationSystem {
    * @return if the move control was set to move forward
    */
   public boolean setMoveForward() {
-    if(!moveControl.isActive() && moveControl.canMove(robotControl.getDirection())) {
-      try {
-        moveControl.moveForward();
-        return true;
-      } catch (Exception e) {
-        System.out.println("caught exception:");
-        e.printStackTrace();
+    if(!moveControl.isActive()) {
+      if(moveControl.canMove(robotControl.getDirection())) {
+        try {
+          moveControl.moveForward();
+          return true;
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
       }
+      System.out.println("WARNING: Bad call to NavSys.setMoveForward (can't move that way!)");
+      return false;
     }
-    System.out.println("WARNING: Bad call to NavSys.setMoveForward");
+    System.out.println("WARNING: Bad call to NavSys.setMoveForward (moveController active)");
     return false;
   }
 
@@ -131,16 +139,20 @@ public class NavigationSystem {
    * @return if the move control was set to move backward
    */
   public boolean setMoveBackward() {
-    if(!moveControl.isActive() && moveControl.canMove(robotControl.getDirection().opposite())) {
-      try {
-        moveControl.moveBackward();
-        return true;
-      } catch (Exception e) {
-        System.out.println("caught exception:");
-        e.printStackTrace();
+    if(!moveControl.isActive()) {
+      if(moveControl.canMove(robotControl.getDirection().opposite())) {
+        try {
+          moveControl.moveBackward();
+          return true;
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
       }
+      System.out.println("WARNING: Bad call to NavSys.setMoveBackward (can't move there!)");
+      return false;
     }
-    System.out.println("WARNING: Bad call to NavSys.setMoveBackward");
+    System.out.println("WARNING: Bad call to NavSys.setMoveBackward (movecontrol active)");
     return false;
   }
 
@@ -213,7 +225,7 @@ public class NavigationSystem {
         //System.out.println("DESTINATION REACHED!!");
         has_destination = false;
         robotControl.setIndicatorString(2, "No Dest");
-        System.out.println("WARNING: Bad call to NavSys.setNextMove ->bug (no dest)");
+        System.out.println("WARNING: Bad call to NavSys.setNextMove ->bug (no dest or dest reached)");
         return false;
       }
       //if we're currently tracking

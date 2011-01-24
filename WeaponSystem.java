@@ -102,9 +102,9 @@ public class WeaponSystem {
 
   /**
    * Checks to see if at least one weapon system are active
-   * @return
+   * @return if at least one weapon is active
    */
-  public boolean isActive() {
+  public boolean atLeastOneIsActive() {
     boolean isActive = false;
     for (int i=0; i<weapons.length; i++) {
       isActive = isActive || weapons[i].isActive();

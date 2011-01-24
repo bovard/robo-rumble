@@ -175,7 +175,7 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
       }
 
       //if we haven't done a single thing, we'll need to try to move closer
-      if(!weaponSys.isActive() && !navSys.isActive()) {
+      if(!weaponSys.atLeastOneIsActive() && !navSys.isActive()) {
         seqForceMove();
         yield();
       }

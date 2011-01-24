@@ -98,7 +98,7 @@ public class SensorSystem {
       System.out.println("caught exception:");
       e.printStackTrace();
     }
-    System.out.println("WARNING: Fell through SensorSystem.senseObjectAtLocation");
+    System.out.println("WARNING: Tried to senseobjectatloction and couldn't! SensorSystem.senseObjectAtLocation");
     return null;
   }
 
@@ -200,6 +200,7 @@ public class SensorSystem {
         }
       }
     }
+    System.out.println("WARNING: Tried to find the nearest bot but no bots were found! (or unkown error)");
     return null;
   }
 
