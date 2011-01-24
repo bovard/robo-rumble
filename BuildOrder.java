@@ -11,7 +11,16 @@ import battlecode.common.*;
 public enum BuildOrder {
 
 
-
+  FLYING_SCOUT_1 (
+    Chassis.FLYING,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.DISH},
+    new ComponentType[] {},
+    new ComponentType[] {},
+    Chassis.FLYING.cost + ComponentType.RADAR.cost + ComponentType.DISH.cost,
+    BuildOrderID.FLYING_SCOUT_1
+  ),
   FIGHTER_SCOUT_1 (
     Chassis.LIGHT,
     ComponentType.RECYCLER,
@@ -102,6 +111,16 @@ public enum BuildOrder {
     Chassis.LIGHT.cost + ComponentType.SIGHT.cost + ComponentType.CONSTRUCTOR.cost + ComponentType.PLATING.cost,
     BuildOrderID.BUILDER_SCOUT_3
   ),
+  FLYING_BUILDER_SCOUT_1 (
+    Chassis.FLYING,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.SIGHT, ComponentType.CONSTRUCTOR},
+    new ComponentType[] {},
+    new ComponentType[] {},
+    Chassis.FLYING.cost + ComponentType.SIGHT.cost + ComponentType.CONSTRUCTOR.cost,
+    BuildOrderID.FLYING_BUILDER_SCOUT_1
+  ),
   RECYCLER (
     Chassis.BUILDING,
     ComponentType.CONSTRUCTOR,
@@ -121,6 +140,16 @@ public enum BuildOrder {
     new ComponentType[] {},
     Chassis.BUILDING.cost + ComponentType.CONSTRUCTOR.cost + ComponentType.SIGHT.cost + ComponentType.BLASTER.cost + ComponentType.SHIELD.cost + ComponentType.ANTENNA.cost,
     BuildOrderID.COMCYCLER
+  ),
+  COMCYCLER_2 (
+    Chassis.BUILDING,
+    ComponentType.CONSTRUCTOR,
+    new ComponentType[] {ComponentType.RECYCLER},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.BLASTER},
+    new ComponentType[] {},
+    new ComponentType[] {},
+    Chassis.BUILDING.cost + ComponentType.CONSTRUCTOR.cost + ComponentType.RADAR.cost + ComponentType.BLASTER.cost,
+    BuildOrderID.COMCYCLER_2
   ),
   FACTORY (
     Chassis.BUILDING,

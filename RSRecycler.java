@@ -65,21 +65,19 @@ public class RSRecycler extends BuilderSensorRobotSystem {
         yield();
       }
       //wait for funds to build an antenna and our buildcontroller is free
-      while(robotControl.getTeamResources() < BuildOrder.COMCYCLER.cost + PlayerConstants.MINIMUM_FLUX
+      while(robotControl.getTeamResources() < BuildOrder.COMCYCLER_2.cost + PlayerConstants.MINIMUM_FLUX
               || buildSys.isActive()) {
         yield();
       }
       //once we've built an antenna, make a new ComRecyclerRobotSystem and start it
-      if (seqBuild(BuildOrder.COMCYCLER, birthPlace)) {
+      if (seqBuild(BuildOrder.COMCYCLER_2, birthPlace)) {
         ComponentController[] components = robotControl.components();
-        //get the antenna
-        BroadcastSystem newBroadcastSystem = new BroadcastSystem(robotControl, (BroadcastController)components[components.length-1]);
-        //sight
-        SensorSystem newSensorSystem = new SensorSystem(robotControl, (SensorController)components[components.length-3]);
+        //radar
+        SensorSystem newSensorSystem = new SensorSystem(robotControl, (SensorController)components[components.length-2]);
         //and blaster
-        WeaponSystem newWeaponSystem = new WeaponSystem((WeaponController)components[components.length-2], newSensorSystem);
+        WeaponSystem newWeaponSystem = new WeaponSystem((WeaponController)components[components.length-1], newSensorSystem);
         //them make a new ComCyler and unleesh it upon the world!
-        new RSComCycler(robotControl, newSensorSystem, buildSys, newBroadcastSystem, newWeaponSystem).go();
+        new RSComCycler(robotControl, newSensorSystem, buildSys, newWeaponSystem).go();
       }
       else {
         System.out.println("WARNING: Tried to build a ComCycler and Failed!");

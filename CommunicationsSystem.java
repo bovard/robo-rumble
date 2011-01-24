@@ -88,7 +88,7 @@ public class CommunicationsSystem {
 
   /**
    * Gets the maplocation out of a build directive message
-   * @see BroadcastSystem
+   * @see BroadcastSystem.sendBuildDirective()
    * @param buildDirective the buildDirective message
    * @return the MapLocation of the directive
    */
@@ -98,7 +98,7 @@ public class CommunicationsSystem {
 
   /**
    * Gets the buildOrderID out of a build directive message
-   * @see BroadcastSystem
+   * @see BroadcastSystem.sendBuildDirective()
    * @param buildDirective the buildDirective message
    * @return the int buildOrderID
    */
@@ -106,6 +106,15 @@ public class CommunicationsSystem {
     return buildDirective.ints[4];
   }
 
+  /**
+   * Gets the maplocation out of a fight directive
+   * @see BroadcastSystem.sendFightDirective()
+   * @param fightDirective the fightDirective message
+   * @return the location to move to attack
+   */
+  public MapLocation getLocationFromFightDirective(Message fightDirective) {
+    return new MapLocation(fightDirective.ints[4], fightDirective.ints[5]);
+  }
 
   /**
    * decrypts an incoming message

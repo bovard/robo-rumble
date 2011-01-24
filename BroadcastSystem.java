@@ -133,4 +133,19 @@ public class BroadcastSystem {
     return sendMessage(encrypt(addCheckSums(toSend)));
   }
 
+  /**
+   * sends a fight directive, receiving units should move to engage enemies at location
+   * Note: zeroeth and last positions are reserved for the addCheckSums function, the first position
+   * is always the round number, the second is the message type, third is the time to live (TTL)
+   * @param location the location to move to attack
+   * @return if the message was sent successfully
+   */
+  public boolean sendFightDirective(MapLocation location) {
+    Message toSend = new Message();
+    int[] intArray = {0, Clock.getRoundNum(), PlayerConstants.MESSAGE_FIGHT_DIRECTIVE, 0,
+                          location.x, location.y, 0};
+    toSend.ints = intArray;
+    return sendMessage(encrypt(addCheckSums(toSend)));
+  }
+
 }

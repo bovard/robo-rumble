@@ -110,7 +110,9 @@ public class SensorRobotSystem extends RobotSystem {
         }
       }
     }
-    changeScoutDirection();
+    //change our scout direction
+    scoutDirection = robotControl.getDirection().opposite();
+    //move in the opposite direction
     navSys.setDestination(chooseNextDestination());
 
     return !gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority);
@@ -331,7 +333,7 @@ public class SensorRobotSystem extends RobotSystem {
     boolean done = false;
     MapLocation currentPos = robotControl.getLocation();
     while(!done) {
-      int nextDir = rand.nextInt(13)*Clock.getRoundNum();
+      int nextDir = Clock.getRoundNum();
       nextDir = nextDir%8;
       switch(nextDir) {
         case 0: //Direction.NORTH

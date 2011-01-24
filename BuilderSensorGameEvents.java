@@ -24,7 +24,7 @@ public class BuilderSensorGameEvents extends SensorGameEvents {
   public void calcGameEvents() {
     calcLostHealth();
     //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
-    calcLowHealth();
+    calcRecentlyLostHealth();
     calcHasDirective();
     calcSeeMine();
     calcSeeEnemy();

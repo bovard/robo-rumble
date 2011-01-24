@@ -271,7 +271,7 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
    * @return if an enemy is seen
    */
   protected boolean seqRotateToUnSeenEnemy() {
-    robotControl.setIndicatorString(1, "seqRotateToEnemy");
+    robotControl.setIndicatorString(1, "seqRotateToUnSeenEnemy");
     while(!((SensorGameEvents)gameEvents).canSeeEnemy()
             && gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
       //if the nav system is busy hang out
@@ -295,6 +295,9 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
               return true;
             }
           }
+        }
+        while(navSys.isActive()) {
+          yield();
         }
 
         //rotate

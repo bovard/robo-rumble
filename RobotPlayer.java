@@ -170,8 +170,9 @@ public class RobotPlayer implements Runnable {
    
     ComponentController[] components = myRC.components();
     //provided BuilderScout (the one that we start off the game with)
-    if (components.length == 3 && components[2].type()==ComponentType.SIGHT &&
-            components[1].type()==ComponentType.CONSTRUCTOR) {
+    if (components.length == 3 && myRC.getChassis() == Chassis.LIGHT 
+            && components[2].type()==ComponentType.SIGHT
+            && components[1].type()==ComponentType.CONSTRUCTOR) {
       RSBaseBuilder system = new RSBaseBuilder(myRC, new SensorSystem(myRC, (SensorController)components[2]),
               new BuilderSystem(myRC, (BuilderController)components[1]));
       system.go();
@@ -179,5 +180,20 @@ public class RobotPlayer implements Runnable {
 
     //turn off and wait to be activated
     myRC.turnOff();
+
+    components = myRC.components();
+
+    if(myRC.getChassis() == Chassis.FLYING) {
+      if (components.length == 3 && components[1].type()==ComponentType.SIGHT
+              && components[2].type()==ComponentType.CONSTRUCTOR) {
+        SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+        BuilderSystem buildSys = new BuilderSystem(myRC, (BuilderController)components[2]);
+        RSBuilderScout system = new RSBuilderScout(myRC, sensorSys, buildSys);
+        system.go();
+      }
+    }
+    else if(myRC.getChassis() == Chassis.BUILDING) {
+      
+    }
   }
 }

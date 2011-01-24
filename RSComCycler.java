@@ -20,6 +20,13 @@ public class RSComCycler extends WeaponBuilderSensorRobotSystem {
     this.broadcastSys = broadcastSys;
   }
 
+  public RSComCycler(RobotController robotControl, SensorSystem sensorSys,
+          BuilderSystem buildSys, WeaponSystem weaponSys) {
+    super(robotControl, sensorSys, buildSys, weaponSys);
+    robotControl.setIndicatorString(0, "ComCycler2");
+  }
+
+
   @Override
   public void go() {
     while(true) {
