@@ -22,7 +22,7 @@ public class GameEvents {
   //list of GameEvents, we'll add more as we get more complex behavoir
   //Note: check out GameEventLevels to see the levels
   //Idle
-  protected boolean lowHealth, hasMessages, negativeFluxRegen;
+  protected boolean lowHealth, hasMessages;
   //Directive
   protected boolean hasDirective;
   //combat GameEvents
@@ -33,7 +33,8 @@ public class GameEvents {
   private int numTurnsNeg;
   private int numTurnsSinceLosingHealth = 100;
   private int numTurnsToLoseHealthThreshhold = 10;
-  private double formerFlux;
+  private double formerFlux = 0;
+  private double changeInFlux = 0;
 
   /**
    * Basic constructor for GameEvents, just requires a robotcontroller
@@ -55,7 +56,6 @@ public class GameEvents {
     recentlyLostHealth = false;
     lowHealth = false;
     hasDirective = false;
-    negativeFluxRegen = false;
     formerHP = robotControl.getHitpoints();
   }
 
@@ -68,6 +68,7 @@ public class GameEvents {
     //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
     calcLowHealth();
     calcHasDirective();
+    calcFluxRegen();
   }
 
   /**
@@ -94,7 +95,7 @@ public class GameEvents {
         return lostHealth || recentlyLostHealth || hasDirective;
       case GameEventLevelPriority.NONE:
         //check all game events
-        return lostHealth || recentlyLostHealth || hasDirective || lowHealth || negativeFluxRegen;
+        return lostHealth || recentlyLostHealth || hasDirective || lowHealth;
     }
     System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
     return false;
@@ -144,22 +145,10 @@ public class GameEvents {
 
 
   /**
-   * calculates if there is a negativeflux regen and if this is above the threshold for
-   * number of turns negative
+   * calculates the change in flux from last round
    */
-  protected void calcNegativeFluxRegen() {
-    if (robotControl.getTeamResources() < formerFlux) {
-      numTurnsNeg++;
-      if (numTurnsNeg < PlayerConstants.NUM_TURNS_NEGATIVE) {
-        negativeFluxRegen = true;
-      }
-      else {
-        negativeFluxRegen = false;
-      }
-    }
-    else {
-      numTurnsNeg = 0;
-    }
+  protected void calcFluxRegen() {
+    changeInFlux = robotControl.getTeamResources() - formerFlux;
     formerFlux = robotControl.getTeamResources();
   }
 
@@ -219,11 +208,12 @@ public class GameEvents {
   }
 
   /**
-   * checks to see if the teams flux levels have a negative regen
-   * @return if there is negative flux regen
+   * checks to see if the team's flex derivative from last turn is greater than the given level
+   * @param level the flux derivative level to check against
+   * @return if the level is above last turns change
    */
-  public boolean negativeFluxRegen() {
-    return negativeFluxRegen;
+  public boolean isFluxRegenAbove(double level) {
+    return changeInFlux > level;
   }
 
 

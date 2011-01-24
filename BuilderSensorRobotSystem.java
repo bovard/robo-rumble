@@ -120,8 +120,10 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
         yield();
         return true;
       }
+      System.out.println("WARNING: Tried to build "+toBuild+" but failed to set the component");
+      return false;
     }
-    System.out.println("WARNING: Tried to build something but fell through");
+    System.out.println("WARNING: Tried to build "+toBuild+" but didn't have enough funds");
     return false;
   }
 

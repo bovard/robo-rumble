@@ -10,6 +10,7 @@ public class RSArmory extends BuilderSensorRobotSystem {
 
   private MapLocation constructionLocation;
   private int lastScout = 0;
+  private int lastScoutBuilder = 0;
   private int lastWarrior = 0;
 
 
@@ -26,7 +27,8 @@ public class RSArmory extends BuilderSensorRobotSystem {
       while(true) {
         //wait for money!
         while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.FLYING_BUILDER_SCOUT_1.cost
-                + PlayerConstants.MINIMUM_FLUX || buildSys.isActive()) {
+                + PlayerConstants.MINIMUM_FLUX || buildSys.isActive()
+                || !gameEvents.isFluxRegenAbove(PlayerConstants.MINIMUM_FLUX_REGEN + BuildOrder.HEAVY_WARRIOR_1.chassis.upkeep)) {
           yield();
         }
         //check to see if we're trying to build a heavy bot and if we are build the factor components
@@ -47,15 +49,28 @@ public class RSArmory extends BuilderSensorRobotSystem {
         }
         //build a flying scout builder if one isn't already there
         bot = (Robot)sensorSys.senseObjectAtLocation(constructionLocation, RobotLevel.IN_AIR);
-        if (bot==null && Clock.getRoundNum() > lastScout + PlayerConstants.SCOUT_COOLDOWN) {
+        if (bot==null && Clock.getRoundNum() > lastScoutBuilder + PlayerConstants.BUILDER_SCOUT_COOLDOWN) {
           while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.FLYING_BUILDER_SCOUT_1.cost
                 + PlayerConstants.MINIMUM_FLUX) {
             yield();
           }
           robotControl.setIndicatorString(1, "seqBuild FBS");
-          lastScout = Clock.getRoundNum();
+          lastScoutBuilder = Clock.getRoundNum();
           seqBuild(BuildOrder.FLYING_BUILDER_SCOUT_1, constructionLocation);
         }
+        /**
+        //build a flying scout if the airspace is availiable
+        bot = (Robot)sensorSys.senseObjectAtLocation(constructionLocation, RobotLevel.IN_AIR);
+        if (bot==null && Clock.getRoundNum() > lastScout + PlayerConstants.SCOUT_COOLDOWN) {
+          while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.FLYING_SCOUT_1.cost
+                + PlayerConstants.MINIMUM_FLUX) {
+            yield();
+          }
+          robotControl.setIndicatorString(1, "seqBuild FBS");
+          lastScout = Clock.getRoundNum();
+          seqBuild(BuildOrder.FLYING_SCOUT_1, constructionLocation);
+        }
+        */
       }
     }
     robotControl.turnOff();

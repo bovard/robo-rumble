@@ -175,7 +175,8 @@ public class RobotSystem {
    * Forces the robot to move somewhere.
    * @return
    */
-  protected boolean setForceMove() {
+  protected boolean seqForceMove() {
+
     while(navSys.isActive()) {
       yield();
     }

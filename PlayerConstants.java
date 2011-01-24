@@ -12,8 +12,9 @@ public final class PlayerConstants {
   public static final int HEAVY_RUSH = 2;
 
   //HEAVY RUSH STRATEGY CONSTNATS
-  public static final int SCOUT_COOLDOWN = 50;
-  public static final int HEAVY_COOLDOWN = 150;
+  public static final int SCOUT_COOLDOWN = 100;
+  public static final int BUILDER_SCOUT_COOLDOWN = 150;
+  public static final int HEAVY_COOLDOWN = 100;
 
   //LIGHT RUSH STRATEGY CONSTANTS
   public static final int START_COMCYCLERS = 500;
@@ -21,8 +22,7 @@ public final class PlayerConstants {
 
   //ECONOMY CONSTANTS
   public static final int MINIMUM_FLUX = 3;
-  //the number of turns in a row that the energon levels must be going down to consider having a negaive regen
-  public static final int NUM_TURNS_NEGATIVE = 20;
+  public static final double MINIMUM_FLUX_REGEN = 2.0;
 
 
   //SENSOR CONSTANTS

@@ -281,11 +281,18 @@ public class NavigationSystem {
           //choose a direction to track in (by making it random we can avoid (some) loops
           //TODO: Change this to favor the direction that would require the least turning
           //to continue in (so when hitting an object at an angle they would continue
-          if (moveControl.canMove(robotControl.getDirection().rotateRight())) {
-            trackingRight = true;
-          }
-          else if (moveControl.canMove(robotControl.getDirection().rotateLeft())) {
-            trackingRight = false;
+
+          //if we can rotate slightly left and/or right
+          if (moveControl.canMove(robotControl.getDirection().rotateRight()) 
+                  || moveControl.canMove(robotControl.getDirection().rotateLeft()))
+          {
+            //if randomized or can't moveLeft, moveRight
+            if (rand.nextBoolean() || moveControl.canMove(robotControl.getDirection().rotateLeft())) {
+              trackingRight = true;
+            }
+            else {
+              trackingRight = false;
+            }
           }
           else {
             trackingRight = rand.nextBoolean();

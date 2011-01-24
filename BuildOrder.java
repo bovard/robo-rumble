@@ -19,9 +19,9 @@ public enum BuildOrder {
     //Components built by the constructor
     new ComponentType[] {},
     //Components built by the recycler
-    new ComponentType[] {ComponentType.RADAR, ComponentType.DISH},
+    new ComponentType[] {ComponentType.RADAR},
     //Components built by the factory
-    new ComponentType[] {},
+    new ComponentType[] { ComponentType.DISH},
     //Components built by the armory
     new ComponentType[] {},
     //cost

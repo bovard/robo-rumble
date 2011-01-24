@@ -26,5 +26,6 @@ public class WeaponBuilderSensorGameEvents extends BuilderSensorGameEvents {
     calcSeeMine();
     calcSeeEnemy();
     calcSeeDebris();
+    calcFluxRegen();
   }
 }

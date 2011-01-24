@@ -38,6 +38,7 @@ public class SensorGameEvents extends GameEvents {
    */
   @Override
   public void calcGameEvents() {
+    calcFluxRegen();
     calcSeeMine();
     calcSeeDebris();
     calcSeeEnemy();

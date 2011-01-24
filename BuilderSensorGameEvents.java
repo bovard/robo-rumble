@@ -28,6 +28,7 @@ public class BuilderSensorGameEvents extends SensorGameEvents {
     calcHasDirective();
     calcSeeMine();
     calcSeeEnemy();
+    calcFluxRegen();
   }
 
 }

@@ -186,11 +186,20 @@ public class RobotPlayer implements Runnable {
       components = myRC.components();
 
       if(myRC.getChassis() == Chassis.FLYING) {
+        //FLYING BUILDER SCOUT
         if (components.length == 3 && components[1].type()==ComponentType.SIGHT
                 && components[2].type()==ComponentType.CONSTRUCTOR) {
           SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
           BuilderSystem buildSys = new BuilderSystem(myRC, (BuilderController)components[2]);
           RSBuilderScout system = new RSBuilderScout(myRC, sensorSys, buildSys);
+          system.go();
+        }
+        //FLYING COM SCOUT
+        if (components.length == 3 && components[2].type()==ComponentType.RADAR
+                && components[1].type()==ComponentType.DISH) {
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[2]);
+          BroadcastSystem bcSys = new BroadcastSystem(myRC, (BroadcastController)components[1]);
+          RSComScout system = new RSComScout(myRC, sensorSys, bcSys);
           system.go();
         }
       }

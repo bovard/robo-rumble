@@ -65,7 +65,7 @@ public class RSRecycler extends BuilderSensorRobotSystem {
         yield();
       }
       //wait for funds to build an antenna and our buildcontroller is free
-      while(robotControl.getTeamResources() < BuildOrder.COMCYCLER_2.cost + PlayerConstants.MINIMUM_FLUX
+      while(robotControl.getTeamResources() < BuildOrder.BUILDER_SCOUT_1.cost + BuildOrder.COMCYCLER_2.cost + PlayerConstants.MINIMUM_FLUX
               || buildSys.isActive()) {
         yield();
       }
@@ -109,7 +109,8 @@ public class RSRecycler extends BuilderSensorRobotSystem {
     }
     //wait for resources
     while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + BuildOrder.BUILDER_SCOUT_1.cost
-            + BuildOrder.RECYCLER.cost + (Clock.getRoundNum()-150)/10 + BuildOrder.GUARD_TOWER_1.cost) {
+            + BuildOrder.RECYCLER.cost + (Clock.getRoundNum()-150)/10 + BuildOrder.GUARD_TOWER_1.cost
+            || !gameEvents.isFluxRegenAbove(PlayerConstants.MINIMUM_FLUX_REGEN + BuildOrder.BUILDER_SCOUT_1.chassis.upkeep )) {
       yield();
     }
     if(decider >= .5) {
