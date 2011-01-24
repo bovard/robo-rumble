@@ -176,36 +176,8 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
 
       //if we haven't done a single thing, we'll need to try to move closer
       if(!weaponSys.isActive() && !navSys.isActive()) {
-        if(navSys.canMove(ourDir.rotateLeft()) && navSys.canMove(ourDir.rotateRight())) {
-          if(rand.nextBoolean()) {
-            navSys.setTurn(ourDir.rotateLeft());
-            while(navSys.isActive()) {
-              yield();
-            }
-            navSys.setMoveForward();
-          }
-          else {
-            navSys.setTurn(ourDir.rotateRight());
-            while(navSys.isActive()) {
-              yield();
-            }
-            navSys.setMoveForward();
-          }
-        }
-        else if(navSys.canMove(ourDir.rotateLeft())) {
-          navSys.setTurn(ourDir.rotateLeft());
-          while(navSys.isActive()) {
-            yield();
-          }
-          navSys.setMoveForward();
-        }
-        else if(navSys.canMove(ourDir.rotateRight())) {
-          navSys.setTurn(ourDir.rotateRight());
-          while(navSys.isActive()) {
-            yield();
-          }
-          navSys.setMoveForward();
-        }
+        setForceMove();
+        yield();
       }
 
       //finally yield

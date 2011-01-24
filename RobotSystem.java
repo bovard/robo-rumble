@@ -171,4 +171,121 @@ public class RobotSystem {
     return false;
   }
 
+  /**
+   * Forces the robot to move somewhere.
+   * @return
+   */
+  protected boolean setForceMove() {
+    while(navSys.isActive()) {
+      yield();
+    }
+
+    Direction ourDir = robotControl.getDirection();
+    // if you can tun 45 right or left, randomize
+    if(navSys.canMove(ourDir.rotateLeft()) && navSys.canMove(ourDir.rotateRight())) {
+      if(rand.nextBoolean()) {
+        navSys.setTurn(ourDir.rotateLeft());
+        while(navSys.isActive()) {
+          yield();
+        }
+        navSys.setMoveForward();
+      }
+      else {
+        navSys.setTurn(ourDir.rotateRight());
+        while(navSys.isActive()) {
+          yield();
+        }
+        navSys.setMoveForward();
+      }
+    }
+    //if you can move 45 left
+    else if(navSys.canMove(ourDir.rotateLeft())) {
+      navSys.setTurn(ourDir.rotateLeft());
+      while(navSys.isActive()) {
+        yield();
+      }
+      navSys.setMoveForward();
+    }
+    //if you can move 45 right
+    else if(navSys.canMove(ourDir.rotateRight())) {
+      navSys.setTurn(ourDir.rotateRight());
+      while(navSys.isActive()) {
+        yield();
+      }
+      navSys.setMoveForward();
+    }
+    // if you can tun 90 right or left, randomize
+    else if(navSys.canMove(ourDir.rotateLeft().rotateLeft())
+            && navSys.canMove(ourDir.rotateRight().rotateRight())) {
+      if(rand.nextBoolean()) {
+        navSys.setTurn(ourDir.rotateLeft().rotateLeft());
+        while(navSys.isActive()) {
+          yield();
+        }
+        navSys.setMoveForward();
+      }
+      else {
+        navSys.setTurn(ourDir.rotateRight().rotateRight());
+        while(navSys.isActive()) {
+          yield();
+        }
+        navSys.setMoveForward();
+      }
+    }
+    //if you can move 90 left
+    else if(navSys.canMove(ourDir.rotateLeft().rotateLeft())) {
+      navSys.setTurn(ourDir.rotateLeft().rotateLeft());
+      while(navSys.isActive()) {
+        yield();
+      }
+      navSys.setMoveForward();
+    }
+    //if you can move 90 right
+    else if(navSys.canMove(ourDir.rotateRight().rotateRight())) {
+      navSys.setTurn(ourDir.rotateRight().rotateRight());
+      while(navSys.isActive()) {
+        yield();
+      }
+      navSys.setMoveForward();
+    }
+    // if you can tun 135 right or left, randomize
+    else if(navSys.canMove(ourDir.rotateLeft().rotateLeft().rotateLeft())
+            && navSys.canMove(ourDir.rotateRight().rotateRight().rotateRight())) {
+      if(rand.nextBoolean()) {
+        navSys.setTurn(ourDir.rotateLeft().rotateLeft().rotateLeft());
+        while(navSys.isActive()) {
+          yield();
+        }
+        navSys.setMoveForward();
+      }
+      else {
+        navSys.setTurn(ourDir.rotateRight().rotateRight().rotateRight());
+        while(navSys.isActive()) {
+          yield();
+        }
+        navSys.setMoveForward();
+      }
+    }
+    //if you can move 135 left
+    else if(navSys.canMove(ourDir.rotateLeft().rotateLeft().rotateLeft())) {
+      navSys.setTurn(ourDir.rotateLeft().rotateLeft());
+      while(navSys.isActive()) {
+        yield();
+      }
+      navSys.setMoveForward();
+    }
+    //if you can move 135 right
+    else if(navSys.canMove(ourDir.rotateRight().rotateRight().rotateRight())) {
+      navSys.setTurn(ourDir.rotateRight().rotateRight());
+      while(navSys.isActive()) {
+        yield();
+      }
+      navSys.setMoveForward();
+    }
+    else {
+      navSys.setMoveBackward();
+    }
+    return true;
+  }
+
 }
