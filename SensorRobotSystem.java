@@ -1,6 +1,7 @@
 
 package team122;
 import battlecode.common.*;
+import java.util.ArrayList;
 
 /**
  * Base behavoir class for robots with movement and sensor controllers (but no weapon or building)
@@ -19,6 +20,7 @@ public class SensorRobotSystem extends RobotSystem {
   protected Direction scoutDirection;
   private int lastChangedDirection;
   private static final int DIRECTION_LIFE = 300;
+  protected ArrayList<Mine> mines;
 
   /**
    * A SensorRobotSystem has everything a RobotSystem does, plus a SensorSystem

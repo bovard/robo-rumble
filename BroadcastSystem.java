@@ -76,7 +76,7 @@ public class BroadcastSystem {
    * @param strings the string array to send
    * @return if the message was sent successfully
    */
-  private boolean sendMessage(Message message) {
+  private boolean setSendMessage(Message message) {
     if(broadcastControl.isActive()) {
       return false;
     }
@@ -100,7 +100,7 @@ public class BroadcastSystem {
    */
   public boolean mutateAndRebroadcast(Message message) {
     //change some stuff in the message
-    return sendMessage(message);
+    return setSendMessage(message);
   }
 
   /**
@@ -113,7 +113,7 @@ public class BroadcastSystem {
     //note: this assumes that we've already checked to makes sure it's our message
     //and that message is not encrypted
     //deincrement ttl, etc...
-    return sendMessage(message);
+    return setSendMessage(message);
   }
 
   /**
@@ -125,12 +125,12 @@ public class BroadcastSystem {
    * @param location the location to build
    * @return if the message was sent successfully
    */
-  public boolean sendBuildDirective(int buildOrderID, MapLocation location) {
+  public boolean setSendBuildDirective(int buildOrderID, MapLocation location) {
     Message toSend = new Message();
     int[] intArray = {0, Clock.getRoundNum(), PlayerConstants.MESSAGE_BUILD_DIRECTIVE, 0, 
                           buildOrderID, location.x, location.y, 0};
     toSend.ints = intArray;
-    return sendMessage(encrypt(addCheckSums(toSend)));
+    return setSendMessage(encrypt(addCheckSums(toSend)));
   }
 
   /**
@@ -140,12 +140,12 @@ public class BroadcastSystem {
    * @param location the location to move to attack
    * @return if the message was sent successfully
    */
-  public boolean sendFightDirective(MapLocation location) {
+  public boolean setSendFightDirective(MapLocation location) {
     Message toSend = new Message();
     int[] intArray = {0, Clock.getRoundNum(), PlayerConstants.MESSAGE_FIGHT_DIRECTIVE, 0,
                           location.x, location.y, 0};
     toSend.ints = intArray;
-    return sendMessage(encrypt(addCheckSums(toSend)));
+    return setSendMessage(encrypt(addCheckSums(toSend)));
   }
 
 }

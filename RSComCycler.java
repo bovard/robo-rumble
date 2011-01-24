@@ -76,7 +76,7 @@ public class RSComCycler extends WeaponBuilderSensorRobotSystem {
         do {
           guardTowerLoc = birthPlace.add(robotControl.getDirection());
           guardTower = sensorSys.senseObjectAtLocation(guardTowerLoc, RobotLevel.ON_GROUND);
-          broadcastSys.sendBuildDirective(BuildOrder.GUARD_TOWER_1.id, guardTowerLoc);
+          broadcastSys.setSendBuildDirective(BuildOrder.GUARD_TOWER_1.id, guardTowerLoc);
           for (int i=0; i<5; i++) {
             yield();
           }
