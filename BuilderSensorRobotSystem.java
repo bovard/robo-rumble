@@ -70,7 +70,7 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
       robotControl.yield();
     }
     if(buildSys.type() == toBuild.chassisBuilder) {
-      success = actBuildChasis(toBuild.chassis,location);
+      success = actBuildChasis(toBuild.chassis, location);
     }
 
     //build the components, falling out if one fails
@@ -103,7 +103,7 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
         return true;
       }
     }
-    System.out.println("WARNING: Tried to build something but fell through");
+    System.out.println("WARNING: Tried to build a chassis but fell through");
     return false;
   }
 

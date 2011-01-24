@@ -63,6 +63,7 @@ public class BuilderSystem {
       System.out.println("caught exception:");
       e.printStackTrace();
     }
+    System.out.println("WARNING: tried to set a build and failed! (is the component active?)");
     return false;
   }
 

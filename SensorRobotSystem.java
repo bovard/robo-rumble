@@ -476,4 +476,30 @@ public class SensorRobotSystem extends RobotSystem {
       e.printStackTrace();
     }
   }
+
+
+  /**
+   * Looks for the RSBaseBuilder who (should) have turned on this on.
+   * It should be a light chassis that is turned on with maxHP = 12 hp
+   *
+   * This should be used when creating a base at the beginning
+   * Note: should only be called immediately after waking up
+   * @return
+   */
+  protected MapLocation findBaseBuilder() {
+    System.out.println("sensing nearby Bots");
+    Robot[] bots = sensorSys.getBots(robotControl.getTeam());
+    System.out.println("Detected "+bots.length+" bots");
+    for (int i=0; i<bots.length; i++) {
+      RobotInfo info = sensorSys.sensorRobotInfo(bots[i]);
+      System.out.println("with info "+info.toString());
+      if(info.on && info.maxHp == (double)12) {
+        System.out.println("found the little bastard!");
+        System.out.println("he's " + robotControl.getLocation().directionTo(info.location)+" of us");
+        System.out.println("location: "+info.location.toString());
+        return info.location;
+      }
+    }
+    return null;
+  }
 }

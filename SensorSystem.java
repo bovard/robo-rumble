@@ -58,6 +58,18 @@ public class SensorSystem {
       System.out.println("caught exception:");
       e.printStackTrace();
     }
+    System.out.println("WARNING: could not sense location of "+go.toString());
+    return null;
+  }
+
+  public RobotInfo sensorRobotInfo(Robot bot) {
+    try {
+      return sensorControl.senseRobotInfo(bot);
+    } catch (Exception e) {
+      System.out.println("caught exception:");
+      e.printStackTrace();
+    }
+    System.out.println("WARNING: tried to sense RobotInfo but couldn't of Robot "+bot.toString());
     return null;
   }
 

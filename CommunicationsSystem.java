@@ -136,20 +136,25 @@ public class CommunicationsSystem {
    * @return if the message is a valid message (aka hasn't been tampared with)
    */
   private boolean checkMessage(Message message) {
-    //check to make sure the message was sent last round and the TTL isn't too high
-    if (message.ints[1] == Clock.getRoundNum() - 1 &&
-            message.ints[3] <= PlayerConstants.MAX_MESSAGE_LIFE) {
-      //check to make sure the assurance bit isn't messed with
-      if(message.ints[0] == PlayerConstants.ASSURANCE_BIT_0
-              || message.ints[0] == PlayerConstants.ASSURANCE_BIT_1
-              || message.ints[0] == PlayerConstants.ASSURANCE_BIT_2) {
-        int sum = 0;
-        for (int i = 0; i< message.ints.length-1; i++) {
-          sum += message.ints[i]*(i+1);
-        }
-        //check to see if the positional sum is correct
-        if (sum*PlayerConstants.ASSURANCE_FACTOR == message.ints[message.ints.length-1]) {
-          return true;
+    //make sure the int field isn't null
+    if (message.ints != null) {
+      //check to make sure the message was sent last round and the TTL isn't too high
+      if (message.ints[1] == Clock.getRoundNum() - 1 &&
+              message.ints[3] <= PlayerConstants.MAX_MESSAGE_LIFE) {
+        //check to make sure the assurance bit isn't messed with
+        if(message.ints[0] == PlayerConstants.ASSURANCE_BIT_0
+                || message.ints[0] == PlayerConstants.ASSURANCE_BIT_1
+                || message.ints[0] == PlayerConstants.ASSURANCE_BIT_2) {
+
+          //calculate the positional sum
+          int sum = 0;
+          for (int i = 0; i< message.ints.length-1; i++) {
+            sum += message.ints[i]*(i+1);
+          }
+          //check to see if the positional sum is correct
+          if (sum*PlayerConstants.ASSURANCE_FACTOR == message.ints[message.ints.length-1]) {
+            return true;
+          }
         }
       }
     }

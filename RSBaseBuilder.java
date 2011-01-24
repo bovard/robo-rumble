@@ -29,39 +29,47 @@ public class RSBaseBuilder extends BuilderSensorRobotSystem {
     boolean mineAtFrontRight = sensorSys.senseObjectAtLocation(birthPlace.add(currentDir.rotateRight()), RobotLevel.MINE) != null;
 
     //if the mine is to our right
-    if(mineAtFrontRight) {
+    if(mineAtFrontRight && navSys.canMove(robotControl.getDirection().rotateRight().rotateRight())) {
       System.out.println("detected mine right");
-      seqBuild(BuildOrder.ARMORY, birthPlace.add(currentDir.rotateRight().rotateRight()));
+      while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + PlayerConstants.MINIMUM_FLUX) {
+        yield();
+      }
+      seqBuild(BuildOrder.FACTORY, birthPlace.add(currentDir.rotateRight().rotateRight()));
     }
     //otherwise the mine is to our left
     else {
       System.out.println("detected mine left");
-      while(robotControl.getTeamResources() < BuildOrder.ARMORY.cost + PlayerConstants.MINIMUM_FLUX) {
+      while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + PlayerConstants.MINIMUM_FLUX) {
         yield();
       }
-      seqBuild(BuildOrder.ARMORY, birthPlace.add(currentDir.rotateLeft().rotateLeft()));
+      seqBuild(BuildOrder.FACTORY, birthPlace.add(currentDir.rotateLeft().rotateLeft()));
     }
 
     Direction toBuild = currentDir;
     while(!navSys.canMove(toBuild)) {
       toBuild = toBuild.rotateRight();
     }
-    while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + PlayerConstants.MINIMUM_FLUX) {
+    while(robotControl.getTeamResources() < BuildOrder.ARMORY.cost + PlayerConstants.MINIMUM_FLUX) {
       yield();
     }
 
-    seqBuild(BuildOrder.FACTORY, birthPlace.add(toBuild));
+    seqBuild(BuildOrder.ARMORY, birthPlace.add(toBuild));
 
     //turn them on
     try {
+      //turn on the recycler and factory
       robotControl.turnOn(birthPlace.add(currentDir), RobotLevel.ON_GROUND);
-      robotControl.turnOn(birthPlace.add(toBuild), RobotLevel.ON_GROUND);
-      if(mineAtFrontRight) {
+      if(mineAtFrontRight && navSys.canMove(robotControl.getDirection().rotateRight().rotateRight())) {
         robotControl.turnOn(birthPlace.add(currentDir.rotateRight().rotateRight()), RobotLevel.ON_GROUND);
       }
       else {
         robotControl.turnOn(birthPlace.add(currentDir.rotateLeft().rotateLeft()), RobotLevel.ON_GROUND);
       }
+      //turn on the armory
+      robotControl.turnOn(birthPlace.add(toBuild), RobotLevel.ON_GROUND);
+
+      //hang out for a turn to allow them to find you
+      yield();
 
     } catch (Exception e) {
       System.out.println("caught exception:");

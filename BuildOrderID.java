@@ -22,6 +22,10 @@ public class BuildOrderID {
   public static final int FACTORY = 50;
   public static final int ARMORY = 60;
   public static final int GUARD_TOWER_1 = 70;
+  public static final int HEAVY_WARRIOR_1 = 80;
+  public static final int HEAVY_WARRIOR_2 = 81;
+  public static final int HEAVY_WARRIOR_3 = 82;
+  public static final int HEAVY_WARRIOR_4 = 83;
 
   public static BuildOrder getBuildOrderFromID(int id) {
     switch (id) {
@@ -59,6 +63,14 @@ public class BuildOrderID {
         return BuildOrder.ARMORY;
       case BuildOrderID.GUARD_TOWER_1:
         return BuildOrder.GUARD_TOWER_1;
+      case BuildOrderID.HEAVY_WARRIOR_1:
+        return BuildOrder.HEAVY_WARRIOR_1;
+      case BuildOrderID.HEAVY_WARRIOR_2:
+        return BuildOrder.HEAVY_WARRIOR_2;
+      case BuildOrderID.HEAVY_WARRIOR_3:
+        return BuildOrder.HEAVY_WARRIOR_3;
+      case BuildOrderID.HEAVY_WARRIOR_4:
+        return BuildOrder.HEAVY_WARRIOR_4;
     }
     System.out.println("WARNING: Fell through BuildOrder.getBuildOrderFromID with id = "+id);
     return null;

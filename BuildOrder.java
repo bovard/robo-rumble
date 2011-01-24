@@ -4,21 +4,29 @@ import battlecode.common.*;
 
 /**
  * A list of all our robot builds. Make sure you update the getBuildOrderFromID method as 
- * well as the new ID in BuildOrderID.java when adding to this. Java Enums are teh fail
- * and you have to do some work to treat them like ints
+ * well as the new ID in BuildOrderID.java when adding to this. We needed to add the extra
+ * constants so we can treat these BuildOrders like int (for transmitting in messages)
  * @author bovard
  */
 public enum BuildOrder {
 
 
   FLYING_SCOUT_1 (
+    //Chassis
     Chassis.FLYING,
-    ComponentType.FACTORY,
+    //Chassis Builder
+    ComponentType.ARMORY,
+    //Components built by the constructor
     new ComponentType[] {},
+    //Components built by the recycler
     new ComponentType[] {ComponentType.RADAR, ComponentType.DISH},
+    //Components built by the factory
     new ComponentType[] {},
+    //Components built by the armory
     new ComponentType[] {},
+    //cost
     Chassis.FLYING.cost + ComponentType.RADAR.cost + ComponentType.DISH.cost,
+    //id
     BuildOrderID.FLYING_SCOUT_1
   ),
   FIGHTER_SCOUT_1 (
@@ -113,13 +121,67 @@ public enum BuildOrder {
   ),
   FLYING_BUILDER_SCOUT_1 (
     Chassis.FLYING,
-    ComponentType.FACTORY,
+    ComponentType.ARMORY,
     new ComponentType[] {},
     new ComponentType[] {ComponentType.SIGHT, ComponentType.CONSTRUCTOR},
     new ComponentType[] {},
     new ComponentType[] {},
     Chassis.FLYING.cost + ComponentType.SIGHT.cost + ComponentType.CONSTRUCTOR.cost,
     BuildOrderID.FLYING_BUILDER_SCOUT_1
+  ),
+  /**
+   * HEAVY_WARRIOR_1 is immune to light arms fire (smg, blaster, hammer)
+   * (blaster, hammer, smg)
+   */
+  HEAVY_WARRIOR_1 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD},
+    new ComponentType[] {ComponentType.REGEN, ComponentType.RAILGUN},
+    new ComponentType[] {},
+    ComponentType.RADAR.cost + 6*ComponentType.SHIELD.cost + ComponentType.REGEN.cost + ComponentType.RAILGUN.cost,
+    BuildOrderID.HEAVY_WARRIOR_1
+  ),
+  /**
+   * HEAVY_WARRIOR_2 is resistant to heavy weapon fire (blasters, beam, railguns) and nullifies SMGs
+   * Also the 2 smgs should try to negate enemy plasmas
+   */
+  HEAVY_WARRIOR_2 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SMG},
+    new ComponentType[] {ComponentType.REGEN, ComponentType.HARDENED, ComponentType.RAILGUN},
+    new ComponentType[] {},
+    ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 2 * ComponentType.SMG.cost + ComponentType.REGEN.cost + ComponentType.HARDENED.cost + ComponentType.RAILGUN.cost,
+    BuildOrderID.HEAVY_WARRIOR_2
+  ),
+  /**
+   * HEAVY_WARRIOR_3 tries to replace the need for regen by using plasmas
+   */
+  HEAVY_WARRIOR_3 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR},
+    new ComponentType[] {ComponentType.RAILGUN},
+    new ComponentType[] {ComponentType.PLASMA, ComponentType.PLASMA, ComponentType.PLASMA, ComponentType.PLASMA, ComponentType.PLASMA},
+    ComponentType.RADAR.cost + ComponentType.SHIELD.cost + ComponentType.RAILGUN.cost + 5 * ComponentType.PLASMA.cost,
+    BuildOrderID.HEAVY_WARRIOR_3
+  ),
+  /**
+   * HEAVY_WARRIOR_4 should be used against enemies who leave their shields at home
+   */
+  HEAVY_WARRIOR_4 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG},
+    new ComponentType[] {ComponentType.HARDENED, ComponentType.REGEN},
+    new ComponentType[] {},
+    ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 7 * ComponentType.SMG.cost + ComponentType.HARDENED.cost + ComponentType.REGEN.cost,
+    BuildOrderID.HEAVY_WARRIOR_4
   ),
   RECYCLER (
     Chassis.BUILDING,

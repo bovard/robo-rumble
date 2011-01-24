@@ -17,6 +17,7 @@ public class RobotPlayer implements Runnable {
 
   private final RobotController myRC;
   private final int strategy = PlayerConstants.LIGHT_RUSH;
+  //private final int strategy = PlayerConstants.HEAVY_RUSH;
 
   /**
    * constructor
@@ -193,7 +194,16 @@ public class RobotPlayer implements Runnable {
       }
     }
     else if(myRC.getChassis() == Chassis.BUILDING) {
-      
+      //FACTORY
+      if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
+                components[2].type()==ComponentType.ARMORY) {
+          RSArmory system = new RSArmory(myRC, new SensorSystem(myRC, (SensorController)components[1]),
+                  new BuilderSystem(myRC, (BuilderController)components[2]));
+          system.go();
+        }
     }
+
+    //turn off and wait to be activated
+    myRC.turnOff();
   }
 }
