@@ -9,10 +9,17 @@ import battlecode.common.*;
  * @author bovard
  */
 public class JumpNavigationSystem extends SensorNavigationSystem {
-  protected JumpController jumpControl;
+  protected JumpSystem jumpSys;
 
-  public JumpNavigationSystem(RobotController robotControl, MovementController moveControl, SensorSystem sensorSys, JumpController jumpControl) {
+  public JumpNavigationSystem(RobotController robotControl, MovementController moveControl, 
+          SensorSystem sensorSys, JumpSystem jumpSys) {
     super(robotControl, moveControl, sensorSys);
-    this.jumpControl = jumpControl;
+    this.jumpSys = jumpSys;
+  }
+
+  public JumpNavigationSystem(RobotController robotControl, MovementController moveControl,
+          SensorSystem sensorSys, JumpController jumpControl) {
+    super(robotControl, moveControl, sensorSys);
+    this.jumpSys = new JumpSystem(jumpControl);
   }
 }
