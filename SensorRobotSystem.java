@@ -281,6 +281,11 @@ public class SensorRobotSystem extends RobotSystem {
     return false;
   }
 
+  @Override
+  protected void yield() {
+    super.yield();
+    robotControl.setIndicatorString(0, "ScoutDirection: " + scoutDirection + " - Location: "+robotControl.getLocation().toString());
+  }
 
 
   /**
