@@ -77,42 +77,16 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
    */
   protected boolean seqRotate() {
     robotControl.setIndicatorString(1, "seqRotate");
-    while(!gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority))
+    while(!gameEvents.checkGameEventsAbove(currentGameEventLevel))
     {
       actRotateFieldOfVision();
     }
-    return !gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+    return !gameEvents.checkGameEventsAbove(currentGameEventLevel);
   }
 
 
 
-  /**
-   * Rotates the robot to its next field of vision
-   * @return true
-   */
-  protected boolean actRotateFieldOfVision() {
-    setCheckNewWeapons();
-    switch(sensorSys.getBreadth()) {
-      case PlayerConstants.TELESCOPE_TURNS:
-        weaponSys.setFireAtRandom();
-        actTurn(robotControl.getDirection().rotateRight());
-        break;
-      case PlayerConstants.SIGHT_TURNS:
-        weaponSys.setFireAtRandom();
-        actTurn(robotControl.getDirection().rotateRight().rotateRight());
-        break;
-      case PlayerConstants.RADAR_TURNS:
-        weaponSys.setFireAtRandom();
-        actTurn(robotControl.getDirection().opposite());
-        break;
-      case PlayerConstants.SATELLITE_TURNS:
-        weaponSys.setFireAtRandom();
-        yield();
-        //in this case the sensor can see in all directions so the bot doesn't need to rotate
-        break;
-    }
-    return true;
-  }
+
 
   /**
    * While the enemy bot is in range, engage it
@@ -167,16 +141,10 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
       if(!weaponSys.allActive() && canSee) {
         weaponSys.setFireAtLocation(enemyLoc, bot.getRobotLevel());
       }
-      //if you can't fire all weapons at the enemy, just try to fire at any enemy robot
-      if(!weaponSys.allActive()) {
-        //Need to rescan because if we killed anything it won't show up on the new scan
-        sensorSys.reScanForBots();
-        weaponSys.setFireAtRandom();
-      }
 
       //if we haven't done a single thing, we'll need to try to move closer
       if(!weaponSys.atLeastOneIsActive() && !navSys.isActive()) {
-        seqForceMove();
+        setForceMove(true);
         yield();
       }
 
@@ -212,12 +180,6 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
       if(!weaponSys.allActive()) {
         weaponSys.setFireAtLocation(enemyLoc, bot.getRobotLevel());
       }
-      //if you can't fire all weapons at the enemy, just try to fire at any enemy robot
-      if(!weaponSys.allActive()) {
-        //Need to rescan because if we killed anything it won't show up on the new scan
-        sensorSys.reScanForBots();
-        weaponSys.setFireAtRandom();
-      }
 
       //finally yield
       yield();
@@ -227,31 +189,19 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
   }
 
   /**
-   * Overrides SensorRobotSystem.actMove() to allow for weapon capabilities
-   * @return if it was performed correctly
+   * Overridden to fire when appropriate
+   * Note: this will force the robot to fire every turn if it is able! So calls to
+   * weaponSys.setFireAtRandom() aren't needed elsewhere
    */
   @Override
-  protected boolean actMove() {
+  protected void yield() {
+    setCheckNewWeapons();
+    sensorSys.reScanForBots();
     if((((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy())
             && !weaponSys.allActive()) {
-      sensorSys.reScanForBots();
       weaponSys.setFireAtRandom();
     }
-    return super.actMove();
-  }
-
-    /**
-   * Overrides actTurn() to allow for weapon capabilities
-   * @return if it was performed correctly
-   */
-  @Override
-  protected boolean actTurn(Direction dir) {
-    if((((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy())
-            && !weaponSys.allActive()) {
-      sensorSys.reScanForBots();
-      weaponSys.setFireAtRandom();
-    }
-    return super.actTurn(dir);
+    super.yield();
   }
 
   /**
@@ -287,7 +237,7 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
   protected boolean seqRotateToUnSeenEnemy() {
     robotControl.setIndicatorString(1, "seqRotateToUnSeenEnemy");
     while(!((SensorGameEvents)gameEvents).canSeeEnemy()
-            && gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
+            && gameEvents.checkGameEventsAbove(GameEventLevel.DIRECTIVE)) {
       //if the nav system is busy hang out
       if(navSys.isActive()) {
         yield();

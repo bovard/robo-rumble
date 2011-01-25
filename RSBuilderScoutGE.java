@@ -53,26 +53,26 @@ public class RSBuilderScoutGE extends BuilderSensorGameEvents {
    * @return if a game event has occurred
    */
   @Override
-  public boolean checkGameEventsAbovePriority(int priority) {
-    switch(priority) {
+  public boolean checkGameEventsAbove(GameEventLevel gameEventLevel) {
+    switch(gameEventLevel.priority) {
       case GameEventLevelPriority.COMBAT:
         //highest priority level, can't have one higher
-        return super.checkGameEventsAbovePriority(priority);
+        return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.DIRECTIVE:
         //check the COMBAT game events
-        return super.checkGameEventsAbovePriority(priority);
+        return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.MISSION:
         //check the COMBAT and DIRECTIVE game events
-        return super.checkGameEventsAbovePriority(priority);
+        return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.NORMAL:
         //check the COMBAT, DIRECTIVE and MISSION game events
-        return super.checkGameEventsAbovePriority(priority) || seeNewUncoveredMine;
+        return super.checkGameEventsAbove(gameEventLevel) || seeNewUncoveredMine;
       case GameEventLevelPriority.LOW:
         //check the COMBAT, DIRECTIVE, MISSION and NORMAL game events
-        return super.checkGameEventsAbovePriority(priority) || seeNewUncoveredMine || seeUncoveredMines;
+        return super.checkGameEventsAbove(gameEventLevel) || seeNewUncoveredMine || seeUncoveredMines;
       case GameEventLevelPriority.NONE:
         //check all game events
-        return super.checkGameEventsAbovePriority(priority) || seeNewUncoveredMine || seeUncoveredMines;
+        return super.checkGameEventsAbove(gameEventLevel) || seeNewUncoveredMine || seeUncoveredMines;
     }
     System.out.println("WARNING: Fell through RSBuilderScoutGE.checkGameEventsAbovePriority (bad priority)");
     return false;

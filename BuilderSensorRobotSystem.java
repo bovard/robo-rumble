@@ -37,12 +37,12 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
       //wait for funds, falling out if a higher priority event happens
       robotControl.setIndicatorString(1, "seqBuildAtLocation - waiting for funds");
       while(robotControl.getTeamResources() < PlayerConstants.MINIMUM_FLUX + toBuild.cost
-              && !gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority)) {
+              && !gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
         yield();
       }
 
       //start building if there isn't a high priority game event
-      if(!gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority)) {
+      if(!gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
         robotControl.setIndicatorString(1, "seqBuildAtLocation - Building");
         success =  seqBuild(toBuild, location);
       }

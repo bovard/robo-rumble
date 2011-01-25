@@ -90,16 +90,16 @@ public class RobotSystem {
    * @return if the destination was reached safely
    */
   protected boolean seqMove() {
-    boolean hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+    boolean hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
     boolean done = navSys.isAtDestination();
     while(!hasGameEvents && !done) {
       while(navSys.isActive() && !hasGameEvents) {
         yield();
-        hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+        hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
       }
       if (!hasGameEvents) {
         if(actMove()) {
-          hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+          hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
           done = navSys.isAtDestination();
         }
         else {
@@ -172,16 +172,32 @@ public class RobotSystem {
   }
 
   /**
-   * Forces the robot to move somewhere.
-   * @return
+   * Yields until the navSys isn't active, dropping out if we encounter a game event
+   * @return if the navSys is not free
    */
-  protected boolean seqForceMove() {
+  protected boolean eventWaitForNavSys () {
+    while(navSys.isActive() && !gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
+      yield();
+    }
+    return !gameEvents.checkGameEventsAbove(currentGameEventLevel);
+  }
+
+  /**
+   * Forces the robot to move somewhere.
+   * @param moveForward true if should force a move forward, false if should move backwards
+   * @return if the move was succesful
+   */
+  protected boolean setForceMove(boolean moveForward) {
 
     while(navSys.isActive()) {
       yield();
     }
 
     Direction ourDir = robotControl.getDirection();
+    if(!moveForward) {
+      ourDir = robotControl.getDirection().opposite();
+    }
+    
     // if you can tun 45 right or left, randomize
     if(navSys.canMove(ourDir.rotateLeft()) && navSys.canMove(ourDir.rotateRight())) {
       if(rand.nextBoolean()) {
@@ -189,14 +205,12 @@ public class RobotSystem {
         while(navSys.isActive()) {
           yield();
         }
-        navSys.setMoveForward();
       }
       else {
         navSys.setTurn(ourDir.rotateRight());
         while(navSys.isActive()) {
           yield();
         }
-        navSys.setMoveForward();
       }
     }
     //if you can move 45 left
@@ -205,7 +219,6 @@ public class RobotSystem {
       while(navSys.isActive()) {
         yield();
       }
-      navSys.setMoveForward();
     }
     //if you can move 45 right
     else if(navSys.canMove(ourDir.rotateRight())) {
@@ -213,7 +226,6 @@ public class RobotSystem {
       while(navSys.isActive()) {
         yield();
       }
-      navSys.setMoveForward();
     }
     // if you can tun 90 right or left, randomize
     else if(navSys.canMove(ourDir.rotateLeft().rotateLeft())
@@ -223,14 +235,12 @@ public class RobotSystem {
         while(navSys.isActive()) {
           yield();
         }
-        navSys.setMoveForward();
       }
       else {
         navSys.setTurn(ourDir.rotateRight().rotateRight());
         while(navSys.isActive()) {
           yield();
         }
-        navSys.setMoveForward();
       }
     }
     //if you can move 90 left
@@ -239,7 +249,6 @@ public class RobotSystem {
       while(navSys.isActive()) {
         yield();
       }
-      navSys.setMoveForward();
     }
     //if you can move 90 right
     else if(navSys.canMove(ourDir.rotateRight().rotateRight())) {
@@ -247,7 +256,6 @@ public class RobotSystem {
       while(navSys.isActive()) {
         yield();
       }
-      navSys.setMoveForward();
     }
     // if you can tun 135 right or left, randomize
     else if(navSys.canMove(ourDir.rotateLeft().rotateLeft().rotateLeft())
@@ -257,14 +265,12 @@ public class RobotSystem {
         while(navSys.isActive()) {
           yield();
         }
-        navSys.setMoveForward();
       }
       else {
         navSys.setTurn(ourDir.rotateRight().rotateRight().rotateRight());
         while(navSys.isActive()) {
           yield();
         }
-        navSys.setMoveForward();
       }
     }
     //if you can move 135 left
@@ -273,7 +279,6 @@ public class RobotSystem {
       while(navSys.isActive()) {
         yield();
       }
-      navSys.setMoveForward();
     }
     //if you can move 135 right
     else if(navSys.canMove(ourDir.rotateRight().rotateRight().rotateRight())) {
@@ -281,10 +286,28 @@ public class RobotSystem {
       while(navSys.isActive()) {
         yield();
       }
-      navSys.setMoveForward();
     }
+    //else we can't move in the direction we want and have to move in the opposite direction if we can
     else {
-      navSys.setMoveBackward();
+      if(moveForward) {
+        if(navSys.canMove(ourDir.opposite())) {
+          navSys.setMoveBackward();
+        }
+      }
+      else {
+        if (navSys.canMove(ourDir.opposite())) {
+          navSys.setMoveForward();
+        }
+      }
+    }
+    if(!navSys.isActive())
+    {
+      if(moveForward) {
+        navSys.setMoveForward();
+      }
+      else {
+        navSys.setMoveBackward();
+      }
     }
     return true;
   }

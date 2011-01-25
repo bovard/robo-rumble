@@ -22,11 +22,14 @@ public class GameEvents {
   //list of GameEvents, we'll add more as we get more complex behavoir
   //Note: check out GameEventLevels to see the levels
   //Idle
-  protected boolean lowHealth, hasMessages;
+  protected boolean hasMessages, underHalfHealth;
   //Directive
   protected boolean hasDirective;
   //combat GameEvents
   protected boolean lostHealth, recentlyLostHealth;
+  //critical GameEvents
+  protected boolean lowHealth;
+
 
   //class variables
   private double formerHP;
@@ -35,6 +38,7 @@ public class GameEvents {
   private int numTurnsToLoseHealthThreshhold = 10;
   private double formerFlux = 0;
   private double changeInFlux = 0;
+
 
   /**
    * Basic constructor for GameEvents, just requires a robotcontroller
@@ -55,18 +59,18 @@ public class GameEvents {
     lostHealth = false;
     recentlyLostHealth = false;
     lowHealth = false;
+    underHalfHealth = false;
     hasDirective = false;
     formerHP = robotControl.getHitpoints();
   }
 
   /**
-   * calculates the game events, returning true if any game events return true; this is the first
-   * thing called after a robot yields
+   * calculates the gameEvents relavant to RobotSystem
    */
   public void calcGameEvents() {
     calcLostHealth();
     //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
-    calcLowHealth();
+    calcRecentlyLostHealth();
     calcHasDirective();
     calcFluxRegen();
   }
@@ -76,26 +80,29 @@ public class GameEvents {
    * @param priority the priority of game events to check
    * @return true if a gameevent has occurred with priority > the imputted priority
    */
-  public boolean checkGameEventsAbovePriority(int priority) {
-    switch(priority) {
-      case GameEventLevelPriority.COMBAT:
-        //highest priority level, can't have one higher
+  public boolean checkGameEventsAbove(GameEventLevel gameEventLevel) {
+    switch(gameEventLevel.priority) {
+      case GameEventLevelPriority.CRITICAL:
+        //the highest leverl
         return false;
+      case GameEventLevelPriority.COMBAT:
+        //interrupted only by CRITICAL game events
+        return lowHealth;
       case GameEventLevelPriority.DIRECTIVE:
-        //interrupted only by COMBAT game events
-        return lostHealth || recentlyLostHealth;
+        //interrupted only by COMBAT game events and higher
+        return lowHealth || lostHealth || recentlyLostHealth;
       case GameEventLevelPriority.MISSION:
-        //check the COMBAT and DIRECTIVE game events
-        return lostHealth || recentlyLostHealth || hasDirective;
+        //check the DIRECTIVE game events and higher
+        return lowHealth || lostHealth || recentlyLostHealth || hasDirective;
       case GameEventLevelPriority.NORMAL:
-        //check the COMBAT and DIRECTIVE and MISSION game events
-        return lostHealth || recentlyLostHealth || hasDirective;
+        //check the MISSION game events and higher
+        return lowHealth || lostHealth || recentlyLostHealth || hasDirective;
       case GameEventLevelPriority.LOW:
-        //check the COMBAT and DIRECTIVE and MISSION and NORMAL game events
-        return lostHealth || recentlyLostHealth || hasDirective;
+        //check the NORMAL game events and higher
+        return lowHealth || lostHealth || recentlyLostHealth || hasDirective;
       case GameEventLevelPriority.NONE:
         //check all game events
-        return lostHealth || recentlyLostHealth || hasDirective || lowHealth;
+        return lowHealth || lostHealth || recentlyLostHealth || hasDirective || lowHealth || underHalfHealth;
     }
     System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
     return false;
@@ -154,14 +161,21 @@ public class GameEvents {
 
   /**
    * calculates if the robot has low health
+   * WARNING: this should only be called if you want your robot to fall out of combat with health < 25%
    * @return if the robot has low health
    */
   protected void calcLowHealth() {
-    if (robotControl.getHitpoints() < .1*robotControl.getMaxHp()) {
+    if (robotControl.getHitpoints() < .25*robotControl.getMaxHp()) {
       lowHealth = true;
     }
     else {
       lowHealth = false;
+    }
+    if (robotControl.getHitpoints() < .5*robotControl.getMaxHp()) {
+      underHalfHealth = true;
+    }
+    else {
+      underHalfHealth = false;
     }
   }
 
@@ -185,10 +199,18 @@ public class GameEvents {
 
   /**
    * checks to see if the robot is low health
-   * @return if the robot has less than 10% of max HP
+   * @return if the robot has less than 25% of max HP
    */
   public boolean hasLowHealth() {
     return lowHealth;
+  }
+
+  /**
+   * checks to see if the robot is below 50% health
+   * @return if the robot has less than 50% of its max HP
+   */
+  public boolean isBelowHalfHeath() {
+    return underHalfHealth;
   }
 
   /**

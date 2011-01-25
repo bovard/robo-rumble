@@ -54,7 +54,7 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
     while(true) {
       yield();
       //if we have a combat game event, run away!
-      if(gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
+      if(gameEvents.checkGameEventsAbove(GameEventLevel.DIRECTIVE)) {
         currentGameEventLevel = GameEventLevel.COMBAT;
         seqFlee();
       }
@@ -86,7 +86,7 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
       //otherwise look for mines
       else {
         currentGameEventLevel = GameEventLevel.LOW;
-        seqScout();
+        seqScoutAndTurn();
       }
     }
   }

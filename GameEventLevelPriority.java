@@ -7,6 +7,7 @@ package team122;
  * @author bovard
  */
 public class GameEventLevelPriority {
+  public static final int CRITICAL = 6;
   public static final int COMBAT = 5;
   public static final int DIRECTIVE = 4;
   public static final int MISSION = 3;

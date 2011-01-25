@@ -21,7 +21,7 @@ public class RSComScout extends SensorRobotSystem {
   public void go() {
     while(true) {
       //if we've seen an enemy or been shot at
-      if(gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
+      if(gameEvents.checkGameEventsAbove(GameEventLevel.DIRECTIVE)) {
         currentGameEventLevel = GameEventLevel.COMBAT;
         //if we can see the enemy
         if(((SensorGameEvents)gameEvents).canSeeEnemy()) {

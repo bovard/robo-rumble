@@ -49,26 +49,27 @@ public class SensorGameEvents extends GameEvents {
    * @return if any game events have occured
    */
   @Override
-  public boolean checkGameEventsAbovePriority(int priority) {
-    switch(priority) {
+  public boolean checkGameEventsAbove(GameEventLevel gameEventLevel) {
+    switch(gameEventLevel.priority) {
+      case GameEventLevelPriority.CRITICAL:
+        return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.COMBAT:
-        //highest priority level, can't have one higher
-        return super.checkGameEventsAbovePriority(priority);
+        return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.DIRECTIVE:
         //check the COMBAT game events
-        return super.checkGameEventsAbovePriority(priority) || seeEnemy;
+        return super.checkGameEventsAbove(gameEventLevel) || seeEnemy;
       case GameEventLevelPriority.MISSION:
         //check the COMBAT and DIRECTIVE game events
-        return super.checkGameEventsAbovePriority(priority) || seeEnemy;
+        return super.checkGameEventsAbove(gameEventLevel) || seeEnemy;
       case GameEventLevelPriority.NORMAL:
         //check the COMBAT, DIRECTIVE and MISSION game events
-        return super.checkGameEventsAbovePriority(priority) || seeEnemy;
+        return super.checkGameEventsAbove(gameEventLevel) || seeEnemy;
       case GameEventLevelPriority.LOW:
         //check the COMBAT, DIRECTIVE, MISSION and NORMAL game events
-        return super.checkGameEventsAbovePriority(priority) || seeEnemy;
+        return super.checkGameEventsAbove(gameEventLevel) || seeEnemy;
       case GameEventLevelPriority.NONE:
         //check all game events
-        return super.checkGameEventsAbovePriority(priority) || seeEnemy || seeMine || seeDebris;
+        return super.checkGameEventsAbove(gameEventLevel) || seeEnemy || seeMine || seeDebris;
     }
     System.out.print("WARNING: fell through checkGameEvents (bad priority level)");
     return false;

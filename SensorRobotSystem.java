@@ -18,8 +18,8 @@ public class SensorRobotSystem extends RobotSystem {
   protected static final int NEW_DEST_VARIANCE = 5;
   //the direction to Scout in
   protected Direction scoutDirection;
-  private int lastChangedDirection;
   protected ArrayList<Mine> mines;
+  MapLocation lastTurn;
 
   /**
    * A SensorRobotSystem has everything a RobotSystem does, plus a SensorSystem
@@ -31,6 +31,7 @@ public class SensorRobotSystem extends RobotSystem {
     this.sensorSys = sensorSys;
     gameEvents = new SensorGameEvents(robotControl, comSys, sensorSys);
     this.navSys = new SensorNavigationSystem(robotControl, (MovementController)robotControl.components()[0], sensorSys);
+    lastTurn = birthPlace;
   }
 
 
@@ -85,6 +86,54 @@ public class SensorRobotSystem extends RobotSystem {
   }
 
   /**
+   * Tells the bot to choose a new destination and move there
+   * @return true if the bot reaches the dest, false if it's interrupted
+   */
+  protected boolean seqScoutAndTurn() {
+    robotControl.setIndicatorString(1, "seqScoutAndTurn");
+    navSys.setDestination(chooseNextDestination());
+    return seqMoveAndTurn();
+  }
+
+  /**
+   * Called to move multiple times to a destination, turning 360 every now and then,
+   * assumes the destination is already set
+   * Note: will fall out if GameEvent higher than gameEventLevel happens
+   * @param dest place to move to
+   * @return if the destination was reached safely
+   */
+  protected boolean seqMoveAndTurn() {
+    boolean hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
+    boolean done = navSys.isAtDestination();
+    if(!hasGameEvents && !done) {
+      hasGameEvents = !seqScoutRotateFieldOfVision();
+    }
+    while(!hasGameEvents && !done) {
+      while(navSys.isActive() && !hasGameEvents) {
+        yield();
+        hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
+      }
+      if (!hasGameEvents) {
+        //if the navSystem is done and we haven't hit a game event, try and move
+        if(robotControl.getLocation().distanceSquaredTo(lastTurn) > 2 * sensorSys.getRangeSquared()) {
+          lastTurn = robotControl.getLocation();
+          hasGameEvents = !seqScoutRotateFieldOfVision();
+        }
+        else if(actMove()) {
+          hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
+          done = navSys.isAtDestination();
+        }
+        //if the move fails, return false
+        else {
+          return false;
+        }
+      }
+    }
+    return done;
+  }
+
+
+  /**
    * the bot runs until there are no more combat events happening
    * @return if it has fleed sucessfully
    */
@@ -92,7 +141,7 @@ public class SensorRobotSystem extends RobotSystem {
     
     robotControl.setIndicatorString(1, "seqFlee!!");
 
-    while(gameEvents.checkGameEventsAbovePriority(GameEventLevel.DIRECTIVE.priority)) {
+    while(gameEvents.checkGameEventsAbove(GameEventLevel.DIRECTIVE)) {
       //wait for a motor to be active
       while(navSys.isActive()) {
         yield();
@@ -105,7 +154,7 @@ public class SensorRobotSystem extends RobotSystem {
       //otherwise turn
       else {
         while(!navSys.canMove(robotControl.getDirection().opposite())
-                && gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
+                && gameEvents.checkGameEventsAbove(GameEventLevel.MISSION)) {
           navSys.setTurn(robotControl.getDirection().rotateRight());
           yield();
         }
@@ -116,7 +165,7 @@ public class SensorRobotSystem extends RobotSystem {
     //move in the opposite direction
     navSys.setDestination(chooseNextDestination());
 
-    return !gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority);
+    return !gameEvents.checkGameEventsAbove(GameEventLevel.MISSION);
   }
 
   /**
@@ -151,17 +200,17 @@ public class SensorRobotSystem extends RobotSystem {
 
     robotControl.setIndicatorString(1, "seqApproachLocation");
     navSys.setDestination(location);
-    boolean hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+    boolean hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
     while(!sensorSys.canSenseLocation(location) && !hasGameEvents) {
       while(navSys.isActive()) {
         yield();
-        hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+        hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
         if(hasGameEvents) {
           return false;
         }
       }
       actMove();
-      hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+      hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
     }
     //if we encounter a game event, pull out
     if(hasGameEvents) {
@@ -178,14 +227,14 @@ public class SensorRobotSystem extends RobotSystem {
       if(freeSquare == null) {
         while(navSys.isActive()) {
           yield();
-          hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+          hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
           if(hasGameEvents) {
             return false;
           }
         }
         actMove();
       }
-      hasGameEvents = gameEvents.checkGameEventsAbovePriority(currentGameEventLevel.priority);
+      hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
       loop++;
     }
     //if we max out the loops or find a gameEvent, pull out
@@ -320,7 +369,6 @@ public class SensorRobotSystem extends RobotSystem {
    * Chooses a new direction to scout in based on know map bounds and previous scouting direction
    */
   public void changeScoutDirection() {
-    lastChangedDirection = Clock.getRoundNum();
     /*
      * North ( 0,-1)
      * South ( 0, 1)
@@ -506,5 +554,89 @@ public class SensorRobotSystem extends RobotSystem {
       }
     }
     return null;
+  }
+
+
+  /**
+   * Makes the robot check left and right, dropping out if a game event happens
+   * @return if the robot made it 360 without a game event above currentGameEventLevel happening
+   */
+  protected boolean seqScoutRotateFieldOfVision() {
+    Direction orig = robotControl.getDirection();
+    if(eventWaitForNavSys()) {
+      actTurn(orig.rotateRight().rotateRight());
+      if(eventWaitForNavSys()) {
+        actTurn(orig.rotateLeft().rotateLeft());
+        if(eventWaitForNavSys()) {
+          actTurn(orig);
+        }
+      }
+
+    }
+    return !gameEvents.checkGameEventsAbove(currentGameEventLevel);
+  }
+
+  /**
+   * Makes the robot run 360 degrees, pulling out if it hits any game events above currentGameEventLevel
+   * @return if the robot made it 360 without a game event above currentGameEventLevel happening
+   */
+  protected boolean seqFullyRotateFieldOfVision() {
+    int numTurns = 0;
+    switch(sensorSys.getBreadth()) {
+      case PlayerConstants.TELESCOPE_TURNS:
+        while(!gameEvents.checkGameEventsAbove(currentGameEventLevel) && numTurns < PlayerConstants.TELESCOPE_TURNS) {
+          actRotateFieldOfVision();
+          numTurns++;
+        }
+        break;
+      case PlayerConstants.SIGHT_TURNS:
+        while(!gameEvents.checkGameEventsAbove(currentGameEventLevel) && numTurns < PlayerConstants.SIGHT_TURNS) {
+          actRotateFieldOfVision();
+          numTurns++;
+        }
+        break;
+      case PlayerConstants.RADAR_TURNS:
+        while(!gameEvents.checkGameEventsAbove(currentGameEventLevel) && numTurns < PlayerConstants.RADAR_TURNS) {
+          actRotateFieldOfVision();
+          numTurns++;
+        }
+        break;
+      case PlayerConstants.SATELLITE_TURNS:
+        yield();
+        //in this case the sensor can see in all directions so the bot doesn't need to rotate
+        break;
+    }
+    return !gameEvents.checkGameEventsAbove(currentGameEventLevel);
+  }
+
+  /**
+   * Rotates the robot to its next field of vision
+   * @return true
+   */
+  protected boolean actRotateFieldOfVision() {
+    while(navSys.isActive() && !gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
+      yield();
+    }
+    if(!gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
+      switch(sensorSys.getBreadth()) {
+        case PlayerConstants.TELESCOPE_TURNS:
+          actTurn(robotControl.getDirection().rotateRight());
+          break;
+        case PlayerConstants.SIGHT_TURNS:
+          actTurn(robotControl.getDirection().rotateRight().rotateRight());
+          break;
+        case PlayerConstants.RADAR_TURNS:
+          actTurn(robotControl.getDirection().opposite());
+          break;
+        case PlayerConstants.SATELLITE_TURNS:
+          yield();
+          //in this case the sensor can see in all directions so the bot doesn't need to rotate
+          break;
+      }
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 }

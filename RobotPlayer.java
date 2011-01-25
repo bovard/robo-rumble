@@ -207,7 +207,7 @@ public class RobotPlayer implements Runnable {
         if (components.length == 10 && components[2].type() == ComponentType.RAILGUN
                 && components[3].type() == ComponentType.RADAR) {
           SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[3]);
-          RSFighterScout system = new RSFighterScout(myRC, sensorSys, (WeaponController)components[2]);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys, (WeaponController)components[2]);
           system.go();
         }
       }

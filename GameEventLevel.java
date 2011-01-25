@@ -12,8 +12,12 @@ public enum GameEventLevel {
   //the most important GameEventLevel should have the highest priority value
   //check the priority levels in GameEventLevelPriority.java
   /*
-   * The COMBAT GameEventLevel is the highest and is used when the robot is in combat,
-   * it can't be interrupted by anything
+   * The CRITICAL GameEventLevel are for game events that should make a robot pull out of combat
+   * (low health for example)
+   */
+  CRITICAL (GameEventLevelPriority.CRITICAL),
+  /*
+   * The COMBAT GameEventLevel is the for when the robot is (or just was) in combat
    */
   COMBAT (GameEventLevelPriority.COMBAT),
   /*

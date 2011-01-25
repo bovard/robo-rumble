@@ -19,14 +19,14 @@ public class RSFighterScout extends WeaponBuilderSensorRobotSystem {
   @Override
   public void go() {
     while(true) {
+
       //if we're in combat
-      if(gameEvents.checkGameEventsAbovePriority(GameEventLevel.MISSION.priority)) {
+      if(gameEvents.checkGameEventsAbove(GameEventLevel.MISSION)) {
+        currentGameEventLevel = GameEventLevel.COMBAT;
         if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
-          currentGameEventLevel = GameEventLevel.COMBAT;
           seqEngageEnemy(sensorSys.getNearestOpponent());
         }
         else {
-          currentGameEventLevel = GameEventLevel.COMBAT;
           seqRotateToUnSeenEnemy();
         }
       }

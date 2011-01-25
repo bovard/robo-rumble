@@ -30,10 +30,15 @@ public final class PlayerConstants {
   //ranges for sensors
   //orthogonal ranges
   public static final int SIGHT_ORTH_RANGE = 3;
+  public static final int SIGHT_ORTH_RANGE_SQUARED = 9;
   public static final int RADAR_ORTH_RANGE = 6;
-  public static final int TELESCOPE_ORTH_RANGE = 12;
+  public static final int RADAR_ORTH_RANGE_SQUARED = 36;
+  public static final int TELESCOPE_ORTH_RANGE = 144;
+  public static final int TELESCOPE_ORTH_RANGE_SQUARED = 12;
   public static final int SATELLITE_ORTH_RANGE = 10;
+  public static final int SATELLITE_ORTH_RANGE_SQUARED = 100;
   public static final int BUILDING_SENSOR_ORTH_RANGE = 1;
+  public static final int BUILDING_SENSOR_ORTH_RANGE_SQUARED = 1;
   //diagonal ranges
   public static final int SIGHT_DIAG_RANGE = 2;
   public static final int RADAR_DIAG_RANGE = 4;

@@ -301,6 +301,26 @@ public class SensorSystem {
   }
 
   /**
+   * Returns the range squared of the sensor squared (as in PlaycerConstants)
+   * @return the range squared of the sensor
+   */
+  public int getRangeSquared() {
+    if (sensorControl.type() == ComponentType.SIGHT)
+      return PlayerConstants.SIGHT_ORTH_RANGE_SQUARED;
+    else if (sensorControl.type() == ComponentType.RADAR)
+      return PlayerConstants.RADAR_ORTH_RANGE_SQUARED;
+    else if (sensorControl.type() == ComponentType.TELESCOPE)
+      return PlayerConstants.TELESCOPE_ORTH_RANGE_SQUARED;
+    else if (sensorControl.type() == ComponentType.SATELLITE)
+      return PlayerConstants.SATELLITE_ORTH_RANGE_SQUARED;
+    else if (sensorControl.type() == ComponentType.BUILDING_SENSOR)
+      return PlayerConstants.BUILDING_SENSOR_ORTH_RANGE_SQUARED;
+    System.out.println("WARNING: Fell through sensorSystem.getRange() (bad logic)");
+    return 0;
+  }
+
+
+  /**
    * Returns the max number of squares a bot can see in the given direction
    * @param dir the direction
    * @return the max distance seen
@@ -333,6 +353,7 @@ public class SensorSystem {
       else if (sensorControl.type() == ComponentType.BUILDING_SENSOR)
         return PlayerConstants.BUILDING_SENSOR_DIAG_RANGE;
     }
+    System.out.println("WARNING: Fell through sensorSystem.getRange() (bad logic)");
     return 0;
   }
 
