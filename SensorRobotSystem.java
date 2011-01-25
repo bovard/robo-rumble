@@ -19,7 +19,6 @@ public class SensorRobotSystem extends RobotSystem {
   //the direction to Scout in
   protected Direction scoutDirection;
   private int lastChangedDirection;
-  private static final int DIRECTION_LIFE = 300;
   protected ArrayList<Mine> mines;
 
   /**
@@ -242,10 +241,6 @@ public class SensorRobotSystem extends RobotSystem {
   protected boolean checkScoutDirectionValidity() {
     MapLocation currentPos = robotControl.getLocation();
     if(scoutDirection == null) {
-      return false;
-    }
-    //if the Direction is too old, it is invalid
-    else if (Clock.getRoundNum() > lastChangedDirection + DIRECTION_LIFE) {
       return false;
     }
     else if(scoutDirection.equals(Direction.NORTH)) { //Direction.NORTH
