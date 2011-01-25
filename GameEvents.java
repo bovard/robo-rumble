@@ -35,7 +35,7 @@ public class GameEvents {
   private double formerHP;
   private int numTurnsNeg;
   private int numTurnsSinceLosingHealth = 100;
-  private int numTurnsToLoseHealthThreshhold = 10;
+  private int numTurnsToLoseHealthThreshhold = 6;
   private double formerFlux = 0;
   private double changeInFlux = 0;
 

@@ -135,6 +135,12 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
             navSys.setMoveBackward();
           }
         }
+        //if we're just right, move forward a square to prevent death by beam (embarrasing...)
+        else {
+          if(navSys.canMove(ourDir)) {
+            navSys.setMoveForward();
+          }
+        }
       }
       //Now set our weapons to fire
       //try to fire at the robot
