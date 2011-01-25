@@ -19,7 +19,7 @@ public class SensorRobotSystem extends RobotSystem {
   //the direction to Scout in
   protected Direction scoutDirection;
   protected ArrayList<Mine> mines;
-  MapLocation lastTurn;
+  MapLocation lastScan;
 
   /**
    * A SensorRobotSystem has everything a RobotSystem does, plus a SensorSystem
@@ -31,7 +31,7 @@ public class SensorRobotSystem extends RobotSystem {
     this.sensorSys = sensorSys;
     gameEvents = new SensorGameEvents(robotControl, comSys, sensorSys);
     this.navSys = new SensorNavigationSystem(robotControl, (MovementController)robotControl.components()[0], sensorSys);
-    lastTurn = birthPlace;
+    lastScan = birthPlace;
   }
 
 
@@ -106,7 +106,7 @@ public class SensorRobotSystem extends RobotSystem {
     boolean hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
     boolean done = navSys.isAtDestination();
     if(!hasGameEvents && !done) {
-      hasGameEvents = !seqScoutRotateFieldOfVision();
+      hasGameEvents = !seqScanArea();
     }
     while(!hasGameEvents && !done) {
       while(navSys.isActive() && !hasGameEvents) {
@@ -115,9 +115,9 @@ public class SensorRobotSystem extends RobotSystem {
       }
       if (!hasGameEvents) {
         //if the navSystem is done and we haven't hit a game event, try and move
-        if(robotControl.getLocation().distanceSquaredTo(lastTurn) > 2 * sensorSys.getRangeSquared()) {
-          lastTurn = robotControl.getLocation();
-          hasGameEvents = !seqScoutRotateFieldOfVision();
+        if(robotControl.getLocation().distanceSquaredTo(lastScan) > 2 * sensorSys.getRangeSquared()) {
+          lastScan = robotControl.getLocation();
+          hasGameEvents = !seqScanArea();
         }
         else if(actMove()) {
           hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
@@ -561,15 +561,12 @@ public class SensorRobotSystem extends RobotSystem {
    * Makes the robot check left and right, dropping out if a game event happens
    * @return if the robot made it 360 without a game event above currentGameEventLevel happening
    */
-  protected boolean seqScoutRotateFieldOfVision() {
+  protected boolean seqScanArea() {
     Direction orig = robotControl.getDirection();
     if(eventWaitForNavSys()) {
       actTurn(orig.rotateRight().rotateRight());
       if(eventWaitForNavSys()) {
         actTurn(orig.rotateLeft().rotateLeft());
-        if(eventWaitForNavSys()) {
-          actTurn(orig);
-        }
       }
 
     }
