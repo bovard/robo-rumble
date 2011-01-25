@@ -298,8 +298,9 @@ public class NavigationSystem {
           if (moveControl.canMove(robotControl.getDirection().rotateRight()) 
                   || moveControl.canMove(robotControl.getDirection().rotateLeft()))
           {
-            //if randomized or can't moveLeft, moveRight
-            if (rand.nextBoolean() || moveControl.canMove(robotControl.getDirection().rotateLeft())) {
+            //if canMove right && (random or can't move Left)
+            if (moveControl.canMove(robotControl.getDirection().rotateRight())
+                    && (rand.nextBoolean() || !moveControl.canMove(robotControl.getDirection().rotateLeft()))) {
               trackingRight = true;
             }
             else {

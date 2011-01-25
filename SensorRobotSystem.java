@@ -293,6 +293,12 @@ public class SensorRobotSystem extends RobotSystem {
    * @return the validity of scoutDirection
    */
   protected boolean checkScoutDirectionValidity() {
+    /*
+     * North ( 0,-1)
+     * South ( 0, 1)
+     * East  ( 1, 0)
+     * West  (-1, 0)
+     */
     MapLocation currentPos = robotControl.getLocation();
     if(scoutDirection == null) {
       return false;
@@ -455,6 +461,7 @@ public class SensorRobotSystem extends RobotSystem {
    * @return the validity of the destination
    */
   protected boolean checkDestinationValidity() {
+
     //if the destination is out of x bounds it's invalid, return false
     if (navSys.getDestination().x < minX || navSys.getDestination().x > maxX) {
       //robotControl.setIndicatorString(2, "BAD X DEST: "+minX+"<"+navSys.getDestination().x+"<"+maxX );
