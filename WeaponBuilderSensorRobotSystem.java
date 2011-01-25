@@ -150,13 +150,13 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
             navSys.setTurn(toEnemy);
         }
         //if we're too far away, close the distance
-        else if (ourLoc.distanceSquaredTo(enemyLoc) > weaponSys.getMinRange()) {
+        else if (!weaponSys.isInRangeOfAllWeapons(enemyLoc)) {
           if(navSys.canMove(ourDir)) {
             navSys.setMoveForward();
           }
         }
         //if we're too close back off a bit
-        else if (ourLoc.distanceSquaredTo(enemyLoc) < weaponSys.getMinRange()) {
+        else if (weaponSys.isInRangeOfAllWeapons(enemyLoc.add(ourDir))) {
           if(navSys.canMove(ourDir.opposite())) {
             navSys.setMoveBackward();
           }

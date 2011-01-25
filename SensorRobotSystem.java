@@ -14,7 +14,7 @@ public class SensorRobotSystem extends RobotSystem {
   //edges of the map, unkown initially
   protected int minX=-1, maxX=Integer.MAX_VALUE, minY=-1, maxY=Integer.MAX_VALUE;
   //new destination constants, used in chooseNewDestination()
-  protected static final int NEW_DEST_RANGE = 20;
+  protected static final int NEW_DEST_RANGE = 15;
   protected static final int NEW_DEST_VARIANCE = 5;
   //the direction to Scout in
   protected Direction scoutDirection;
@@ -334,8 +334,9 @@ public class SensorRobotSystem extends RobotSystem {
      */
     boolean done = false;
     MapLocation currentPos = robotControl.getLocation();
+    int loops = 0;
     while(!done) {
-      int nextDir = Clock.getRoundNum();
+      int nextDir = Clock.getRoundNum() + loops;
       nextDir = nextDir%8;
       switch(nextDir) {
         case 0: //Direction.NORTH
@@ -390,6 +391,13 @@ public class SensorRobotSystem extends RobotSystem {
             done = true;
           }
           break;
+      }
+      loops++;
+      if (loops > 8) {
+        System.out.println("WARNING: In changeScoutDirection and loops="+loops+" and scoutDirection = "+scoutDirection);
+        System.out.println("(minx,miny),(maxx, maxy): "+"("+minX+","+minY+"),("+maxX+","+maxY+")");
+        scoutDirection = Direction.NONE;
+        done = true;
       }
     }
   }

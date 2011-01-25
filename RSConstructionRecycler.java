@@ -37,7 +37,6 @@ public class RSConstructionRecycler extends BuilderSensorRobotSystem {
 
           RobotInfo info = sensorSys.sensorRobotInfo(bot);
           if (!info.on && info.maxHp == 10) {
-            System.out.println("here");
             while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.FLYING_BUILDER_SCOUT_1.cost
                   + 2 * PlayerConstants.MINIMUM_FLUX) {
               yield();

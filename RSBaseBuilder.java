@@ -29,6 +29,11 @@ public class RSBaseBuilder extends BuilderSensorRobotSystem {
     boolean mineAtFrontRight = sensorSys.senseObjectAtLocation(birthPlace.add(currentDir.rotateRight()), RobotLevel.MINE) != null;
     boolean builtRight = false;
 
+    while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + BuildOrder.ARMORY.cost
+            + BuildOrder.RECYCLER.cost/4) {
+      yield();
+    }
+
     //if the mine is to our right
     if(mineAtFrontRight && navSys.canMove(robotControl.getDirection().rotateRight().rotateRight())) {
       System.out.println("detected mine right");

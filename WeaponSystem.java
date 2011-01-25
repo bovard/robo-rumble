@@ -2,6 +2,7 @@
 
 package team122;
 import battlecode.common.*;
+import java.util.ArrayList;
 
 /**
  * The WeaponSystem takes care of shooting for the robot. It relies on imput from
@@ -18,6 +19,11 @@ import battlecode.common.*;
 public class WeaponSystem {
 
   private WeaponController[] weapons;
+
+  /**
+   * The unique weapons array should hold one weapon of every type owned by the bot
+   */
+  private ArrayList<WeaponController> uniqueWeapons;
   private SensorSystem sensorSys;
   private int mode;
   private int minRange=Integer.MAX_VALUE, maxRange=-1;
@@ -33,6 +39,7 @@ public class WeaponSystem {
   public WeaponSystem(WeaponController[] weapons, SensorSystem sensorSys) {
     this.weapons = weapons;
     this.sensorSys = sensorSys;
+    uniqueWeapons = new ArrayList<WeaponController>();
     mode = WeaponMode.OPEN_FIRE;
     for (int i = 0 ; i < weapons.length ; i++) {
       updateRange(weapons[i]);
@@ -47,6 +54,7 @@ public class WeaponSystem {
   public WeaponSystem(WeaponController weapon, SensorSystem sensorSys) {
     this.sensorSys = sensorSys;
     this.weapons = new WeaponController[] {weapon};
+    uniqueWeapons = new ArrayList<WeaponController>();
     mode = WeaponMode.OPEN_FIRE;
     updateRange(weapon);
   }
@@ -56,6 +64,7 @@ public class WeaponSystem {
    * @param weaponControl the weapon to measure against
    */
   private void updateRange(WeaponController weaponControl) {
+    //update the ranges
     int range = calcRange(weaponControl);
     if (range > maxRange) {
       maxRange = range;
@@ -63,6 +72,18 @@ public class WeaponSystem {
     if (range < minRange) {
       minRange = range;
     }
+
+    //check to see if it's a unique weapon type
+    boolean toAdd = true;
+    for (int i=0; i< uniqueWeapons.size(); i++) {
+      if(uniqueWeapons.get(i).type() == weaponControl.type()) {
+        toAdd = false;
+      }
+    }
+    if(toAdd) {
+      uniqueWeapons.add(weaponControl);
+    }
+
   }
 
 
@@ -248,6 +269,35 @@ public class WeaponSystem {
    */
   public int getMaxRange() {
     return maxRange;
+  }
+
+  /**
+   * Checks to see if this is within the range of ALL the weapons
+   *
+   *
+   * @param loc The location to check
+   * @return if all weapons on the bot can fire at selected square
+   */
+  public boolean isInRangeOfAllWeapons(MapLocation loc) {
+    boolean canFire = true;
+    for (int i = 0; i < uniqueWeapons.size() ; i++) {
+      canFire = canFire && uniqueWeapons.get(i).withinRange(loc);
+    }
+    return canFire;
+  }
+
+  /**
+   * Checks to see if this weapon is within the range of at least one weapon
+   * @param loc The location to check
+   * @return if at least one weapon is in range of selected square
+   */
+  public boolean isInRangeOfAtLeastOneWeapon(MapLocation loc) {
+    for (int i = 0; i < uniqueWeapons.size() ; i++) {
+      if(uniqueWeapons.get(i).withinRange(loc)) {
+        return true;
+      }
+    }
+    return false;
   }
 
 

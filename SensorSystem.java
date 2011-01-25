@@ -114,7 +114,7 @@ public class SensorSystem {
       //tries the closest square (check that it can be sensed, that it is land, and that it's free)
       Direction toTry = dir;
       if (sensorControl.canSenseSquare(target.add(toTry))
-              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
+              && ((robotControl.getChassis().isAirborne() && robotControl.senseTerrainTile(target.add(toTry)) != TerrainTile.OFF_MAP) || robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND)
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
         return target.add(toTry);
       }
@@ -125,7 +125,7 @@ public class SensorSystem {
           toTry = toTry.rotateLeft();
         }
         if (sensorControl.canSenseSquare(target.add(toTry))
-              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
+              && ((robotControl.getChassis().isAirborne() && robotControl.senseTerrainTile(target.add(toTry)) != TerrainTile.OFF_MAP) || robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND)
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
           return target.add(toTry);
         }
@@ -134,7 +134,7 @@ public class SensorSystem {
           toTry = toTry.rotateRight();
         }
         if (sensorControl.canSenseSquare(target.add(toTry))
-              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
+              && ((robotControl.getChassis().isAirborne() && robotControl.senseTerrainTile(target.add(toTry)) != TerrainTile.OFF_MAP) || robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND)
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
           return target.add(toTry);
         }
@@ -142,7 +142,7 @@ public class SensorSystem {
       //try the furthest square
       toTry = dir.opposite();
       if (sensorControl.canSenseSquare(target.add(toTry))
-              && robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND
+              && ((robotControl.getChassis().isAirborne() && robotControl.senseTerrainTile(target.add(toTry)) != TerrainTile.OFF_MAP) || robotControl.senseTerrainTile(target.add(toTry)) == TerrainTile.LAND)
               && sensorControl.senseObjectAtLocation(target.add(toTry), robotControl.getRobot().getRobotLevel()) == null) {
         return target.add(toTry);
       }
