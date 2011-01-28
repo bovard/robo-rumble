@@ -52,16 +52,14 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
 
   @Override
   public void go() {
-    seqBuildProductionBuildings();
-    seqBuildGuardTowers();
+    seqBuildBase();
     while(true) {
       if(checkBase()) {
         seqBuildScoutsAndHeavies();
         yield();
       }
       else {
-        seqBuildProductionBuildings();
-        seqBuildGuardTowers();
+        seqBuildBase();
       }
     }
   }
@@ -76,15 +74,27 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
             && sensorSys.canSenseObject(armoryGuard) && sensorSys.canSenseObject(factoryGuard);
   }
 
+  /**
+   * Checks to see if each element of the base is there and builds it if it isn't
+   * @return
+   */
+  public boolean seqBuildBase() {
+    for (int i = 0; i < 10; i++) {
+      yield();
+    }
+    seqBuildArmory();
+    seqBuildArmoryGuard();
+    seqBuildFactory();
+    seqBuildFactoryGuard();
+
+    return true;
+  }
 
   /**
    * Checks to see if either of the production buildings are not build or are missing and builds them
    * @return true
    */
-  public boolean seqBuildProductionBuildings() {
-    for (int i = 0; i < 20; i++) {
-      yield();
-    }
+  public boolean seqBuildArmory() {
     if(armory == null || !sensorSys.canSenseObject(armory)) {
       while(robotControl.getTeamResources() < BuildOrder.ARMORY.cost + 20 + PlayerConstants.MINIMUM_FLUX ||
               sensorSys.senseObjectAtLocation(armoryLoc, RobotLevel.ON_GROUND) != null) {
@@ -110,6 +120,10 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         }
       }
     }
+    return true;
+  }
+
+  public boolean seqBuildFactory() {
     if(factory == null || !sensorSys.canSenseObject(factory)) {
       while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + 20 + PlayerConstants.MINIMUM_FLUX) {
         yield();
@@ -154,7 +168,7 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
    * checks to see that both guard towers are built and/or still there, builds them if they aren't
    * @return true
    */
-  protected boolean seqBuildGuardTowers() {
+  protected boolean seqBuildArmoryGuard() {
     //build the armory guard tower if there isn't one there
     if(armoryGuard == null || !sensorSys.canSenseObject(armoryGuard)) {
       while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_3.cost + PlayerConstants.MINIMUM_FLUX) {
@@ -182,7 +196,10 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         }
       }
     }
-    
+    return true;
+  }
+
+  public boolean seqBuildFactoryGuard() {
     //build the factory guard tower if there isn't one there
     if(factoryGuard == null || !sensorSys.canSenseObject(factoryGuard)) {
       while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_2.cost + PlayerConstants.MINIMUM_FLUX) {

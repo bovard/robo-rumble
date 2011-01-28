@@ -55,22 +55,38 @@ public class SensorRobotSystem extends RobotSystem {
     int loops = 0;
     int x, y;
     do {
-      next = navSys.getDestination();
+      next = robotControl.getLocation();
       //make the next destination in the direction of scoutDirection
       next = next.add(scoutDirection, NEW_DEST_RANGE - NEW_DEST_VARIANCE);
 
       //add a slight variance
-      x = ((rand.nextInt(2*NEW_DEST_VARIANCE+1) * Clock.getRoundNum()) % (2*NEW_DEST_VARIANCE))
-              - NEW_DEST_VARIANCE;
-      y = ((rand.nextInt(2*NEW_DEST_VARIANCE+1) * Clock.getRoundNum()) % (2*NEW_DEST_VARIANCE))
-              - NEW_DEST_VARIANCE;
+      x = (Clock.getRoundNum()*rand.nextInt())%NEW_DEST_VARIANCE;
+      y = (Clock.getRoundNum()*rand.nextInt())%NEW_DEST_VARIANCE;
+      if(rand.nextBoolean()) {
+        if(rand.nextBoolean()) {
+          x*=-1;
+          y*=-1;
+        }
+        else {
+          x*=-1;
+        }
+      }
+      else {
+        if(rand.nextBoolean()) {
+          y*=-1;
+        }
+      }
+      
       next = next.add(x, y);
       loops++;
-    } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<25);
-    if (loops<25) {
+    } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<5);
+    if (loops<5) {
       return next;
     }
     else {
+      System.out.println("WARNING: Surpassed the maximum amounts of loops for choose direction!");
+      System.out.println("currend position "+robotControl.getLocation());
+      System.out.println("(minx,miny),(maxx, maxy): "+"("+minX+","+minY+"),("+maxX+","+maxY+")");
       return birthPlace;
     }
   }
@@ -139,7 +155,7 @@ public class SensorRobotSystem extends RobotSystem {
     
     robotControl.setIndicatorString(1, "seqFlee!!");
 
-    while(gameEvents.checkGameEventsAbove(GameEventLevel.DIRECTIVE)) {
+    while(gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
       //wait for a motor to be active
       while(navSys.isActive()) {
         yield();
@@ -152,8 +168,8 @@ public class SensorRobotSystem extends RobotSystem {
       //otherwise turn
       else {
         while(!navSys.canMove(robotControl.getDirection().opposite())
-                && gameEvents.checkGameEventsAbove(GameEventLevel.MISSION)) {
-          navSys.setTurn(robotControl.getDirection().rotateRight());
+                && gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
+          setForceMove(false);
           yield();
         }
       }
@@ -163,7 +179,7 @@ public class SensorRobotSystem extends RobotSystem {
     //move in the opposite direction
     navSys.setDestination(chooseNextDestination());
 
-    return !gameEvents.checkGameEventsAbove(GameEventLevel.MISSION);
+    return !gameEvents.checkGameEventsAbove(currentGameEventLevel);
   }
 
   /**
@@ -496,7 +512,7 @@ public class SensorRobotSystem extends RobotSystem {
    */
   protected void updateMapExtrema() {
     try {
-      if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateLeft()))==TerrainTile.OFF_MAP) {
+      if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateLeft().rotateLeft()))==TerrainTile.OFF_MAP) {
         MapLocation ourLocation = robotControl.getLocation();
         MapLocation offMap = ourLocation.add(robotControl.getDirection().rotateLeft().rotateLeft());
 
@@ -513,7 +529,7 @@ public class SensorRobotSystem extends RobotSystem {
           minY = offMap.y;
         }
       }
-      else if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateRight()))==TerrainTile.OFF_MAP) {
+      else if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateRight().rotateRight()))==TerrainTile.OFF_MAP) {
         MapLocation ourLocation = robotControl.getLocation();
         MapLocation offMap = ourLocation.add(robotControl.getDirection().rotateRight().rotateRight());
 
