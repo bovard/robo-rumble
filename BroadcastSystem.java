@@ -50,10 +50,10 @@ public class BroadcastSystem {
         message.ints[0] = PlayerConstants.ASSURANCE_BIT_0;
         break;
       case 1:
-        message.ints[1] = PlayerConstants.ASSURANCE_BIT_1;
+        message.ints[0] = PlayerConstants.ASSURANCE_BIT_1;
         break;
       case 2:
-        message.ints[1] = PlayerConstants.ASSURANCE_BIT_2;
+        message.ints[0] = PlayerConstants.ASSURANCE_BIT_2;
         break;
     }
 

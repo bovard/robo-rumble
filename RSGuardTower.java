@@ -13,6 +13,11 @@ public class RSGuardTower extends WeaponBuilderSensorRobotSystem {
 
   }
 
+  public RSGuardTower(RobotController robotControl, SensorSystem sensorSys, WeaponController weapon) {
+    super(robotControl, sensorSys, weapon);
+
+  }
+
   @Override
   public void go() {
     while(true) {

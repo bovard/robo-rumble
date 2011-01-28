@@ -212,6 +212,14 @@ public class RobotPlayer implements Runnable {
         }
       }
       else if(myRC.getChassis() == Chassis.BUILDING) {
+        //GUARD TOWER
+        if (components.length >= 4 && components[1].type() == ComponentType.BUILDING_SENSOR
+                && components[2].type()==ComponentType.RADAR) {
+          RSGuardTower system = new RSGuardTower(myRC,
+                  new SensorSystem(myRC, (SensorController)components[2]),
+                  (WeaponController)components[3]);
+          system.go();
+        }
         //ARMORY
         if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
                   components[2].type()==ComponentType.ARMORY) {

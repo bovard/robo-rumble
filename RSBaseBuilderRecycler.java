@@ -73,8 +73,11 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
 
 
   public boolean seqBuildProductionBuildings() {
+    for (int i = 0; i < 20; i++) {
+      yield();
+    }
     if(armory == null || !sensorSys.canSenseObject(armory)) {
-      while(robotControl.getTeamResources() < BuildOrder.ARMORY.cost + PlayerConstants.MINIMUM_FLUX ||
+      while(robotControl.getTeamResources() < BuildOrder.ARMORY.cost + 20 + PlayerConstants.MINIMUM_FLUX ||
               sensorSys.senseObjectAtLocation(armoryLoc, RobotLevel.ON_GROUND) != null) {
         yield();
         robotControl.setIndicatorString(1, "waitingToBuildArmory");
@@ -99,7 +102,7 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
       }
     }
     if(factory == null || !sensorSys.canSenseObject(factory)) {
-      while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + PlayerConstants.MINIMUM_FLUX) {
+      while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + 20 + PlayerConstants.MINIMUM_FLUX) {
         yield();
         robotControl.setIndicatorString(1, "waitingToBuildFactory");
       }
@@ -137,10 +140,50 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
 
   protected boolean seqBuildGuardTowers() {
     if(armoryGuard == null || !sensorSys.canSenseObject(armoryGuard)) {
-
+      while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_3.cost + PlayerConstants.MINIMUM_FLUX) {
+        yield();
+        robotControl.setIndicatorString(1, "waitingToBuildArmoryGuardTower");
+      }
+      constructor.setBuildChassis(Chassis.BUILDING, armoryGuardLoc);
+      yield();
+      while(constructor.isActive()) {
+        yield();
+      }
+      seqBuild(BuildOrder.GUARD_TOWER_3, armoryGuardLoc);
+      while(constructor.isActive()) {
+        yield();
+      }
+      armoryGuard = (Robot)sensorSys.senseObjectAtLocation(armoryGuardLoc, RobotLevel.ON_GROUND);
+      if(factory != null) {
+        try {
+          robotControl.turnOn(armoryGuardLoc, RobotLevel.ON_GROUND);
+          bcSys.setSendBuildDirective(BuildOrder.GUARD_TOWER_3.id, armoryGuardLoc);
+          yield();
+        } catch (Exception e) {
+          System.out.println("caught exception:");
+          e.printStackTrace();
+        }
+      }
     }
     if(factoryGuard == null || !sensorSys.canSenseObject(factoryGuard)) {
-
+      while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_2.cost + PlayerConstants.MINIMUM_FLUX) {
+        yield();
+        robotControl.setIndicatorString(1, "waitingToBuildFactoryGuardTower");
+      }
+      constructor.setBuildChassis(Chassis.BUILDING, factoryGuardLoc);
+      yield();
+      while(constructor.isActive()) {
+        yield();
+      }
+      seqBuild(BuildOrder.GUARD_TOWER_2, factoryGuardLoc);
+      while(constructor.isActive()) {
+        yield();
+      }
+      factoryGuard = (Robot)sensorSys.senseObjectAtLocation(factoryGuardLoc, RobotLevel.ON_GROUND);
+      if(factory != null) {
+        bcSys.setSendBuildDirective(BuildOrder.GUARD_TOWER_2.id, factoryGuardLoc);
+        yield();
+      }
     }
     return true;
   }

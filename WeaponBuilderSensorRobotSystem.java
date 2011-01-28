@@ -77,9 +77,14 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
     robotControl.setIndicatorString(1, "seqRotateAndEngage");
     currentGameEventLevel = GameEventLevel.NORMAL;
     seqRotate();
-    if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
+    if(gameEvents.checkGameEventsAbove(GameEventLevel.NORMAL)) {
       currentGameEventLevel = GameEventLevel.COMBAT;
-      seqStaticEngageEnemy(sensorSys.getNearestOpponent());
+      if(((SensorGameEvents)gameEvents).canSeeEnemy()) {
+        seqStaticEngageEnemy(sensorSys.getNearestOpponent());
+      }
+      else {
+        actRotateFieldOfVision();
+      }
     }
     else {
       while(navSys.isActive()) {

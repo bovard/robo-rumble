@@ -29,6 +29,11 @@ public class CommunicationsSystem {
     this.filter = filter;
   }
 
+  /**
+   * Checks to see if the robot has received any mail this turn, then returns true if there
+   * is mail in the queue or directive queue
+   * @return if there is mail
+   */
   public boolean checkMail() {
     //if we haven't already checked our mail (messages) this turn, check them
     if (lastMailCheck < Clock.getRoundNum()) {
@@ -138,26 +143,23 @@ public class CommunicationsSystem {
   private boolean checkMessage(Message message) {
     //make sure the int field isn't null
     if (message.ints != null) {
-      //check to make sure the message was sent last round and the TTL isn't too high
-      if (message.ints[1] == Clock.getRoundNum() - 1 &&
-              message.ints[3] <= PlayerConstants.MAX_MESSAGE_LIFE) {
-        //check to make sure the assurance bit isn't messed with
-        if(message.ints[0] == PlayerConstants.ASSURANCE_BIT_0
-                || message.ints[0] == PlayerConstants.ASSURANCE_BIT_1
-                || message.ints[0] == PlayerConstants.ASSURANCE_BIT_2) {
+      //check to make sure the assurance bit isn't messed with
+      if(message.ints[0] == PlayerConstants.ASSURANCE_BIT_0
+              || message.ints[0] == PlayerConstants.ASSURANCE_BIT_1
+              || message.ints[0] == PlayerConstants.ASSURANCE_BIT_2) {
 
-          //calculate the positional sum
-          int sum = 0;
-          for (int i = 0; i< message.ints.length-1; i++) {
-            sum += message.ints[i]*(i+1);
-          }
-          //check to see if the positional sum is correct
-          if (sum*PlayerConstants.ASSURANCE_FACTOR == message.ints[message.ints.length-1]) {
-            return true;
-          }
+        //calculate the positional sum
+        int sum = 0;
+        for (int i = 0; i< message.ints.length-1; i++) {
+          sum += message.ints[i]*(i+1);
+        }
+        //check to see if the positional sum is correct
+        if (sum*PlayerConstants.ASSURANCE_FACTOR == message.ints[message.ints.length-1]) {
+          return true;
         }
       }
     }
+    System.out.println("FAILED!");
     return false;
   }
 

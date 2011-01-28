@@ -8,72 +8,31 @@ import battlecode.common.*;
  */
 public class RSArmory extends BuilderSensorRobotSystem {
 
-  private MapLocation constructionLocation;
-  private int lastScout = 0;
-  private int lastScoutBuilder = 0;
-  private int lastWarrior = 0;
-
 
   public RSArmory(RobotController robotControl, SensorSystem sensorSys, BuilderSystem buildSys) {
     
     super(robotControl, sensorSys, buildSys);
-    robotControl.setIndicatorString(0, "RSArmory");
-    constructionLocation = findBaseBuilder();
+    robotControl.setIndicatorString(2, "RSArmory");
+    comSys.setFilter(new int[] {1,1,0});
   }
 
   @Override
   public void go() {
-    if(constructionLocation != null) {
-      while(true) {
-        //wait for money!
-        while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.FLYING_BUILDER_SCOUT_1.cost
-                + PlayerConstants.MINIMUM_FLUX || buildSys.isActive()
-                || !gameEvents.isFluxRegenAbove(PlayerConstants.MINIMUM_FLUX_REGEN + BuildOrder.HEAVY_WARRIOR_1.chassis.upkeep)) {
-          yield();
-        }
-        //check to see if we're trying to build a heavy bot and if we are build the factor components
-        Robot bot = (Robot)sensorSys.senseObjectAtLocation(constructionLocation, RobotLevel.ON_GROUND);
-        if(bot != null && Clock.getRoundNum() > lastWarrior + PlayerConstants.HEAVY_COOLDOWN) {
-          
-          RobotInfo info = sensorSys.sensorRobotInfo(bot);
-          if (!info.on && info.maxHp == 40) {
-            //if a heavy turned-off bot is detected, build!
-            while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.HEAVY_WARRIOR_1.cost
-                + PlayerConstants.MINIMUM_FLUX) {
-              yield();
-            }
-            robotControl.setIndicatorString(1, "seqBuild HW");
-            lastWarrior = Clock.getRoundNum();
-            seqBuild(BuildOrder.HEAVY_WARRIOR_1, constructionLocation);
-          }
-        }
-        //build a flying scout builder if one isn't already there
-        bot = (Robot)sensorSys.senseObjectAtLocation(constructionLocation, RobotLevel.IN_AIR);
-        if (bot==null && Clock.getRoundNum() > lastScoutBuilder + PlayerConstants.BUILDER_SCOUT_COOLDOWN) {
-          while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.FLYING_BUILDER_SCOUT_1.cost
-                + PlayerConstants.MINIMUM_FLUX) {
+    while(true) {
+      yield();
+      if(gameEvents.hasDirective()) {
+        robotControl.setIndicatorString(1, "Building a directive!");
+        Message directive = comSys.getLastDirective(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
+        MapLocation location = comSys.getMapLocationFromBuildDirective(directive);
+        if(location.isAdjacentTo(birthPlace)) {
+          BuildOrder order = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(directive));
+          while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + order.cost + 2*PlayerConstants.MINIMUM_FLUX) {
             yield();
           }
-          robotControl.setIndicatorString(1, "seqBuild FBS");
-          lastScoutBuilder = Clock.getRoundNum();
-          seqBuild(BuildOrder.FLYING_BUILDER_SCOUT_1, constructionLocation);
+          seqBuild(order, location);
         }
-        /**
-        //build a flying scout if the airspace is availiable
-        bot = (Robot)sensorSys.senseObjectAtLocation(constructionLocation, RobotLevel.IN_AIR);
-        if (bot==null && Clock.getRoundNum() > lastScout + PlayerConstants.SCOUT_COOLDOWN) {
-          while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.FLYING_SCOUT_1.cost
-                + PlayerConstants.MINIMUM_FLUX) {
-            yield();
-          }
-          robotControl.setIndicatorString(1, "seqBuild FBS");
-          lastScout = Clock.getRoundNum();
-          seqBuild(BuildOrder.FLYING_SCOUT_1, constructionLocation);
-        }
-        */
       }
     }
-    robotControl.turnOff();
   }
 
 

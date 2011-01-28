@@ -247,7 +247,7 @@ public enum BuildOrder {
     Chassis.BUILDING,
     ComponentType.CONSTRUCTOR,
     new ComponentType[] {},
-    new ComponentType[] {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SMG, ComponentType.BLASTER},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SMG, ComponentType.SMG, ComponentType.BLASTER, ComponentType.SHIELD },
     new ComponentType[] {ComponentType.HARDENED, ComponentType.REGEN, ComponentType.RAILGUN},
     new ComponentType[] {},
     Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 2*ComponentType.SMG.cost + ComponentType.BLASTER.cost + ComponentType.HARDENED.cost + ComponentType.REGEN.cost + ComponentType.RAILGUN.cost,
