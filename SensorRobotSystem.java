@@ -66,8 +66,8 @@ public class SensorRobotSystem extends RobotSystem {
               - NEW_DEST_VARIANCE;
       next = next.add(x, y);
       loops++;
-    } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<5);
-    if (loops<5) {
+    } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<25);
+    if (loops<25) {
       return next;
     }
     else {
@@ -105,9 +105,7 @@ public class SensorRobotSystem extends RobotSystem {
   protected boolean seqMoveAndTurn() {
     boolean hasGameEvents = gameEvents.checkGameEventsAbove(currentGameEventLevel);
     boolean done = navSys.isAtDestination();
-    if(!hasGameEvents && !done) {
-      hasGameEvents = !seqScanArea();
-    }
+
     while(!hasGameEvents && !done) {
       while(navSys.isActive() && !hasGameEvents) {
         yield();
@@ -303,6 +301,9 @@ public class SensorRobotSystem extends RobotSystem {
     if(scoutDirection == null) {
       return false;
     }
+    if(scoutDirection.equals(Direction.NONE)) {
+      return true;
+    }
     else if(scoutDirection.equals(Direction.NORTH)) { //Direction.NORTH
       if(currentPos.add(Direction.NORTH, NEW_DEST_RANGE).y > minY) {
         return true;
@@ -494,45 +495,83 @@ public class SensorRobotSystem extends RobotSystem {
    * used to update the information that we know about the edges of the map
    */
   protected void updateMapExtrema() {
-    MapLocation canSee = robotControl.getLocation().add(robotControl.getDirection(),
-            sensorSys.getRange(robotControl.getDirection()));
-
     try {
-      //if we're looking at a tile off map, update the min/max x/y as needed
-      if(robotControl.senseTerrainTile(canSee)==TerrainTile.OFF_MAP) {
-        //figure what edge we're looking over
-        //System.out.println("trying to updater! "+canSee);
-        //System.out.println("current "+minX+" "+maxX+" "+minY+" "+maxY);
+      if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateLeft()))==TerrainTile.OFF_MAP) {
+        MapLocation ourLocation = robotControl.getLocation();
+        MapLocation offMap = ourLocation.add(robotControl.getDirection().rotateLeft().rotateLeft());
 
-        //Check the X edges
-        //looking at the minX edge
-        if( minX == -1 && sensorSys.canSenseLocation(canSee.add(1, 0)) && robotControl.senseTerrainTile(canSee.add(1,0))!=TerrainTile.OFF_MAP) {
-          if (canSee.x > minX) {
-            //System.out.println("UPDATING minX: "+minX+" to "+canSee.x);
-            minX = canSee.x;
-          }
+        if(ourLocation.x<offMap.x) {
+          maxX = offMap.x;
         }
-        //looking at the maxX edge
-        else if (maxX == Integer.MAX_VALUE && sensorSys.canSenseLocation(canSee.add(-1, 0)) && robotControl.senseTerrainTile(canSee.add(-1,0))!=TerrainTile.OFF_MAP) {
-          if(canSee.x < maxX) {
-            //System.out.println("UPDATING maxX: "+maxX+" to "+canSee.x);
-            maxX = canSee.x;
-          }
+        else if(ourLocation.x>offMap.x) {
+          minX = offMap.x;
         }
+        else if(ourLocation.y<offMap.y) {
+          maxY = offMap.y;
+        }
+        else if(ourLocation.y>offMap.y) {
+          minY = offMap.y;
+        }
+      }
+      else if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateRight()))==TerrainTile.OFF_MAP) {
+        MapLocation ourLocation = robotControl.getLocation();
+        MapLocation offMap = ourLocation.add(robotControl.getDirection().rotateRight().rotateRight());
 
-        //Check the Y edges
-        //looking at the minY edge
-        if( minY == -1 && sensorSys.canSenseLocation(canSee.add(0, 1)) && robotControl.senseTerrainTile(canSee.add(0,1))!=TerrainTile.OFF_MAP) {
-          if (canSee.y > minY) {
-            //System.out.println("UPDATING minY: "+minY+" to "+canSee.y);
-            minY = canSee.y;
-          }
+        if(ourLocation.x<offMap.x) {
+          maxX = offMap.x;
         }
-        //looking at the maxY edge
-        else if ( maxY == Integer.MAX_VALUE && sensorSys.canSenseLocation(canSee.add(0, -1)) && robotControl.senseTerrainTile(canSee.add(0, -1))!=TerrainTile.OFF_MAP) {
-          if(canSee.y < maxY) {
-            //System.out.println("UPDATING maxY: "+maxY+" to "+canSee.y);
-            maxY = canSee.y;
+        else if(ourLocation.x>offMap.x) {
+          minX = offMap.x;
+        }
+        else if(ourLocation.y<offMap.y) {
+          maxY = offMap.y;
+        }
+        else if(ourLocation.y>offMap.y) {
+          minY = offMap.y;
+        }
+      }
+      else {
+
+        MapLocation canSee = robotControl.getLocation().add(robotControl.getDirection(),
+                sensorSys.getRange(robotControl.getDirection()));
+
+
+        //if we're looking at a tile off map, update the min/max x/y as needed
+        if(robotControl.senseTerrainTile(canSee)==TerrainTile.OFF_MAP) {
+          //figure what edge we're looking over
+          //System.out.println("trying to updater! "+canSee);
+          //System.out.println("current "+minX+" "+maxX+" "+minY+" "+maxY);
+
+          //Check the X edges
+          //looking at the minX edge
+          if( minX == -1 && sensorSys.canSenseLocation(canSee.add(1, 0)) && robotControl.senseTerrainTile(canSee.add(1,0))!=TerrainTile.OFF_MAP) {
+            if (canSee.x > minX) {
+              //System.out.println("UPDATING minX: "+minX+" to "+canSee.x);
+              minX = canSee.x;
+            }
+          }
+          //looking at the maxX edge
+          else if (maxX == Integer.MAX_VALUE && sensorSys.canSenseLocation(canSee.add(-1, 0)) && robotControl.senseTerrainTile(canSee.add(-1,0))!=TerrainTile.OFF_MAP) {
+            if(canSee.x < maxX) {
+              //System.out.println("UPDATING maxX: "+maxX+" to "+canSee.x);
+              maxX = canSee.x;
+            }
+          }
+
+          //Check the Y edges
+          //looking at the minY edge
+          if( minY == -1 && sensorSys.canSenseLocation(canSee.add(0, 1)) && robotControl.senseTerrainTile(canSee.add(0,1))!=TerrainTile.OFF_MAP) {
+            if (canSee.y > minY) {
+              //System.out.println("UPDATING minY: "+minY+" to "+canSee.y);
+              minY = canSee.y;
+            }
+          }
+          //looking at the maxY edge
+          else if ( maxY == Integer.MAX_VALUE && sensorSys.canSenseLocation(canSee.add(0, -1)) && robotControl.senseTerrainTile(canSee.add(0, -1))!=TerrainTile.OFF_MAP) {
+            if(canSee.y < maxY) {
+              //System.out.println("UPDATING maxY: "+maxY+" to "+canSee.y);
+              maxY = canSee.y;
+            }
           }
         }
       }

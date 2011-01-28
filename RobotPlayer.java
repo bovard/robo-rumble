@@ -204,10 +204,18 @@ public class RobotPlayer implements Runnable {
         }
       }
       else if(myRC.getChassis() == Chassis.HEAVY) {
+        //HEAVY_WARRIOR_1
         if (components.length == 10 && components[2].type() == ComponentType.RAILGUN
                 && components[3].type() == ComponentType.RADAR) {
           SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[3]);
           RSRegenFighter system = new RSRegenFighter(myRC, sensorSys, (WeaponController)components[2]);
+          system.go();
+        }
+        //HEAVY_WARRIOR_2
+        if (components.length == 8 && components[3].type() == ComponentType.RAILGUN
+                && components[4].type() == ComponentType.RADAR) {
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[4]);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys, (WeaponController)components[3]);
           system.go();
         }
       }

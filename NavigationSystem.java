@@ -296,7 +296,7 @@ public class NavigationSystem {
 
           //if we can rotate slightly left and/or right
           if (moveControl.canMove(robotControl.getDirection().rotateRight()) 
-                  || moveControl.canMove(robotControl.getDirection().rotateLeft()))
+                  || moveControl.canMove(robotControl.getDirection().rotateLeft()) && rand.nextInt(10) < 8)
           {
             //if canMove right && (random or can't move Left)
             if (moveControl.canMove(robotControl.getDirection().rotateRight())

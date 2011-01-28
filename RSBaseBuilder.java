@@ -46,21 +46,79 @@ public class RSBaseBuilder extends RSBuilderScout {
 
   public void chooseDirection() {
     Direction dirToEnemy = Direction.NORTH;
-    //we found teh south edge, so the enemy is north
-    if(maxY < Integer.MAX_VALUE) {
-      dirToEnemy = Direction.NORTH;
+    //if we already know the edges of the map
+    if(maxX != Integer.MAX_VALUE || maxY != Integer.MAX_VALUE || minX != -1 || minY != -1) {
+
+      //we found teh south edge, so the enemy is north
+      if(maxY < Integer.MAX_VALUE) {
+        dirToEnemy = Direction.NORTH;
+      }
+      //we found the north edge, so the enemy is south
+      else if(minY > -1) {
+        dirToEnemy = Direction.SOUTH;
+      }
+      //we foudn teh west edge, so the enemy is east
+      else if (minX > -1) {
+        dirToEnemy = Direction.EAST;
+      }
+      //we found the east edge, so the enemy is west
+      else if (maxX < Integer.MAX_VALUE) {
+        dirToEnemy = Direction.WEST;
+      }
     }
-    //we found the north edge, so the enemy is south
-    else if(minY > -1) {
-      dirToEnemy = Direction.SOUTH;
-    }
-    //we foudn teh west edge, so the enemy is east
-    else if (minX > -1) {
-      dirToEnemy = Direction.EAST;
-    }
-    //we found the east edge, so the enemy is west
-    else if (maxX < Integer.MAX_VALUE) {
-      dirToEnemy = Direction.WEST;
+    //otherwise guess
+    else {
+      dirToEnemy = Direction.OMNI;
+      //we found teh north edge, so the enemy is north
+      navSys.setTurn(Direction.NORTH);
+      yield();
+      if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.NORTH, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+        dirToEnemy = Direction.SOUTH;
+      }
+      //we found the north edge, so the enemy is south
+      if(dirToEnemy.equals(Direction.OMNI)) {
+        navSys.setTurn(Direction.SOUTH);
+        yield();
+        if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.SOUTH, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+          dirToEnemy = Direction.NORTH;
+        }
+      }
+      //we foudn teh west edge, so the enemy is east
+      if(dirToEnemy.equals(Direction.OMNI)) {
+        navSys.setTurn(Direction.WEST);
+        yield();
+        if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.WEST, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+          dirToEnemy = Direction.EAST;
+        }
+      }
+      //we found the east edge, so the enemy is west
+      if(dirToEnemy.equals(Direction.OMNI)) {
+        navSys.setTurn(Direction.EAST);
+        yield();
+        if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.EAST, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+          dirToEnemy = Direction.WEST;
+        }
+      }
+
+      if(dirToEnemy.equals(Direction.OMNI)) {
+        System.out.println("Warning: couldn't find map edge, ranomly guessing...");
+        if(rand.nextBoolean()) {
+          if(rand.nextBoolean()) {
+            dirToEnemy = Direction.WEST;
+          }
+          else {
+            dirToEnemy = Direction.EAST;
+          }
+        }
+        else {
+          if(rand.nextBoolean()) {
+            dirToEnemy = Direction.NORTH;
+          }
+          else {
+            dirToEnemy = Direction.SOUTH;
+          }
+        }
+      }
     }
 
     navSys.setTurn(dirToEnemy);

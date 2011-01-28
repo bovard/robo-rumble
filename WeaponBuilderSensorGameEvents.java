@@ -22,7 +22,6 @@ public class WeaponBuilderSensorGameEvents extends BuilderSensorGameEvents {
     calcLostHealth();
     //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
     calcRecentlyLostHealth();
-    calcHasDirective();
     calcSeeMine();
     calcSeeEnemy();
     calcSeeDebris();

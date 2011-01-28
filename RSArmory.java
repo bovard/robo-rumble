@@ -26,7 +26,12 @@ public class RSArmory extends BuilderSensorRobotSystem {
         MapLocation location = comSys.getMapLocationFromBuildDirective(directive);
         if(location.isAdjacentTo(birthPlace)) {
           BuildOrder order = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(directive));
-          while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + order.cost + 2*PlayerConstants.MINIMUM_FLUX) {
+          if(order.chassisBuilder != buildSys.type()) {
+            while(sensorSys.senseObjectAtLocation(location, order.chassis.level)==null) {
+              yield();
+            }
+          }
+          while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + order.cost + PlayerConstants.MINIMUM_FLUX) {
             yield();
           }
           seqBuild(order, location);

@@ -56,6 +56,7 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
     seqBuildGuardTowers();
     while(true) {
       if(checkBase()) {
+        seqBuildScoutsAndHeavies();
         yield();
       }
       else {
@@ -66,12 +67,20 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
   }
 
 
+  /**
+   * Checks to makes sure that our base is safe and sounds
+   * @return if any base buildings are missing
+   */
   public boolean checkBase() {
-    return sensorSys.canSenseObject(armory) && sensorSys.canSenseObject(factory);
-    //        && sensorSys.canSenseObject(guardOne) && sensorSys.canSenseObject(guardTwo);
+    return sensorSys.canSenseObject(armory) && sensorSys.canSenseObject(factory)
+            && sensorSys.canSenseObject(armoryGuard) && sensorSys.canSenseObject(factoryGuard);
   }
 
 
+  /**
+   * Checks to see if either of the production buildings are not build or are missing and builds them
+   * @return true
+   */
   public boolean seqBuildProductionBuildings() {
     for (int i = 0; i < 20; i++) {
       yield();
@@ -129,6 +138,9 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
   }
 
 
+  /**
+   * set the locations to build each base component
+   */
   private void setLocations() {
     Direction currentDir = robotControl.getDirection();
     armoryLoc = birthPlace.add(currentDir.rotateRight().rotateRight());
@@ -138,7 +150,12 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
     comTowerLoc = birthPlace.add(currentDir.opposite());
   }
 
+  /**
+   * checks to see that both guard towers are built and/or still there, builds them if they aren't
+   * @return true
+   */
   protected boolean seqBuildGuardTowers() {
+    //build the armory guard tower if there isn't one there
     if(armoryGuard == null || !sensorSys.canSenseObject(armoryGuard)) {
       while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_3.cost + PlayerConstants.MINIMUM_FLUX) {
         yield();
@@ -165,6 +182,8 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         }
       }
     }
+    
+    //build the factory guard tower if there isn't one there
     if(factoryGuard == null || !sensorSys.canSenseObject(factoryGuard)) {
       while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_2.cost + PlayerConstants.MINIMUM_FLUX) {
         yield();
@@ -185,7 +204,60 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         yield();
       }
     }
+
+    
+    
+
+
     return true;
+  }
+
+  private int lastScout = 0;
+  private int lastHeavy = 0;
+  private int scoutCooldown = 150;
+  private int heavyCooldown = 75;
+
+  protected boolean seqBuildScoutsAndHeavies() {
+    if (lastScout + scoutCooldown < Clock.getRoundNum()
+            && gameEvents.isFluxRegenAbove(PlayerConstants.MINIMUM_FLUX + Chassis.FLYING.upkeep)
+            && robotControl.getTeamResources() > BuildOrder.FLYING_BUILDER_SCOUT_1.cost +
+            BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX) {
+      robotControl.setIndicatorString(1, "Building a Scout!");
+      if(sensorSys.senseObjectAtLocation(constructionZone, RobotLevel.IN_AIR)==null) {
+        bcSys.setSendBuildDirective(BuildOrder.FLYING_BUILDER_SCOUT_1.id, constructionZone);
+        lastScout = Clock.getRoundNum();
+        while(sensorSys.senseObjectAtLocation(constructionZone, RobotLevel.IN_AIR)==null
+                || robotControl.getTeamResources() < BuildOrder.FLYING_BUILDER_SCOUT_1.cost +
+            BuildOrder.RECYCLER.cost + 5*PlayerConstants.MINIMUM_FLUX) {
+          yield();
+        }
+        seqBuild(BuildOrder.FLYING_BUILDER_SCOUT_1, constructionZone);
+      }
+    }
+    if (lastHeavy + heavyCooldown < Clock.getRoundNum()
+            && gameEvents.isFluxRegenAbove(PlayerConstants.MINIMUM_FLUX + Chassis.HEAVY.upkeep)
+            && robotControl.getTeamResources() > BuildOrder.HEAVY_WARRIOR_2.cost +
+            BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX) {
+      robotControl.setIndicatorString(1, "Building a Heavy!");
+      if(sensorSys.senseObjectAtLocation(constructionZone, RobotLevel.ON_GROUND)==null) {
+        bcSys.setSendBuildDirective(BuildOrder.HEAVY_WARRIOR_2.id, constructionZone);
+        lastHeavy = Clock.getRoundNum();
+        while(sensorSys.senseObjectAtLocation(constructionZone, RobotLevel.ON_GROUND)==null) {
+          yield();
+        }
+        for(int i=0; i<10; i++) {
+          yield();
+        }
+        while(robotControl.getTeamResources() < BuildOrder.HEAVY_WARRIOR_2.cost +
+            BuildOrder.RECYCLER.cost + 5*PlayerConstants.MINIMUM_FLUX) {
+          yield();
+        }
+        seqBuild(BuildOrder.HEAVY_WARRIOR_2, constructionZone);
+      }
+    }
+
+
+    return false;
   }
 
 

@@ -27,6 +27,14 @@ public class RSFactory extends BuilderSensorRobotSystem {
         MapLocation location = comSys.getMapLocationFromBuildDirective(directive);
         if(location.isAdjacentTo(birthPlace)) {
           BuildOrder order = BuildOrderID.getBuildOrderFromID(comSys.getBuildOrderIDFromBuildDirective(directive));
+          if(order.chassisBuilder != buildSys.type()) {
+            while(sensorSys.senseObjectAtLocation(location, order.chassis.level)==null) {
+              yield();
+            }
+            for(int i=0; i<5; i++) {
+              yield();
+            }
+          }
           while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + order.cost + 3*PlayerConstants.MINIMUM_FLUX) {
             yield();
           }
