@@ -242,6 +242,36 @@ public enum BuildOrder {
     new ComponentType[] {},
     Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SHIELD.cost + ComponentType.SMG.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.SHIELD.cost + ComponentType.BLASTER.cost + ComponentType.BLASTER.cost + ComponentType.SMG.cost,
     BuildOrderID.GUARD_TOWER_1
+  ),
+  GUARD_TOWER_2 (
+    Chassis.BUILDING,
+    ComponentType.CONSTRUCTOR,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SHIELD, ComponentType.SMG, ComponentType.SMG, ComponentType.BLASTER},
+    new ComponentType[] {ComponentType.HARDENED, ComponentType.REGEN, ComponentType.RAILGUN},
+    new ComponentType[] {},
+    Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 2*ComponentType.SMG.cost + ComponentType.BLASTER.cost + ComponentType.HARDENED.cost + ComponentType.REGEN.cost + ComponentType.RAILGUN.cost,
+    BuildOrderID.GUARD_TOWER_2
+  ),
+  GUARD_TOWER_3 (
+    Chassis.BUILDING,
+    ComponentType.CONSTRUCTOR,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SMG, },
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.PLASMA, ComponentType.PLASMA, ComponentType.PLASMA, ComponentType.PLASMA, ComponentType.BEAM, ComponentType.BEAM},
+    Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SMG.cost + 4*ComponentType.PLASMA.cost + 2*ComponentType.BEAM.cost,
+    BuildOrderID.GUARD_TOWER_3
+  ),
+  CONTROL_TOWER_1 (
+    Chassis.BUILDING,
+    ComponentType.CONSTRUCTOR,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.SHIELD},
+    new ComponentType[] {ComponentType.HARDENED, ComponentType.REGEN},
+    new ComponentType[] {ComponentType.SATELLITE, ComponentType.NETWORK},
+    Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SMG.cost + 4*ComponentType.PLASMA.cost + 2*ComponentType.BEAM.cost,
+    BuildOrderID.CONTROL_TOWER_1
   );
 
   

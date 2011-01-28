@@ -231,10 +231,19 @@ public class RobotPlayer implements Runnable {
         //HeavyConstructionRecycler
         if (components.length == 3 && components[1].type() == ComponentType.BUILDING_SENSOR &&
                   components[2].type()==ComponentType.RECYCLER) {
-          RSConstructionRecycler system = new RSConstructionRecycler(myRC,
-                  new SensorSystem(myRC, (SensorController)components[1]),
-                  new BuilderSystem(myRC, (BuilderController)components[2]));
-          system.go();
+          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[1]);
+          if(sensorSys.senseObjectAtLocation(myRC.getLocation(), RobotLevel.MINE) == null) {
+            RSBaseBuilderRecycler system = new RSBaseBuilderRecycler(myRC,
+                    sensorSys,
+                    new BuilderSystem(myRC, (BuilderController)components[2]));
+            system.go();
+          }
+          else{
+            RSConstructionRecycler system = new RSConstructionRecycler(myRC,
+                    sensorSys,
+                    new BuilderSystem(myRC, (BuilderController)components[2]));
+            system.go();
+          }
         }
       }
       myRC.yield();

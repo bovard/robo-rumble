@@ -55,20 +55,23 @@ public class RSBuilderScoutGE extends BuilderSensorGameEvents {
   @Override
   public boolean checkGameEventsAbove(GameEventLevel gameEventLevel) {
     switch(gameEventLevel.priority) {
+      case GameEventLevelPriority.CRITICAL:
+        //highest level
+        return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.COMBAT:
-        //highest priority level, can't have one higher
+        //check CRITICAL game events and above
         return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.DIRECTIVE:
-        //check the COMBAT game events
+        //check the COMBAT game events and above
         return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.MISSION:
-        //check the COMBAT and DIRECTIVE game events
+        //check the DIRECTIVE game events and above
         return super.checkGameEventsAbove(gameEventLevel);
       case GameEventLevelPriority.NORMAL:
-        //check the COMBAT, DIRECTIVE and MISSION game events
+        //check the MISSION game events and above
         return super.checkGameEventsAbove(gameEventLevel) || seeNewUncoveredMine;
       case GameEventLevelPriority.LOW:
-        //check the COMBAT, DIRECTIVE, MISSION and NORMAL game events
+        //check the NORMAL game events and above
         return super.checkGameEventsAbove(gameEventLevel) || seeNewUncoveredMine || seeUncoveredMines;
       case GameEventLevelPriority.NONE:
         //check all game events

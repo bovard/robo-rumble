@@ -189,7 +189,7 @@ public class NavigationSystem {
    * @return if the robot is at its destination MapLocation
    */
   public boolean isAtDestination() {
-    return robotControl.getLocation() == destination;
+    return robotControl.getLocation().equals(destination);
   }
 
   /**

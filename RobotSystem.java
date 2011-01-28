@@ -86,7 +86,6 @@ public class RobotSystem {
   /**
    * Called to move multiple times to a destination, assumes the destination is already set
    * Note: will fall out if GameEvent higher than gameEventLevel happens
-   * @param dest place to move to
    * @return if the destination was reached safely
    */
   protected boolean seqMove() {

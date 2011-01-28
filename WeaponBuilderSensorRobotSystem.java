@@ -14,6 +14,13 @@ import battlecode.common.*;
 public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
   protected WeaponSystem weaponSys;
 
+  /**
+   * Constructor for system with a buildSys AND weaponSys
+   * @param robotControl The robot Controller
+   * @param sensorSys The SensorSystem
+   * @param buildSys the BuilderSystem
+   * @param weaponSys The WeaponSystem
+   */
   public WeaponBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
           BuilderSystem buildSys, WeaponSystem weaponSys) {
     super(robotControl, sensorSys, buildSys);
@@ -21,6 +28,12 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
     gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
+  /**
+   * Constructor for a system with a weaponSys only
+   * @param robotControl The robot Controller
+   * @param sensorSys The SensorSystem
+   * @param weaponSys The WeaponSystem
+   */
   public WeaponBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
           WeaponSystem weaponSys) {
     super(robotControl, sensorSys, null);
@@ -28,6 +41,12 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
     gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
+  /**
+   * Constructor for those too lazy to build their own weaponSys
+   * @param robotControl The robot Controller
+   * @param sensorSys The SensorSystem
+   * @param weapon The weaponSystem to use
+   */
   public WeaponBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys,
           WeaponController weapon) {
     super(robotControl, sensorSys, null);
