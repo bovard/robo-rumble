@@ -135,8 +135,9 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
             navSys.setMoveBackward();
           }
         }
-        //if we're just right, move forward a square to prevent death by beam (embarrasing...)
-        else {
+        //if we're just right, and have taken some damage
+        //move forward a square to prevent death by beam (embarrasing...)
+        else if (gameEvents.lostHeath()) {
           if(navSys.canMove(ourDir)) {
             navSys.setMoveForward();
           }

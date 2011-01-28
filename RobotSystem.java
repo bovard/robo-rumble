@@ -224,7 +224,7 @@ public class RobotSystem {
     }
     //if you can move 45 right
     else if(navSys.canMove(ourDir.rotateRight())) {
-      System.out.println("canMove 45 right!");
+      //System.out.println("canMove 45 right!");
       navSys.setTurn(ourDir.rotateRight());
       while(navSys.isActive()) {
         yield();
@@ -257,7 +257,7 @@ public class RobotSystem {
     }
     //if you can move 90 right
     else if(navSys.canMove(ourDir.rotateRight().rotateRight())) {
-      System.out.println("canMove 90 right!");
+      //System.out.println("canMove 90 right!");
       navSys.setTurn(ourDir.rotateRight().rotateRight());
       while(navSys.isActive()) {
         yield();
