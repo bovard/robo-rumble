@@ -46,24 +46,40 @@ public class RSBaseBuilder extends RSBuilderScout {
 
   public void chooseDirection() {
     Direction dirToEnemy = Direction.NORTH;
+    MapLocation loc = robotControl.getLocation();
     //if we already know the edges of the map
     if(maxX != Integer.MAX_VALUE || maxY != Integer.MAX_VALUE || minX != -1 || minY != -1) {
+      int distToMinX = loc.x-minX;
+      int distToMaxX = maxX-loc.x;
+      int distToMinY = loc.y-minY;
+      int distToMaxY = maxY-loc.y;
 
+      /*
+       * North ( 0,-1)
+       * South ( 0, 1)
+       * East  ( 1, 0)
+       * West  (-1, 0)
+       */
+      
       //we found teh south edge, so the enemy is north
-      if(maxY < Integer.MAX_VALUE) {
+      if(distToMaxY <= distToMinX && distToMaxY <= distToMaxX && distToMaxY <= distToMinY) {
         dirToEnemy = Direction.NORTH;
       }
       //we found the north edge, so the enemy is south
-      else if(minY > -1) {
+      else if(distToMinY <= distToMinX && distToMinY <= distToMaxX && distToMinY <= distToMaxY) {
         dirToEnemy = Direction.SOUTH;
       }
       //we foudn teh west edge, so the enemy is east
-      else if (minX > -1) {
+      else if (distToMinX <= distToMaxX && distToMinX <= distToMinY && distToMinX <= distToMaxY) {
         dirToEnemy = Direction.EAST;
       }
       //we found the east edge, so the enemy is west
-      else if (maxX < Integer.MAX_VALUE) {
+      else if (distToMaxX <= distToMinX && distToMaxX <= distToMinY && distToMaxX <= distToMaxY) {
         dirToEnemy = Direction.WEST;
+      }
+      else {
+        //woops
+        System.out.println("WARNING: LOGIC INCORRECT IN THE FIRST PART OF CHOOSE DIRECTION!");
       }
     }
     //otherwise guess
@@ -133,8 +149,35 @@ public class RSBaseBuilder extends RSBuilderScout {
       changeScoutDirection();
       navSys.setDestination(chooseNextDestination());
       while(!done && actMove()) {
-        while(navSys.isActive()) {
-          yield();
+        if(robotControl.getDirection().equals(Direction.NORTH_EAST)
+                || robotControl.getDirection().equals(Direction.NORTH_WEST)
+                || robotControl.getDirection().equals(Direction.SOUTH_EAST)
+                || robotControl.getDirection().equals(Direction.SOUTH_WEST) ) {
+          MapLocation loc = robotControl.getLocation();
+          Direction dir = robotControl.getDirection();
+          if(sensorSys.senseObjectAtLocation(loc.add(dir), RobotLevel.ON_GROUND)==null
+                  && sensorSys.senseObjectAtLocation(loc.add(dir,2), RobotLevel.ON_GROUND)==null
+                  && sensorSys.senseObjectAtLocation(loc.add(dir,2), RobotLevel.ON_GROUND)==null
+                  && sensorSys.senseObjectAtLocation(loc.add(dir.rotateLeft()), RobotLevel.ON_GROUND)==null
+                  && sensorSys.senseObjectAtLocation(loc.add(dir.rotateLeft(),2), RobotLevel.ON_GROUND)==null
+                  && sensorSys.senseObjectAtLocation(loc.add(dir.rotateRight()), RobotLevel.ON_GROUND)==null
+                  && sensorSys.senseObjectAtLocation(loc.add(dir.rotateRight(),2), RobotLevel.ON_GROUND)==null)
+            while(navSys.isActive()) {
+              yield();
+            }
+            navSys.setMoveForward();
+            while(navSys.isActive()) {
+              yield();
+            }
+            navSys.setMoveForward();
+            while(navSys.isActive()) {
+              yield();
+            }
+        }
+        else{
+          while(navSys.isActive()) {
+            yield();
+          }
         }
         boolean canMove = true;
         Direction toTest = robotControl.getDirection();

@@ -22,7 +22,7 @@ public final class PlayerConstants {
 
   //ECONOMY CONSTANTS
   public static final int MINIMUM_FLUX = 3;
-  public static final double MINIMUM_FLUX_REGEN = 2.0;
+  public static final double MINIMUM_FLUX_REGEN = 3.0;
 
 
   //SENSOR CONSTANTS

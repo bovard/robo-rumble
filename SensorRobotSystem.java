@@ -53,6 +53,7 @@ public class SensorRobotSystem extends RobotSystem {
     }
     MapLocation next;
     int loops = 0;
+    int maxLoops = 10;
     int x, y;
     do {
       next = robotControl.getLocation();
@@ -79,8 +80,8 @@ public class SensorRobotSystem extends RobotSystem {
       
       next = next.add(x, y);
       loops++;
-    } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<5);
-    if (loops<5) {
+    } while ((next.x < minX || next.x > maxX || next.y < minY || next.y > maxY) && loops<maxLoops);
+    if (loops<maxLoops) {
       return next;
     }
     else {
@@ -155,7 +156,7 @@ public class SensorRobotSystem extends RobotSystem {
     
     robotControl.setIndicatorString(1, "seqFlee!!");
 
-    while(gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
+    while(gameEvents.recentlyLostHealth() || ((SensorGameEvents)gameEvents).canSeeEnemy()) {
       //wait for a motor to be active
       while(navSys.isActive()) {
         yield();
@@ -167,11 +168,8 @@ public class SensorRobotSystem extends RobotSystem {
       }
       //otherwise turn
       else {
-        while(!navSys.canMove(robotControl.getDirection().opposite())
-                && gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
-          setForceMove(false);
-          yield();
-        }
+        setForceMove(false);
+        yield();
       }
     }
     //change our scout direction

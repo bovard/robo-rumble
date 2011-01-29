@@ -79,12 +79,15 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
    * @return
    */
   public boolean seqBuildBase() {
-    for (int i = 0; i < 10; i++) {
+    seqBuildArmory();
+    for (int i = 0; i < 5; i++) {
       yield();
     }
-    seqBuildArmory();
     seqBuildArmoryGuard();
     seqBuildFactory();
+    for (int i = 0; i < 5; i++) {
+      yield();
+    }
     seqBuildFactoryGuard();
 
     return true;
@@ -185,7 +188,7 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         yield();
       }
       armoryGuard = (Robot)sensorSys.senseObjectAtLocation(armoryGuardLoc, RobotLevel.ON_GROUND);
-      if(factory != null) {
+      if(armoryGuard != null) {
         try {
           robotControl.turnOn(armoryGuardLoc, RobotLevel.ON_GROUND);
           bcSys.setSendBuildDirective(BuildOrder.GUARD_TOWER_3.id, armoryGuardLoc);
@@ -216,7 +219,7 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         yield();
       }
       factoryGuard = (Robot)sensorSys.senseObjectAtLocation(factoryGuardLoc, RobotLevel.ON_GROUND);
-      if(factory != null) {
+      if(factoryGuard != null) {
         bcSys.setSendBuildDirective(BuildOrder.GUARD_TOWER_2.id, factoryGuardLoc);
         yield();
       }
@@ -236,7 +239,7 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
 
   protected boolean seqBuildScoutsAndHeavies() {
     if (lastScout + scoutCooldown < Clock.getRoundNum()
-            && gameEvents.isFluxRegenAbove(PlayerConstants.MINIMUM_FLUX + Chassis.FLYING.upkeep)
+            && gameEvents.isFluxRegenAbove(Chassis.FLYING.upkeep)
             && robotControl.getTeamResources() > BuildOrder.FLYING_BUILDER_SCOUT_1.cost +
             BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX) {
       robotControl.setIndicatorString(1, "Building a Scout!");
