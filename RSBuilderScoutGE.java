@@ -43,7 +43,12 @@ public class RSBuilderScoutGE extends BuilderSensorGameEvents {
   public void calcGameEvents() {
     calcCanSeeNewUncoveredMine();
     calcCanSeeUncoveredMine();
-    super.calcGameEvents();
+    calcLostHealth();
+    //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
+    calcRecentlyLostHealth();
+    calcSeeMine();
+    calcSeeEnemy();
+    calcFluxRegen();
   }
 
   /**
