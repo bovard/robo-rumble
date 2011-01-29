@@ -79,16 +79,23 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
    * @return
    */
   public boolean seqBuildBase() {
+    while(buildSys.isActive()) {
+      yield();
+    }
+
     seqBuildArmory();
-    for (int i = 0; i < 5; i++) {
-      yield();
-    }
     seqBuildArmoryGuard();
-    seqBuildFactory();
-    for (int i = 0; i < 5; i++) {
+
+    while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.GUARD_TOWER_3.cost + 6*PlayerConstants.MINIMUM_FLUX) {
       yield();
     }
+
+    seqBuildFactory();
     seqBuildFactoryGuard();
+
+    while(robotControl.getTeamResources() < BuildOrder.RECYCLER.cost + BuildOrder.GUARD_TOWER_2.cost + 6*PlayerConstants.MINIMUM_FLUX) {
+      yield();
+    }
 
     return true;
   }
@@ -100,7 +107,8 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
   public boolean seqBuildArmory() {
     if(armory == null || !sensorSys.canSenseObject(armory)) {
       while(robotControl.getTeamResources() < BuildOrder.ARMORY.cost + 20 + PlayerConstants.MINIMUM_FLUX ||
-              sensorSys.senseObjectAtLocation(armoryLoc, RobotLevel.ON_GROUND) != null) {
+              sensorSys.senseObjectAtLocation(armoryLoc, RobotLevel.ON_GROUND) != null
+              || constructor.isActive()) {
         yield();
         robotControl.setIndicatorString(1, "waitingToBuildArmory");
       }
@@ -128,7 +136,9 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
 
   public boolean seqBuildFactory() {
     if(factory == null || !sensorSys.canSenseObject(factory)) {
-      while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + 20 + PlayerConstants.MINIMUM_FLUX) {
+      while(robotControl.getTeamResources() < BuildOrder.FACTORY.cost + 20 + PlayerConstants.MINIMUM_FLUX
+              || sensorSys.senseObjectAtLocation(factoryLoc, RobotLevel.ON_GROUND) != null
+              || constructor.isActive()) {
         yield();
         robotControl.setIndicatorString(1, "waitingToBuildFactory");
       }
@@ -174,7 +184,9 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
   protected boolean seqBuildArmoryGuard() {
     //build the armory guard tower if there isn't one there
     if(armoryGuard == null || !sensorSys.canSenseObject(armoryGuard)) {
-      while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_3.cost + PlayerConstants.MINIMUM_FLUX) {
+      while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_3.cost + PlayerConstants.MINIMUM_FLUX
+              || sensorSys.senseObjectAtLocation(armoryGuardLoc, RobotLevel.ON_GROUND) != null
+              || constructor.isActive()) {
         yield();
         robotControl.setIndicatorString(1, "waitingToBuildArmoryGuardTower");
       }
@@ -205,7 +217,9 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
   public boolean seqBuildFactoryGuard() {
     //build the factory guard tower if there isn't one there
     if(factoryGuard == null || !sensorSys.canSenseObject(factoryGuard)) {
-      while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_2.cost + PlayerConstants.MINIMUM_FLUX) {
+      while(robotControl.getTeamResources() < BuildOrder.GUARD_TOWER_2.cost + PlayerConstants.MINIMUM_FLUX
+              || sensorSys.senseObjectAtLocation(factoryGuardLoc, RobotLevel.ON_GROUND) != null
+              || constructor.isActive()) {
         yield();
         robotControl.setIndicatorString(1, "waitingToBuildFactoryGuardTower");
       }

@@ -76,7 +76,10 @@ public class RSBuilderScout extends BuilderSensorRobotSystem {
           while(navSys.isActive()) {
             yield();
           }
-          navSys.setTurn(robotControl.getLocation().directionTo(currentMine.getLocation()));
+          Direction toTurn = robotControl.getLocation().directionTo(currentMine.getLocation());
+          if(!robotControl.getDirection().equals(toTurn)) {
+            navSys.setTurn(toTurn);
+          }
           uncoveredMines.remove(currentMine);
           currentMine = null;
 

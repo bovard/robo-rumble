@@ -513,35 +513,42 @@ public class SensorRobotSystem extends RobotSystem {
       if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateLeft().rotateLeft()))==TerrainTile.OFF_MAP) {
         MapLocation ourLocation = robotControl.getLocation();
         MapLocation offMap = ourLocation.add(robotControl.getDirection().rotateLeft().rotateLeft());
-
-        if(ourLocation.x<offMap.x) {
-          maxX = offMap.x;
+        if(robotControl.getDirection().equals(Direction.NORTH) || robotControl.getDirection().equals(Direction.SOUTH)) {
+          if(ourLocation.x<offMap.x) {
+            maxX = offMap.x;
+          }
+          else if(ourLocation.x>offMap.x) {
+            minX = offMap.x;
+          }
         }
-        else if(ourLocation.x>offMap.x) {
-          minX = offMap.x;
-        }
-        else if(ourLocation.y<offMap.y) {
-          maxY = offMap.y;
-        }
-        else if(ourLocation.y>offMap.y) {
-          minY = offMap.y;
+        if(robotControl.getDirection().equals(Direction.WEST) || robotControl.getDirection().equals(Direction.EAST)) {
+          if(ourLocation.y<offMap.y) {
+            maxY = offMap.y;
+          }
+          else if(ourLocation.y>offMap.y) {
+            minY = offMap.y;
+          }
         }
       }
       else if(robotControl.senseTerrainTile(robotControl.getLocation().add(robotControl.getDirection().rotateRight().rotateRight()))==TerrainTile.OFF_MAP) {
         MapLocation ourLocation = robotControl.getLocation();
         MapLocation offMap = ourLocation.add(robotControl.getDirection().rotateRight().rotateRight());
 
-        if(ourLocation.x<offMap.x) {
-          maxX = offMap.x;
+        if(robotControl.getDirection().equals(Direction.NORTH) || robotControl.getDirection().equals(Direction.SOUTH)) {
+          if(ourLocation.x<offMap.x) {
+            maxX = offMap.x;
+          }
+          else if(ourLocation.x>offMap.x) {
+            minX = offMap.x;
+          }
         }
-        else if(ourLocation.x>offMap.x) {
-          minX = offMap.x;
-        }
-        else if(ourLocation.y<offMap.y) {
-          maxY = offMap.y;
-        }
-        else if(ourLocation.y>offMap.y) {
-          minY = offMap.y;
+        if(robotControl.getDirection().equals(Direction.WEST) || robotControl.getDirection().equals(Direction.EAST)) {
+          if(ourLocation.y<offMap.y) {
+            maxY = offMap.y;
+          }
+          else if(ourLocation.y>offMap.y) {
+            minY = offMap.y;
+          }
         }
       }
       else {

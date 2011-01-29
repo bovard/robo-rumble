@@ -49,6 +49,7 @@ public class RSBaseBuilder extends RSBuilderScout {
     MapLocation loc = robotControl.getLocation();
     //if we already know the edges of the map
     if(maxX != Integer.MAX_VALUE || maxY != Integer.MAX_VALUE || minX != -1 || minY != -1) {
+      System.out.println("(minx,miny),(maxx, maxy): "+"("+minX+","+minY+"),("+maxX+","+maxY+")");
       int distToMinX = loc.x-minX;
       int distToMaxX = maxX-loc.x;
       int distToMinY = loc.y-minY;
@@ -63,18 +64,22 @@ public class RSBaseBuilder extends RSBuilderScout {
       
       //we found teh south edge, so the enemy is north
       if(distToMaxY <= distToMinX && distToMaxY <= distToMaxX && distToMaxY <= distToMinY) {
+        System.out.println("the enemy is North!!");
         dirToEnemy = Direction.NORTH;
       }
       //we found the north edge, so the enemy is south
       else if(distToMinY <= distToMinX && distToMinY <= distToMaxX && distToMinY <= distToMaxY) {
+        System.out.println("the enemy is South!!");
         dirToEnemy = Direction.SOUTH;
       }
       //we foudn teh west edge, so the enemy is east
       else if (distToMinX <= distToMaxX && distToMinX <= distToMinY && distToMinX <= distToMaxY) {
+        System.out.println("the enemy is East!!");
         dirToEnemy = Direction.EAST;
       }
       //we found the east edge, so the enemy is west
       else if (distToMaxX <= distToMinX && distToMaxX <= distToMinY && distToMaxX <= distToMaxY) {
+        System.out.println("the enemy is West!!");
         dirToEnemy = Direction.WEST;
       }
       else {
@@ -89,6 +94,7 @@ public class RSBaseBuilder extends RSBuilderScout {
       navSys.setTurn(Direction.NORTH);
       yield();
       if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.NORTH, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+        System.out.println("the enemy is South!");
         dirToEnemy = Direction.SOUTH;
       }
       //we found the north edge, so the enemy is south
@@ -96,6 +102,7 @@ public class RSBaseBuilder extends RSBuilderScout {
         navSys.setTurn(Direction.SOUTH);
         yield();
         if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.SOUTH, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+          System.out.println("the enemy is North!");
           dirToEnemy = Direction.NORTH;
         }
       }
@@ -104,6 +111,7 @@ public class RSBaseBuilder extends RSBuilderScout {
         navSys.setTurn(Direction.WEST);
         yield();
         if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.WEST, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+          System.out.println("the enemy is EAST!");
           dirToEnemy = Direction.EAST;
         }
       }
@@ -112,6 +120,7 @@ public class RSBaseBuilder extends RSBuilderScout {
         navSys.setTurn(Direction.EAST);
         yield();
         if(robotControl.senseTerrainTile(robotControl.getLocation().add(Direction.EAST, PlayerConstants.SIGHT_ORTH_RANGE))==TerrainTile.OFF_MAP) {
+          System.out.println("the enemy is West!");
           dirToEnemy = Direction.WEST;
         }
       }
@@ -121,17 +130,21 @@ public class RSBaseBuilder extends RSBuilderScout {
         if(rand.nextBoolean()) {
           if(rand.nextBoolean()) {
             dirToEnemy = Direction.WEST;
+            System.out.println("the enemy is West?");
           }
           else {
             dirToEnemy = Direction.EAST;
+            System.out.println("the enemy is East?");
           }
         }
         else {
           if(rand.nextBoolean()) {
             dirToEnemy = Direction.NORTH;
+            System.out.println("the enemy is North?");
           }
           else {
             dirToEnemy = Direction.SOUTH;
+            System.out.println("the enemy is South?");
           }
         }
       }
