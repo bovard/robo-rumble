@@ -182,10 +182,6 @@ public class RSBaseBuilder extends RSBuilderScout {
             while(navSys.isActive()) {
               yield();
             }
-            navSys.setMoveForward();
-            while(navSys.isActive()) {
-              yield();
-            }
         }
         else{
           while(navSys.isActive()) {
