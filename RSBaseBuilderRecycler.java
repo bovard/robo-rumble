@@ -238,6 +238,20 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
   private int heavyCooldown = 75;
 
   protected boolean seqBuildScoutsAndHeavies() {
+    seqBuildScout();
+    if(rand.nextBoolean()) {
+      seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_1);
+    }
+    else{
+      seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_2);
+    }
+
+
+    return true;
+  }
+
+
+  protected boolean seqBuildScout() {
     if (lastScout + scoutCooldown < Clock.getRoundNum()
             && gameEvents.isFluxRegenAbove(Chassis.FLYING.upkeep)
             && robotControl.getTeamResources() > BuildOrder.FLYING_BUILDER_SCOUT_1.cost +
@@ -254,13 +268,17 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         seqBuild(BuildOrder.FLYING_BUILDER_SCOUT_1, constructionZone);
       }
     }
+    return false;
+  }
+
+  protected boolean seqBuildHeavy(BuildOrder order) {
     if (lastHeavy + heavyCooldown < Clock.getRoundNum()
             && gameEvents.isFluxRegenAbove(PlayerConstants.MINIMUM_FLUX + Chassis.HEAVY.upkeep)
-            && robotControl.getTeamResources() > BuildOrder.HEAVY_WARRIOR_2.cost +
+            && robotControl.getTeamResources() > order.cost +
             BuildOrder.RECYCLER.cost + PlayerConstants.MINIMUM_FLUX) {
       robotControl.setIndicatorString(1, "Building a Heavy!");
       if(sensorSys.senseObjectAtLocation(constructionZone, RobotLevel.ON_GROUND)==null) {
-        bcSys.setSendBuildDirective(BuildOrder.HEAVY_WARRIOR_2.id, constructionZone);
+        bcSys.setSendBuildDirective(order.id, constructionZone);
         lastHeavy = Clock.getRoundNum();
         while(sensorSys.senseObjectAtLocation(constructionZone, RobotLevel.ON_GROUND)==null) {
           yield();
@@ -268,18 +286,15 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
         for(int i=0; i<10; i++) {
           yield();
         }
-        while(robotControl.getTeamResources() < BuildOrder.HEAVY_WARRIOR_2.cost +
+        while(robotControl.getTeamResources() < order.cost +
             BuildOrder.RECYCLER.cost + 5*PlayerConstants.MINIMUM_FLUX) {
           yield();
         }
-        seqBuild(BuildOrder.HEAVY_WARRIOR_2, constructionZone);
+        seqBuild(order, constructionZone);
       }
     }
-
-
-    return false;
+    return true;
   }
-
 
 
 }
