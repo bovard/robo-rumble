@@ -117,6 +117,7 @@ public class RobotSystem {
    * @return if the turn was executed successfully
    */
   protected boolean actTurn(Direction dir) {
+    //System.out.println("In actTurn: "+Clock.getBytecodeNum());
     if(navSys.setTurn(dir)) {
       yield();
       return true;

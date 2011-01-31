@@ -19,6 +19,7 @@ public class WeaponBuilderSensorGameEvents extends BuilderSensorGameEvents {
    */
   @Override
   public void calcGameEvents() {
+    //System.out.println("In WeaponBuilderSensorGameEvents.calcGameEvents at bytecode: "+Clock.getBytecodeNum());
     calcLostHealth();
     //Note: calcRecentlyLostHeath() must be called AFTER calcLostHealth()
     calcRecentlyLostHealth();
@@ -26,5 +27,6 @@ public class WeaponBuilderSensorGameEvents extends BuilderSensorGameEvents {
     calcSeeEnemy();
     calcSeeDebris();
     calcFluxRegen();
+    //System.out.println("Leaving at bytecode: "+Clock.getBytecodeNum());
   }
 }

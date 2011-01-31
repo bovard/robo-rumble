@@ -683,6 +683,7 @@ public class SensorRobotSystem extends RobotSystem {
    * @return true
    */
   protected boolean actRotateFieldOfVision() {
+    //System.out.println("In actRotateFieldOfVision: "+Clock.getBytecodeNum());
     while(navSys.isActive() && !gameEvents.checkGameEventsAbove(currentGameEventLevel)) {
       yield();
     }

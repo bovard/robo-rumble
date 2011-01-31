@@ -75,6 +75,7 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
    */
   protected boolean seqRotateAndEngage() {
     robotControl.setIndicatorString(1, "seqRotateAndEngage");
+    //System.out.println("In seqRotateAndEngage at bytecode: "+Clock.getBytecodeNum());
     currentGameEventLevel = GameEventLevel.NORMAL;
     seqRotate();
     if(gameEvents.checkGameEventsAbove(GameEventLevel.NORMAL)) {
@@ -92,6 +93,7 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
       }
       actRotateFieldOfVision();
     }
+    //System.out.println("Leaving seqTurnAndEngage at bytecode: "+Clock.getBytecodeNum());
     return true;
   }
 
@@ -101,6 +103,7 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
    */
   protected boolean seqRotate() {
     robotControl.setIndicatorString(1, "seqRotate");
+    //System.out.println("In seqRotate at bytecode: "+Clock.getBytecodeNum());
     while(!gameEvents.checkGameEventsAbove(currentGameEventLevel))
     {
       actRotateFieldOfVision();
@@ -226,8 +229,13 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
    */
   @Override
   protected void yield() {
+    //System.out.println("In yield: "+Clock.getBytecodeNum());
     setCheckNewWeapons();
-    sensorSys.reScanForBots();
+    //System.out.println("In yield after checking for new weapons: "+Clock.getBytecodeNum());
+    //if(sensorSys.getBots().length < 5) {
+    //  sensorSys.reScanForBots(); //disabled for its large bytecode cost
+    //}
+    //System.out.println("In yield after rescanning: "+Clock.getBytecodeNum());
     if((((SensorGameEvents)gameEvents).canSeeDebris() || ((SensorGameEvents)gameEvents).canSeeEnemy())
             && !weaponSys.allActive()) {
       weaponSys.setFireAtRandom();

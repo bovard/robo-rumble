@@ -140,6 +140,7 @@ public class WeaponSystem {
    * @return the MapLocation where (at least one) weapon is firing
    */
   public MapLocation setFireAtRandom() {
+    //System.out.println("In setFireAtRandom at bytecode: "+Clock.getBytecodeNum());
     MapLocation toFire = null;
     RobotLevel level = null;
     if (mode!=WeaponMode.HOLD_FIRE) {
@@ -150,6 +151,7 @@ public class WeaponSystem {
 
         //if we can see an enemy robot
         if (sensorSys.getBots(sensorSys.getSensor().getRC().getTeam().opponent()).length > 0) {
+          //System.out.println("firing at enemy bots!");
 
 
           targets = sensorSys.getBots(sensorSys.getSensor().getRC().getTeam().opponent());
@@ -185,19 +187,28 @@ public class WeaponSystem {
 
         //if you can't see the enemy, but can see debris
         else if (sensorSys.getBots(Team.NEUTRAL).length > 0) {
+          //System.out.println("Firing at neutrals");
           //Fire at neutrals
           //gets enemy bots in sensor range
+          int max_length = 5;
+
+
           targets = sensorSys.getBots(Team.NEUTRAL);
           locations = new MapLocation[targets.length];
-
-          //pulls their location
-          for (int i = 0; i<targets.length;i++) {
-            locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
+          int length;
+          if(targets.length > max_length) {
+            length = max_length;
           }
+          else {
+            length = targets.length;
+          }
+
+          //System.out.println("limiting target to "+length+" debris peices");
 
 
           //TODO: implement targetting logic (this is too simple)
           for (int j=0; j<weapons.length; j++){
+            //System.out.println("looking at weaponControl" + weapons[j].toString());
             if (!weapons[j].isActive()) {
               if(toFire!=null) {
                 if(weapons[j].withinRange(toFire)) {
@@ -205,7 +216,9 @@ public class WeaponSystem {
                   break;
                 }
               }
-              for (int i=0; i<targets.length; i++) {
+              for (int i=0; i<length; i++) {
+                //System.out.println(i+"Stepping through targets bytecode: "+Clock.getBytecodeNum());
+                locations[i] = sensorSys.getSensor().senseLocationOf(targets[i]);
                 if(weapons[j].withinRange(locations[i])) {
                   toFire = locations[i];
                   level = sensorSys.getSensor().senseRobotInfo(targets[i]).chassis.level;
@@ -222,6 +235,7 @@ public class WeaponSystem {
         e.printStackTrace();
       }
     }
+    //System.out.println("Leaving setFireAtRandom at bytecode "+Clock.getBytecodeNum());
     return toFire;
   }
 
