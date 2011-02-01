@@ -13,7 +13,8 @@ public class RSFactory extends BuilderSensorRobotSystem {
   public RSFactory(RobotController robotControl, SensorSystem sensorSys, BuilderSystem buildSys) {
     super(robotControl, sensorSys, buildSys);
     robotControl.setIndicatorString(2, "RSFactory");
-    comSys.setFilter(new int[] {1,1,0});
+    comSys.setAcceptMessageType(PlayerConstants.MESSAGE_INFO);
+    comSys.setAcceptMessageType(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
   }
 
 

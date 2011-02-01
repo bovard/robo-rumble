@@ -17,7 +17,8 @@ public class BuilderSensorRobotSystem extends SensorRobotSystem {
     gameEvents = new BuilderSensorGameEvents(robotControl, comSys, sensorSys);
 
     //check out PlayerConstants to see what each of these filters
-    comSys.setFilter(new int[] {1, 1, 0});
+    comSys.setAcceptMessageType(PlayerConstants.MESSAGE_INFO);
+    comSys.setAcceptMessageType(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
   }
 
 

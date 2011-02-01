@@ -15,7 +15,10 @@ public class CommunicationsSystem {
 
   public CommunicationsSystem(RobotController robotControl) {
     this.robotControl = robotControl;
-    this.filter = new int[] {0,0,0};
+
+    //initializes the filter to all 0s
+    this.filter = new int[PlayerConstants.NUM_OF_MESSAGE_TYPES];
+    java.util.Arrays.fill(filter, 0);
   }
 
   /**
@@ -24,9 +27,18 @@ public class CommunicationsSystem {
    * Filters are binary int arrays (so either 1,0) a 1 in the position of PlayerConstants.MESSAGE_SUBTYPE
    * indicates that it should be accepted, a 0 indicates it should be rejected.
    * @param filter an array of messages to listen for
+   * @deprecated use setAcceptMessageType instead
    */
   public void setFilter(int[] filter) {
     this.filter = filter;
+  }
+
+  /**
+   * tells the system to start accepting messages of type PlayerConstants.MESSAGE_TYPE
+   * @param messageType
+   */
+  public void setAcceptMessageType(int messageType) {
+    filter[messageType]=1;
   }
 
   /**

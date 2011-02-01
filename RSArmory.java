@@ -13,7 +13,8 @@ public class RSArmory extends BuilderSensorRobotSystem {
     
     super(robotControl, sensorSys, buildSys);
     robotControl.setIndicatorString(2, "RSArmory");
-    comSys.setFilter(new int[] {1,1,0});
+    comSys.setAcceptMessageType(PlayerConstants.MESSAGE_INFO);
+    comSys.setAcceptMessageType(PlayerConstants.MESSAGE_BUILD_DIRECTIVE);
   }
 
   @Override

@@ -59,6 +59,7 @@ public final class PlayerConstants {
   public static final boolean ENCRYPTION = false;
 
   //the types of messages, used to send a receive messenges
+  public static final int NUM_OF_MESSAGE_TYPES = 3;
   //Note: these have to be in array order as we're using a filter based on these in CommunicationsSystem
   public static final int MESSAGE_INFO = 0;
   public static final int MESSAGE_BUILD_DIRECTIVE = 1;

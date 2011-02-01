@@ -52,7 +52,7 @@ public class RobotSystem {
     gameEvents = new GameEvents(robotControl, comSys);
 
     //check out PlayerConstants to see what each of these filters
-    comSys.setFilter(new int[] {1, 0, 0});
+    comSys.setAcceptMessageType(PlayerConstants.MESSAGE_INFO);
 
     rand.setSeed(Clock.getRoundNum());
   }
