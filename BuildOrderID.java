@@ -6,6 +6,7 @@ package team122;
  */
 public class BuildOrderID {
   public static final int FLYING_SCOUT_1 = 1;
+  public static final int FLYING_FIGHTER_SCOUT_1 = 10;
   public static final int FIGHTER_SCOUT_1 = 11;
   public static final int FIGHTER_SCOUT_2 = 12;
   public static final int FIGHTER_SCOUT_3 = 13;
@@ -28,12 +29,19 @@ public class BuildOrderID {
   public static final int HEAVY_WARRIOR_2 = 81;
   public static final int HEAVY_WARRIOR_3 = 82;
   public static final int HEAVY_WARRIOR_4 = 83;
-  public static final int CONTROL_TOWER_1 = 90;
+  public static final int HEAVY_WARRIOR_5 = 84;
+  public static final int HEAVY_WARRIOR_6 = 85;
+  public static final int TURTLE_1 = 90;
+  public static final int TURTLE_2 = 91;
+  public static final int TURTLE_3 = 92;
+  public static final int CONTROL_TOWER_1 = 100;
 
   public static BuildOrder getBuildOrderFromID(int id) {
     switch (id) {
       case BuildOrderID.FLYING_SCOUT_1:
         return BuildOrder.FLYING_SCOUT_1;
+      case BuildOrderID.FLYING_FIGHTER_SCOUT_1:
+        return BuildOrder.FLYING_FIGHTER_SCOUT_1;
       case BuildOrderID.FIGHTER_SCOUT_1:
         return BuildOrder.FIGHTER_SCOUT_1;
       case BuildOrderID.FIGHTER_SCOUT_2:
@@ -80,6 +88,16 @@ public class BuildOrderID {
         return BuildOrder.HEAVY_WARRIOR_3;
       case BuildOrderID.HEAVY_WARRIOR_4:
         return BuildOrder.HEAVY_WARRIOR_4;
+      case BuildOrderID.HEAVY_WARRIOR_5:
+        return BuildOrder.HEAVY_WARRIOR_5;
+      case BuildOrderID.HEAVY_WARRIOR_6:
+        return BuildOrder.HEAVY_WARRIOR_6;
+      case BuildOrderID.TURTLE_1:
+        return BuildOrder.TURTLE_1;
+      case BuildOrderID.TURTLE_2:
+        return BuildOrder.TURTLE_2;
+      case BuildOrderID.TURTLE_3:
+        return BuildOrder.TURTLE_3;
     }
     System.out.println("WARNING: Fell through BuildOrder.getBuildOrderFromID with id = "+id);
     return null;

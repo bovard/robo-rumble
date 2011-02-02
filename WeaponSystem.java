@@ -60,6 +60,18 @@ public class WeaponSystem {
   }
 
   /**
+   * The WeaponSystem constuctor that allows no weapons to be passed in
+   * @param weapon the WeaponController
+   * @param sensorSys the SensorSystem
+   */
+  public WeaponSystem(SensorSystem sensorSys) {
+    this.sensorSys = sensorSys;
+    this.weapons = new WeaponController[] {};
+    uniqueWeapons = new ArrayList<WeaponController>();
+    mode = WeaponMode.OPEN_FIRE;
+  }
+
+  /**
    * Changes the minRange or maxRange if need be
    * @param weaponControl the weapon to measure against
    */

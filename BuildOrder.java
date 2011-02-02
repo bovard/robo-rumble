@@ -29,6 +29,16 @@ public enum BuildOrder {
     //id
     BuildOrderID.FLYING_SCOUT_1
   ),
+  FLYING_FIGHTER_SCOUT_1 (
+    Chassis.FLYING,
+    ComponentType.ARMORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.SIGHT, ComponentType.HAMMER, ComponentType.SHIELD, ComponentType.PLATING},
+    new ComponentType[] {},
+    new ComponentType[] {},
+    Chassis.FLYING.cost + ComponentType.SIGHT.cost + ComponentType.HAMMER.cost + ComponentType.SHIELD.cost + ComponentType.PLATING.cost,
+    BuildOrderID.FLYING_FIGHTER_SCOUT_1
+  ),
   FIGHTER_SCOUT_1 (
     Chassis.LIGHT,
     ComponentType.RECYCLER,
@@ -183,6 +193,71 @@ public enum BuildOrder {
     ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 7 * ComponentType.SMG.cost + ComponentType.HARDENED.cost + ComponentType.REGEN.cost,
     BuildOrderID.HEAVY_WARRIOR_4
   ),
+  /**
+   * HEAVY_WARRIOR_5 is made for overcoming plasma shields at close range
+   */
+  HEAVY_WARRIOR_5 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.HAMMER, ComponentType.HAMMER, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD},
+    new ComponentType[] {ComponentType.HARDENED, ComponentType.REGEN},
+    new ComponentType[] {},
+    ComponentType.RADAR.cost + 4 * ComponentType.SHIELD.cost + 2 * ComponentType.HAMMER.cost + ComponentType.REGEN.cost + ComponentType.HARDENED.cost,
+    BuildOrderID.HEAVY_WARRIOR_5
+  ),
+  /**
+   * HEAVY_WARRIOR_6 is made for overcoming plasma shields at a far range
+   */
+  HEAVY_WARRIOR_6 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SMG},
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.BEAM, ComponentType.BEAM, ComponentType.PLASMA, ComponentType.PLASMA, ComponentType.PLASMA},
+    ComponentType.RADAR.cost + 2 * ComponentType.BEAM.cost + 3 * ComponentType.PLASMA.cost + ComponentType.SMG.cost,
+    BuildOrderID.HEAVY_WARRIOR_6
+  ),
+  /**
+   * TURTLE_1 is almost invicible, with an okay punch
+   */
+  TURTLE_1 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.SIGHT, ComponentType.HAMMER, ComponentType.HAMMER, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD},
+    new ComponentType[] {ComponentType.REGEN},
+    new ComponentType[] {},
+    ComponentType.SIGHT.cost + 9 * ComponentType.SHIELD.cost + 2 * ComponentType.HAMMER.cost + ComponentType.REGEN.cost,
+    BuildOrderID.TURTLE_1
+  ),
+  /**
+   * TURTLE_1 is almost invicible, with a small punch
+   */
+  TURTLE_2 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.SIGHT, ComponentType.HAMMER, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD},
+    new ComponentType[] {ComponentType.REGEN},
+    new ComponentType[] {},
+    ComponentType.SIGHT.cost + 11 * ComponentType.SHIELD.cost + ComponentType.HAMMER.cost + ComponentType.REGEN.cost,
+    BuildOrderID.TURTLE_2
+  ),
+  /**
+   * TURTLE_3 is pretty much invicible, used to broadcast target locations
+   */
+  TURTLE_3 (
+    Chassis.HEAVY,
+    ComponentType.FACTORY,
+    new ComponentType[] {},
+    new ComponentType[] {ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD, ComponentType.SHIELD},
+    new ComponentType[] {ComponentType.DISH, ComponentType.REGEN},
+    new ComponentType[] {},
+    12 * ComponentType.SHIELD.cost + ComponentType.DISH.cost + ComponentType.REGEN.cost,
+    BuildOrderID.TURTLE_3
+  ),
   RECYCLER (
     Chassis.BUILDING,
     ComponentType.CONSTRUCTOR,
@@ -247,10 +322,10 @@ public enum BuildOrder {
     Chassis.BUILDING,
     ComponentType.CONSTRUCTOR,
     new ComponentType[] {},
-    new ComponentType[] {ComponentType.RADAR, ComponentType.SMG, ComponentType.SMG, ComponentType.BLASTER, ComponentType.SHIELD },
+    new ComponentType[] {ComponentType.RADAR, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SMG, ComponentType.SHIELD },
     new ComponentType[] {ComponentType.HARDENED, ComponentType.REGEN, ComponentType.RAILGUN},
     new ComponentType[] {},
-    Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 2*ComponentType.SMG.cost + ComponentType.BLASTER.cost + ComponentType.HARDENED.cost + ComponentType.REGEN.cost + ComponentType.RAILGUN.cost,
+    Chassis.BUILDING.cost + ComponentType.RADAR.cost + ComponentType.SHIELD.cost + 4*ComponentType.SMG.cost + ComponentType.HARDENED.cost + ComponentType.REGEN.cost + ComponentType.RAILGUN.cost,
     BuildOrderID.GUARD_TOWER_2
   ),
   GUARD_TOWER_3 (
@@ -285,6 +360,7 @@ public enum BuildOrder {
   public final ComponentType[] armoryComponents;
   public final int cost;
   public final int id;
+  public final int[] key;
   
   /**
    * The components of recognized builds
@@ -309,9 +385,9 @@ public enum BuildOrder {
     this.armoryComponents = armoryComponents;
     this.cost = cost;
     this.id = id;
+    this.key = ComponentTypeKey.getComponentTypeKey(this);
   }
 
-  
 
   /**
    * returns the list of components to build for the given buld component
