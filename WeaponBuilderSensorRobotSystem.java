@@ -54,6 +54,20 @@ public class WeaponBuilderSensorRobotSystem extends BuilderSensorRobotSystem {
     gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
   }
 
+
+  /**
+   * Constructor for those too lazy to pass in a weapon
+   * @param robotControl The robot Controller
+   * @param sensorSys The SensorSystem
+   * @param weapon The weaponSystem to use
+   */
+  public WeaponBuilderSensorRobotSystem(RobotController robotControl, SensorSystem sensorSys) {
+    super(robotControl, sensorSys, null);
+    this.weaponSys = new WeaponSystem(sensorSys);
+    setCheckNewWeapons();
+    gameEvents = new WeaponBuilderSensorGameEvents(robotControl, comSys, sensorSys);
+  }
+
   /**
    * Scouts the map and engages any enemies it sees
    * @return true

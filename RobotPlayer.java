@@ -1,6 +1,7 @@
 package team122;
 
 import battlecode.common.*;
+import java.util.Arrays;
 
 /**
  * The first thing that will be loaded by a robot waking up,
@@ -50,7 +51,7 @@ public class RobotPlayer implements Runnable {
    * Note: requires version 1.07 or later to work correctly
    * Note: not very efficient at the moment, we'll have to clean it up later
    */
-  public void lightRushStaging() {
+  private void lightRushStaging() {
     ComponentController [] components;
     //one the code enters here it waits until it recognizes one of the builds, then loads
     //the appropriate system
@@ -167,7 +168,7 @@ public class RobotPlayer implements Runnable {
   /**
    * This is the staging area for robot systems taking part of the heavy rush strategy
    */
-  public void heavyRushStaging() {
+  private void heavyRushStaging() {
    
     ComponentController[] components = myRC.components();
     //provided BuilderScout (the one that we start off the game with)
@@ -184,6 +185,7 @@ public class RobotPlayer implements Runnable {
 
     while(true) {
       components = myRC.components();
+      int key = ComponentTypeKey.getComponentTypeKey(components);
 
       if(myRC.getChassis() == Chassis.FLYING) {
         //FLYING BUILDER SCOUT
@@ -212,12 +214,33 @@ public class RobotPlayer implements Runnable {
           system.go();
         }
         //HEAVY_WARRIOR_2
-        if (components.length == 8 && components[3].type() == ComponentType.RAILGUN
+        else if (components.length == 8 && components[3].type() == ComponentType.RAILGUN
                 && components[4].type() == ComponentType.RADAR) {
           SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[4]);
           RSRegenFighter system = new RSRegenFighter(myRC, sensorSys, (WeaponController)components[3]);
           system.go();
         }
+        else if(key == BuildOrder.HEAVY_WARRIOR_3.key) {
+          SensorSystem sensorSys = getSensorSystem(ComponentType.RADAR, components);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys);
+          system.go();
+        }
+        else if(key == BuildOrder.HEAVY_WARRIOR_4.key) {
+          SensorSystem sensorSys = getSensorSystem(ComponentType.RADAR, components);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys);
+          system.go();
+        }
+        else if(key == BuildOrder.HEAVY_WARRIOR_5.key) {
+          SensorSystem sensorSys = getSensorSystem(ComponentType.RADAR, components);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys);
+          system.go();
+        }
+        else if(key == BuildOrder.HEAVY_WARRIOR_6.key) {
+          SensorSystem sensorSys = getSensorSystem(ComponentType.RADAR, components);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys);
+          system.go();
+        }
+
       }
       else if(myRC.getChassis() == Chassis.BUILDING) {
         //GUARD TOWER
@@ -265,4 +288,16 @@ public class RobotPlayer implements Runnable {
       myRC.yield();
     }
   }
+
+
+  private SensorSystem getSensorSystem(ComponentType sensor, ComponentController[] components) {
+    for(ComponentController component : components) {
+      if(component.type() == sensor) {
+        return new SensorSystem(myRC, (SensorController)component);
+      }
+    }
+    return null;
+  }
+
+
 }

@@ -254,10 +254,31 @@ public class RSBaseBuilderRecycler extends BuilderSensorRobotSystem {
   protected boolean seqBuildScoutsAndHeavies() {
     seqBuildScout();
     if(rand.nextBoolean()) {
-      seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_1);
+      if(rand.nextBoolean()) {
+        seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_1);
+      }
+      else {
+        seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_6);
+      }
     }
     else{
-      seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_2);
+      if(rand.nextBoolean()) {
+        if(rand.nextBoolean()) {
+          seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_2);
+        }
+        else {
+          seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_3);
+        }
+      }
+      else {
+        if(rand.nextBoolean()) {
+          seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_4);
+        }
+        else {
+          seqBuildHeavy(BuildOrder.HEAVY_WARRIOR_5);
+        }
+      }
+      
     }
 
 

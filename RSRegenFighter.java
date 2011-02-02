@@ -16,6 +16,10 @@ public class RSRegenFighter extends WeaponBuilderSensorRobotSystem {
     super(robotControl, sensorSys, weapon);
   }
 
+  public RSRegenFighter(RobotController robotControl, SensorSystem sensorSys) {
+    super(robotControl, sensorSys);
+  }
+
   @Override
   public void go() {
     while(true) {

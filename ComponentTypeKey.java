@@ -12,13 +12,19 @@ public class ComponentTypeKey {
 
   private static final int NUMBER_OF_COMPONENTS = 34;
 
+
+  public static int getComponentTypeKey(ComponentController [] componentControls) {
+    int [] key = getComponentKey(componentControls);
+    return getKeySig(key);
+  }
+
   /**
    * Makes a 'key' for the given components, ie a number that will be the same no matter
    * what the order of components
    * @param componentControls The components to add into the key
    * @return the int[] key
    */
-  public static int[] getComponentTypeKey(ComponentController[] componentControls) {
+  private static int[] getComponentKey(ComponentController[] componentControls) {
     int[] key = new int[NUMBER_OF_COMPONENTS];
     java.util.Arrays.fill(key, 0);
 
@@ -29,13 +35,19 @@ public class ComponentTypeKey {
     return key;
   }
 
+
+  public static int getComponentTypeKey(ComponentType[] componentTypes) {
+    int [] key = getComponentKey(componentTypes);
+    return getKeySig(key);
+  }
+
   /**
    * Makes a 'key' for the given components, ie a number that will be the same no matter
    * what the order of components
    * @param componentTypes The components to add into the key
    * @return the int[] key
    */
-  public static int[] getComponentTypeKey(ComponentType[] componentTypes) {
+  private static int[] getComponentKey(ComponentType[] componentTypes) {
     int[] key = new int[NUMBER_OF_COMPONENTS];
     java.util.Arrays.fill(key, 0);
 
@@ -52,12 +64,22 @@ public class ComponentTypeKey {
    * @param componentTypes the Components to add
    * @return the int[] key
    */
-  public static int[] addToComponentTypeKey(int[] key, ComponentType[] componentTypes) {
+  private static int[] addToComponentKey(int[] key, ComponentType[] componentTypes) {
     for(ComponentType componentType : componentTypes) {
       key[getComponentTypePosition(componentType)]++;
     }
 
     return key;
+  }
+
+  private static int getKeySig(int key[]) {
+    return java.util.Arrays.hashCode(key);
+  }
+
+
+  public static int getComponentTypeKey(BuildOrder order) {
+    int [] key = getComponentKey(order);
+    return getKeySig(key);
   }
 
   /**
@@ -66,15 +88,15 @@ public class ComponentTypeKey {
    * @param componentTypes The components to add into the key
    * @return the int[] key
    */
-  public static int[] getComponentTypeKey(BuildOrder order) {
+  private static int[] getComponentKey(BuildOrder order) {
     int[] key = new int[NUMBER_OF_COMPONENTS];
     java.util.Arrays.fill(key, 0);
 
     key[getComponentTypePosition(order.chassis.motor)]++;
 
-    key = addToComponentTypeKey(key, order.recyclerComponents);
-    key = addToComponentTypeKey(key, order.factoryComponents);
-    key = addToComponentTypeKey(key, order.armoryComponents);
+    key = addToComponentKey(key, order.recyclerComponents);
+    key = addToComponentKey(key, order.factoryComponents);
+    key = addToComponentKey(key, order.armoryComponents);
 
     return key;
   }

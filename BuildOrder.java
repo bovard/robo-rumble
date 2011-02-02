@@ -360,7 +360,7 @@ public enum BuildOrder {
   public final ComponentType[] armoryComponents;
   public final int cost;
   public final int id;
-  public final int[] key;
+  public final int key;
   
   /**
    * The components of recognized builds
