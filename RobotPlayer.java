@@ -206,18 +206,14 @@ public class RobotPlayer implements Runnable {
         }
       }
       else if(myRC.getChassis() == Chassis.HEAVY) {
-        //HEAVY_WARRIOR_1
-        if (components.length == 10 && components[2].type() == ComponentType.RAILGUN
-                && components[3].type() == ComponentType.RADAR) {
-          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[3]);
-          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys, (WeaponController)components[2]);
+        if(key == BuildOrder.HEAVY_WARRIOR_1.key) {
+          SensorSystem sensorSys = getSensorSystem(ComponentType.RADAR, components);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys);
           system.go();
         }
-        //HEAVY_WARRIOR_2
-        else if (components.length == 8 && components[3].type() == ComponentType.RAILGUN
-                && components[4].type() == ComponentType.RADAR) {
-          SensorSystem sensorSys = new SensorSystem(myRC, (SensorController)components[4]);
-          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys, (WeaponController)components[3]);
+        else if(key == BuildOrder.HEAVY_WARRIOR_2.key) {
+          SensorSystem sensorSys = getSensorSystem(ComponentType.RADAR, components);
+          RSRegenFighter system = new RSRegenFighter(myRC, sensorSys);
           system.go();
         }
         else if(key == BuildOrder.HEAVY_WARRIOR_3.key) {
@@ -296,6 +292,17 @@ public class RobotPlayer implements Runnable {
         return new SensorSystem(myRC, (SensorController)component);
       }
     }
+    System.out.println("WARNING: Bad call to getSensorSystem (target sensor type wasn't found)");
+    return null;
+  }
+
+  private BuilderSystem getBuildSystem(ComponentType builder, ComponentController[] components) {
+    for(ComponentController component : components) {
+      if(component.type() == builder) {
+        return new BuilderSystem(myRC, (BuilderController)component);
+      }
+    }
+    System.out.println("WARNING: Bad call to getBuildSystem (target builder type wasn't found)");
     return null;
   }
 
